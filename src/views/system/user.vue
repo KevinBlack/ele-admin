@@ -1,449 +1,388 @@
-<template>
-  <div>
-    <el-card class="box-card card_l" id="card_l">
-      <el-tree :data="data2" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-    </el-card>
-    <el-card class="box-card card_r" id="card_r">
-      <div class="app-container" ref="app-content">
-        <div class="filter-container" ref="filConHit">
-          <el-form :inline="true" label-width="80px">
-            <el-form-item label="角色名称:">
-              <el-input v-model="inputTreeValue" placeholder="请输入名称..." style="width: 200px;" class="filter-item" />
-            </el-form-item>
-            <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-              搜索
-            </el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit"
-              @click="handleCreate">
-              添加管理员
-            </el-button>
-          </el-form>
-        </div>
-        <!-- 表格 -->
-        <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row
-          style="width: 100%;" @sort-change="sortChange">
-          <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80"
-            :class-name="getSortClass('id')">
-            <template slot-scope="scope">
-              <span>{{ scope.row.id }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="角色名称" width="110px" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.author }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="角色编码" width="80px" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.importance }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="排序号" align="center" width="95">
-            <template slot-scope="{row}">
-              <span>{{ row.pageviews }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="更新时间" width="150px" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="备注信息" min-width="150px">
-            <template slot-scope="{row}">
-              <span>{{ row.title }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" class-name="status-col" width="100">
-            <template slot-scope="{row}">
-              <el-tag :type="row.status | statusFilter">
-                {{ row.status }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-            <template slot-scope="{row}">
-              <el-tooltip class="item" effect="dark" content="编辑角色" placement="top-start">
-                <el-button circle type="primary" icon="el-icon-edit" size="mini" @click="handleUpdate(row)"></el-button>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="停用角色" placement="top-start">
-                <el-button circle type="info" icon="el-icon-remove-outline" size="mini"
-                  @click="handleModifyStatus(row,'禁用')"></el-button>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="删除角色" placement="top-start">
-                <el-button circle type="danger" icon="el-icon-delete" size="mini" @click="handleModifyStatus(row,'删除')">
-                </el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页 -->
-        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
-          @pagination="getList" />
-        <!-- 弹框 -->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-          <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px"
-            style="width: 400px; margin-left:50px;">
-            <el-form-item label="角色" prop="author">
-              <el-input v-model="temp.author" class="filter-item" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="时间" prop="timestamp">
-              <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-            </el-form-item>
-            <el-form-item label="备注" prop="title">
-              <el-input v-model="temp.title" type="textarea" placeholder="Please input" />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-select v-model="temp.status" class="filter-item" placeholder="请选择">
-                <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="编码">
-              <el-input v-model="temp.importance" class="filter-item" placeholder="请输入" />
-            </el-form-item>
-            <el-form-item label="序号">
-              <el-input v-model="temp.pageviews" class="filter-item" placeholder="请输入" />
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">
-              取消
-            </el-button>
-            <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-              确定
-            </el-button>
-          </div>
-        </el-dialog>
-      </div>
-    </el-card>
-  </div>
-</template>
+	<template>
+	  <div class="app-container">
+		<el-row>
+		  <el-col>
+			<!-- 查询面板 -->
+			<el-card class="box-card" shadow="never">
+			  <!-- label-width="65px" -->
+			  <el-form ref="formQuery" :model="formQuery"  label-width="100px">
+				<el-row>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="机构Id" size="mini" prop="officeId" style="display:none;">
+					  <el-input v-model="formQuery.officeId" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="登录名" size="mini" prop="loginCode">
+					  <el-input v-model="formQuery.loginCode" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="用户名" size="mini" prop="userName">
+					  <el-input v-model="formQuery.userName" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="邮箱" size="mini" prop="email">
+					  <el-input v-model="formQuery.email" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="手机" size="mini" prop="mobile">
+					  <el-input v-model="formQuery.mobile" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="电话" size="mini" prop="phone">
+					  <el-input v-model="formQuery.phone" size="mini"></el-input>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item label="状态" size="mini" prop="status">
+					  <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
+						<el-option
+						  v-for="item in statusOptions"
+						  :key="item.value"
+						  :label="item.label"
+						  :value="item.value"
+						></el-option>
+					  </el-select>
+					</el-form-item>
+				  </el-col>
+				  <el-col :md="6" :lg="6" :xl="4">
+					<el-form-item size="mini">
+					  <el-button type="primary" size="mini" @click="search">查询</el-button>
+					  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+					</el-form-item>
+				  </el-col>
+				</el-row>
+			  </el-form>
+			</el-card>
+			<!-- 表格区 -->
+			<el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
+			  <!-- 按钮区 -->
+			  <el-card
+				shadow="never"
+				style="padding:15px;border-radius:0px;"
+				:body-style="{ padding: '0px' }"
+			  >
+				<el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
+				<el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
+				  <el-button type="primary" size="mini">
+					批量操作
+					<i class="el-icon-arrow-down el-icon--right"></i>
+				  </el-button>
+				  <el-dropdown-menu slot="dropdown">
+					<el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
+					<el-dropdown-item icon="el-icon-close" command="batchStop">停用</el-dropdown-item>
+					<el-dropdown-item icon="el-icon-check" command="batchStart">启用</el-dropdown-item>
+				  </el-dropdown-menu>
+				</el-dropdown>
+			  </el-card>
+			  <!-- 表格区 -->
+			  <el-table
+				ref="userTable"
+				:data="tableData"
+				style="width:100%"
+				:header-row-style="headRowStyle"
+				:row-style="rowStyle"
+				:header-cell-style="getCellStyle"
+				v-loading="tableLoading"
+				border
+				highlight-current-row
+				@selection-change="selectionChange"
+			  >
+				<el-table-column type="selection" width="55" align="center"></el-table-column>
+				<el-table-column prop="loginCode" label="登录账号" width="200" align="center"></el-table-column>
+				<el-table-column prop="userName" label="用户名" width="200" align="center"></el-table-column>
+				<el-table-column
+				  align="center"
+				  prop="status"
+				  width="150"
+				  :formatter="statusFmt"
+				  label="状态"
+				></el-table-column>
+				<el-table-column prop="email" label="邮箱" width="200" align="center"></el-table-column>
+				<el-table-column prop="mobile" label="手机" width="200" align="center"></el-table-column>
+				<el-table-column prop="phone" label="电话" width="200" align="left"></el-table-column>
+				<el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
+				<el-table-column fixed="right" label="操作" width="200" align="center">
+				  <template slot-scope="scope">
+					<el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+				  </template>
+				</el-table-column>
+			  </el-table>
+			  <el-pagination
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page.sync="formQuery.pageNo"
+				:page-size.sync="formQuery.pageSize"
+				:page-sizes="[15, 30, 50, 100]"
+				layout="total, sizes, prev, pager, next, jumper"
+				:total="pageTotal"
+			  ></el-pagination>
+			</el-card>
+		  </el-col>
+		</el-row>
+	  </div>
+	</template>
 
-<script>
-  import {
-    fetchList,
-    createArticle,
-    updateArticle
-  } from '@/api/article'
-  import waves from '@/directive/waves' // waves directive
-  import {
-    parseTime
-  } from '@/utils'
-  import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+	<script>
+	import {
+	  getUser,
+	  getUserList,
+	  deleteUser,
+	  stopUser,
+	  startUser
+	} from "@/api/user";
 
-  const calendarTypeOptions = [{
-      key: 'CN',
-      display_name: 'China'
-    },
-    {
-      key: 'US',
-      display_name: 'USA'
-    },
-    {
-      key: 'JP',
-      display_name: 'Japan'
-    },
-    {
-      key: 'EU',
-      display_name: 'Eurozone'
-    }
-  ]
-
-  // arr to obj, such as { CN : "China", US : "USA" }
-  const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-    acc[cur.key] = cur.display_name
-    return acc
-  }, {})
-
-  export default {
-    name: 'ComplexTable',
-    components: {
-      Pagination
-    },
-    directives: {
-      waves
-    },
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          '正常': 'success',
-          '禁用': 'info'
-          // deleted: 'danger'
-        }
-        return statusMap[status]
-      },
-      typeFilter(type) {
-        return calendarTypeKeyValue[type]
-      }
-    },
-    data() {
-      return {
-        tableKey: 0,
-        list: null,
-        total: 0,
-        inputTreeValue: '',
-        listLoading: true,
-        listQuery: {
-          page: 1,
-          limit: 20,
-          importance: undefined,
-          title: undefined,
-          type: undefined,
-          sort: '+id'
-        },
-        data2: [{
-          label: '山东公司',
-          children: [{
-            label: '济南分部',
-            children: [{
-              label: '济南一部'
-            }, {
-              label: '济南二部'
-            }]
-          }]
-        }, {
-          label: '河北公司',
-          children: [{
-            label: '石家庄分部'
-          }, {
-            label: '秦皇岛分部'
-          }]
-        }, {
-          label: '黑龙江公司',
-          children: [{
-            label: '哈尔滨分部'
-          }, {
-            label: '大庆分部'
-          }]
-        }],
-        defaultProps: {
-          children: 'children',
-          label: 'label'
-        },
-
-        importanceOptions: [1, 2, 3],
-        calendarTypeOptions,
-        sortOptions: [{
-          label: 'ID Ascending',
-          key: '+id'
-        }, {
-          label: 'ID Descending',
-          key: '-id'
-        }],
-        statusOptions: ['正常', '禁用'],
-        // showReviewer: false,
-        temp: {
-          id: undefined,
-          importance: 1,
-          author: '',
-          timestamp: new Date(),
-          title: '',
-          type: '',
-          status: '正常'
-        },
-        dialogFormVisible: false,
-        dialogStatus: '',
-        textMap: {
-          update: 'Edit',
-          create: 'Create'
-        },
-        dialogPvVisible: false,
-        pvData: [],
-        rules: {
-          type: [{
-            required: true,
-            message: 'type is required',
-            trigger: 'change'
-          }],
-          timestamp: [{
-            type: 'date',
-            required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }],
-          title: [{
-            required: true,
-            message: 'title is required',
-            trigger: 'blur'
-          }]
-        },
-        downloadLoading: false
-      }
-    },
-    created() {
-      this.getList()
-    },
-    methods: {
-      handleNodeClick(data) {
-        this.inputTreeValue = data.label
-        console.log(this.inputTreeValue);
-
-      },
-      getList() {
-        this.listLoading = true
-        fetchList(this.listQuery).then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
-
-          // Just to simulate the time of the request
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1.5 * 1000)
-        })
-      },
-      handleFilter() {
-        this.listQuery.page = 1
-        this.getList()
-      },
-      handleModifyStatus(row, status) {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
-        row.status = status
-      },
-      sortChange(data) {
-        const {
-          prop,
-          order
-        } = data
-        if (prop === 'id') {
-          this.sortByID(order)
-        }
-      },
-      sortByID(order) {
-        if (order === 'ascending') {
-          this.listQuery.sort = '+id'
-        } else {
-          this.listQuery.sort = '-id'
-        }
-        this.handleFilter()
-      },
-      resetTemp() {
-        this.temp = {
-          id: undefined,
-          importance: 1,
-          author: '',
-          timestamp: new Date(),
-          title: '',
-          status: '正常',
-          type: ''
-        }
-      },
-      handleCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      createData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-            // this.temp.author = ''
-            createArticle(this.temp).then(() => {
-              this.list.unshift(this.temp)
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: '添加成功',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
-      },
-      handleUpdate(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.temp.timestamp = new Date(this.temp.timestamp)
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.temp)
-            tempData.timestamp = +new Date(tempData
-              .timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            updateArticle(tempData).then(() => {
-              for (const v of this.list) {
-                if (v.id === this.temp.id) {
-                  const index = this.list.indexOf(v)
-                  this.list.splice(index, 1, this.temp)
-                  break
-                }
-              }
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
-      },
-      handleDelete(row) {
-        this.$notify({
-          title: 'Success',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
-        })
-        const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
-      },
-      formatJson(filterVal, jsonData) {
-        return jsonData.map(v => filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        }))
-      },
-      getSortClass: function (key) {
-        const sort = this.listQuery.sort
-        return sort === `+${key}` ?
-          'ascending' :
-          sort === `-${key}` ?
-          'descending' :
-          ''
-      }
-    }
-  }
-
-</script>
-<style scoped>
-  .card_l,
-  .card_c,
-  .card_r {
-    float: left;
-    box-sizing: border-box !important;
-  }
-
-   .card_l,
-  .card_c {
-    height: 1935px;
-  }
-
-  .card_l {
-    width: 18%;
-    margin-left: 10px;
-  }
-
-  .card_c {
-    width: 1%;
-  }
-
-  .card_r {
-    width: 80%;
-  }
-
-</style>
+	export default {
+	  data() {
+		return {
+		  treeData: [],
+		  treeDefaultProps: {
+			children: "childs",
+			label: function(data, node) {
+			  return data.officeName;
+			}
+		  },
+		  pageTotal: 0,
+		  formQuery: {
+			loginCode: "",
+			userName: "",
+			email: "",
+			mobile: "",
+			phone: "",
+			status: "0",
+			pageNo: 1,
+			pageSize: 15,
+			orderBy: ""
+		  },
+		  tableLoading: false,
+		  tableData: [],
+		  tableMultiSelection: [],
+		  statusOptions: [
+			{
+			  value: "0",
+			  label: "正常"
+			},
+			{
+			  value: "2",
+			  label: "停用"
+			}
+		  ]
+		};
+	  },
+	  created() {
+		this.getTableList();
+	  },
+	  methods: {
+		selectionChange(val) {
+		  this.tableMultiSelection = val;
+		},
+		search() {
+		  this.getTableList();
+		},
+		resetForm(formName) {
+		  this.$nextTick(() => {
+			this.$refs[formName].resetFields();
+		  });
+		},
+		getTableList() {
+		  this.tableLoading = true;
+		  getUserList(this.formQuery).then(response => {
+			this.tableData = response.data;
+			this.pageTotal = response.page.total || 0;
+			this.tableLoading = false;
+		  });
+		},
+		handleSizeChange(val) {
+		  this.getTableList();
+		},
+		handleCurrentChange(val) {
+		  this.getTableList();
+		},
+		rowStyle(row, rowIndex) {
+		  return "height:15px;font-size: 13px;color: #333;font-weight: normal; ";
+		},
+		headRowStyle(row, rowIndex) {
+		  return "height:15px;";
+		},
+		getCellStyle({ row, column, rowIndex, columnIndex }) {
+		  if (rowIndex === 0) {
+			return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal;";
+		  } else {
+			return "";
+		  }
+		},
+		handleBatchCommand(command) {
+		  if (command == "batchDelete") {
+			this.batchDelete();
+		  } else if (command == "batchStop") {
+			this.batchStop();
+		  } else if (command == "batchStart") {
+			this.batchStart();
+		  }
+		},
+		batchStop() {
+		  if (!this.tableMultiSelection) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要停用的数据!"
+			});
+			return;
+		  }
+		  let selectRows = this.tableMultiSelection;
+		  if (selectRows.length == 0) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要停用的数据!"
+			});
+			return;
+		  }
+		  this.$confirm("是否执行停用操作?", "提示", {
+			confirmButtonText: "确定",
+			cancelButtonText: "取消",
+			type: "warning"
+		  })
+			.then(() => {
+			  var userIdArr = new Array();
+			  Object.keys(selectRows).forEach(function(key) {
+				if (selectRows[key].userId) {
+				  userIdArr.push(selectRows[key].userId);
+				}
+			  });
+			  if (userIdArr && userIdArr.length > 0) {
+				var userIds = userIdArr.join();
+				stopUser(userIds).then(response => {
+				  this.$message({
+					type: "success",
+					message: "停用成功!"
+				  });
+				  this.getTableList();
+				});
+			  }
+			})
+			.catch(() => {
+			  // 取消时执行此处
+			});
+		},
+		batchStart() {
+		  if (!this.tableMultiSelection) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要启用的数据!"
+			});
+			return;
+		  }
+		  let selectRows = this.tableMultiSelection;
+		  if (selectRows.length == 0) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要启用的数据!"
+			});
+			return;
+		  }
+		  this.$confirm("是否执行启用操作?", "提示", {
+			confirmButtonText: "确定",
+			cancelButtonText: "取消",
+			type: "warning"
+		  })
+			.then(() => {
+			  var userIdArr = new Array();
+			  Object.keys(selectRows).forEach(function(key) {
+				console.log(selectRows[key].userId);
+				if (selectRows[key].userId) {
+				  userIdArr.push(selectRows[key].userId);
+				}
+			  });
+			  if (userIdArr && userIdArr.length > 0) {
+				var userIds = userIdArr.join();
+				startUser(userIds).then(response => {
+				  this.$message({
+					type: "success",
+					message: "启用成功!"
+				  });
+				  this.getTableList();
+				});
+			  }
+			})
+			.catch(() => {
+			  // 取消时执行此处
+			});
+		},
+		batchDelete() {
+		  console.log("delete");
+		  if (!this.tableMultiSelection) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要删除的数据!"
+			});
+			return;
+		  }
+		  let selectRows = this.tableMultiSelection;
+		  if (selectRows.length == 0) {
+			this.$message({
+			  type: "info",
+			  message: "请选中要删除的数据!"
+			});
+			return;
+		  }
+		  this.$confirm("是否执行删除操作?", "提示", {
+			confirmButtonText: "确定",
+			cancelButtonText: "取消",
+			type: "warning"
+		  })
+			.then(() => {
+			  var userIdArr = new Array();
+			  Object.keys(selectRows).forEach(function(key) {
+				if (selectRows[key].userId) {
+				  userIdArr.push(selectRows[key].userId);
+				}
+			  });
+			  if (userIdArr && userIdArr.length > 0) {
+				var userIds = userIdArr.join();
+				deleteUser(userIds).then(response => {
+				  this.$message({
+					type: "success",
+					message: "删除成功!"
+				  });
+				  this.getTableList();
+				});
+			  }
+			})
+			.catch(() => {
+			  // 取消时执行此处
+			});
+		},
+		handleAdd() {
+		  this.$router.push({ path: "/system/user-detail", query: {} });
+		},
+		handleEdit(row) {
+		  let userId = row.userId;
+		  this.$router.push({
+			path: "/system/user-detail",
+			query: { userId: userId }
+		  });
+		},
+		statusFmt(row, column, cellValue, index) {
+		  let status = row.status.trim();
+		  if (status === "0") {
+			return "正常";
+		  } else if (status === "1") {
+			return "删除";
+		  } else if (status === "2") {
+			return "停用";
+		  } else {
+			return row.status;
+		  }
+		}
+	  }
+	};
+	</script>
+	<style>
+  /* el-select 比正常的框长 */
+	.el-form-item .el-select {
+	  width: 100%;
+	}
+	</style>

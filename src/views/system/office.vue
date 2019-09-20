@@ -1,106 +1,116 @@
 <template>
-  <div  class="app-container">
+  <div class="app-container">
     <el-row>
       <el-col :md="5" :lg="5" :xl="4">
         <el-card class="box-card" style="height:736px">
           <el-tree :data="treeData" :props="treeDefaultProps" @node-click="handleNodeClick"></el-tree>
-        </el-card>  
+        </el-card>
       </el-col>
       <el-col :md="19" :lg="19" :xl="20">
-        <!-- 查询面板 -->
-        <el-card class="box-card" shadow="never">
-          <!-- label-width="65px" -->
-          <el-form ref="formQuery" :model="formQuery" :inline="true">
-            <el-form-item label="机构Id" size="mini" prop="officeId" style="display:none;">
-              <el-input v-model="formQuery.officeId" size="mini"></el-input>
-            </el-form-item>
-            <el-row>
-              <el-col  :md="8" :lg="8" :xl="6">
-                <el-form-item label="机构编号" size="mini" prop="officeCode" >
-                  <el-input v-model="formQuery.officeCode" size="mini"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col   :md="8" :lg="8" :xl="6">
-                <el-form-item label="机构名称" size="mini" prop="officeName">
-                  <el-input v-model="formQuery.officeName" size="mini" ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col   :md="8" :lg="8" :xl="6">
-                <el-form-item label="状态" size="mini" prop="status">
-                  <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
-                    <el-option
-                      v-for="item in statusOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <!-- <el-col :md="8" :lg="6" style="text-align:center">
-                <el-form-item size="mini">
-                  <el-button type="primary" size="mini" @click="search">查询</el-button>
-                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-                </el-form-item>
-              </el-col> -->
-            </el-row>
-            <el-row>
-              <el-col :span="24" style="text-align:center">
-                <el-form-item size="mini">
-                  <el-button type="primary" size="mini" @click="search">查询</el-button>
-                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
-        <!-- 表格区 -->
-        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-          <!-- 按钮区 -->
-          <el-card
-            shadow="never"
-            style="padding:15px;border-radius:0px;"
-            :body-style="{ padding: '0px' }"
-          >
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
-            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete()">删除</el-button>
-            <el-button type="primary" icon="el-icon-close" size="mini" @click="batchStop()">停用</el-button>
-            <el-button type="primary" icon="el-icon-check" size="mini" @click="batchStart()">启用</el-button>
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit()">编辑</el-button>
+          <!-- 查询面板 -->
+          <el-card class="box-card" shadow="never">
+            <!-- label-width="65px" -->
+            <el-form ref="formQuery" :model="formQuery" :inline="true">
+              <el-form-item label="机构Id" size="mini" prop="officeId" style="display:none;">
+                <el-input v-model="formQuery.officeId" size="mini"></el-input>
+              </el-form-item>
+              <el-row>
+                <el-col :md="8" :lg="8" :xl="6">
+                  <el-form-item label="机构编号" size="mini" prop="officeCode">
+                    <el-input v-model="formQuery.officeCode" size="mini"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :md="8" :lg="8" :xl="6">
+                  <el-form-item label="机构名称" size="mini" prop="officeName">
+                    <el-input v-model="formQuery.officeName" size="mini"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :md="8" :lg="8" :xl="6">
+                  <el-form-item label="状态" size="mini" prop="status">
+                    <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
+                      <el-option
+                        v-for="item in statusOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :md="8" :lg="8" :xl="6">
+                  <el-form-item size="mini">
+                    <el-button type="primary" size="mini" @click="search">查询</el-button>
+                    <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
           </el-card>
           <!-- 表格区 -->
-          <el-table
-            ref="officeTable"
-            :data="tableData"
-            style="width:100%"
-            :header-row-style="headRowStyle"
-            :row-style="rowStyle"
-            :header-cell-style="getCellStyle"
-            v-loading="tableLoading"
-            border
-            highlight-current-row
-            @selection-change="selectionChange"
-          >
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="officeCode" label="机构编码" width="200" align="center"></el-table-column>
-            <el-table-column prop="officeName" label="机构名称" width="200" align="center"></el-table-column>
-            <el-table-column
-              align="center"
-              prop="status"
-              width="150"
-              :formatter="statusFmt"
-              label="状态"
-            ></el-table-column>
-            <el-table-column prop="treeSort" label="排序号" width="150" align="center"></el-table-column>
-            <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
-            <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100" align="center">
-              <template slot-scope="scope">
-                <el-button @click="addSubOffice(scope.row)" type="text" size="small">添加下级</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+          <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
+            <!-- 按钮区 -->
+            <el-card
+              shadow="never"
+              style="padding:15px;border-radius:0px;"
+              :body-style="{ padding: '0px' }"
+            >
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
+              <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
+                <el-button type="primary" size="mini">
+                  批量操作
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-close" command="batchStop">停用</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-check" command="batchStart">启用</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-card>
+            <!-- 表格区 -->
+            <el-table
+              ref="officeTable"
+              :data="tableData"
+              style="width:100%"
+              :header-row-style="headRowStyle"
+              :row-style="rowStyle"
+              :header-cell-style="getCellStyle"
+              v-loading="tableLoading"
+              border
+              highlight-current-row
+              @selection-change="selectionChange"
+            >
+              <el-table-column type="selection" width="55" align="center"></el-table-column>
+              <el-table-column prop="officeCode" label="机构编码" width="200" align="center"></el-table-column>
+              <el-table-column prop="officeName" label="机构名称" width="200" align="center"></el-table-column>
+              <el-table-column
+                align="center"
+                prop="status"
+                width="150"
+                :formatter="statusFmt"
+                label="状态"
+              ></el-table-column>
+              <el-table-column prop="treeSort" label="排序号" width="150" align="center"></el-table-column>
+              <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
+              <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
+              <el-table-column fixed="right" label="操作" width="150" align="center">
+                <template slot-scope="scope">
+                  <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                  <el-button @click="addSubOffice(scope.row)" type="text" size="small">添加下级</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="formQuery.pageNo"
+              :page-size.sync="formQuery.pageSize"
+              :page-sizes="[15, 30, 50, 100]"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="pageTotal"
+            ></el-pagination>
+          </el-card>
       </el-col>
     </el-row>
   </div>
@@ -111,8 +121,7 @@ import {
   getOfficeList,
   getOfficeTree,
   getOffice,
-  addOffice,
-  updateOffice,
+  saveOffice,
   deleteOffice,
   stopOffice,
   startOffice
@@ -125,7 +134,7 @@ export default {
       treeDefaultProps: {
         children: "childs",
         label: function(data, node) {
-          return  data.officeName;
+          return data.officeName;
         }
       },
       pageTotal: 0,
@@ -135,7 +144,7 @@ export default {
         officeName: "",
         status: "0",
         pageNo: 1,
-        pageSize: 20,
+        pageSize: 15,
         orderBy: ""
       },
       tableLoading: false,
@@ -145,10 +154,6 @@ export default {
         {
           value: "0",
           label: "正常"
-        },
-        {
-          value: "1",
-          label: "删除"
         },
         {
           value: "2",
@@ -187,8 +192,15 @@ export default {
       this.tableLoading = true;
       getOfficeList(this.formQuery).then(response => {
         this.tableData = response.data;
+        this.pageTotal = response.page.total;
         this.tableLoading = false;
       });
+    },
+    handleSizeChange() {
+      this.getTableList();
+    },
+    handleCurrentChange() {
+      this.getTableList();
     },
     rowStyle(row, rowIndex) {
       return "height:15px;font-size: 13px;color: #333;font-weight: normal; ";
@@ -201,6 +213,15 @@ export default {
         return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal;";
       } else {
         return "";
+      }
+    },
+    handleBatchCommand(command) {
+      if (command == "batchDelete") {
+        this.batchDelete();
+      } else if (command == "batchStop") {
+        this.batchStop();
+      } else if (command == "batchStart") {
+        this.batchStart();
       }
     },
     batchStop() {
@@ -239,6 +260,7 @@ export default {
                 message: "停用成功!"
               });
               this.getTableList();
+              this.getTreeData();
             });
           }
         })
@@ -283,6 +305,7 @@ export default {
                 message: "启用成功!"
               });
               this.getTableList();
+              this.getTreeData();
             });
           }
         })
@@ -326,6 +349,7 @@ export default {
                 message: "删除成功!"
               });
               this.getTableList();
+              this.getTreeData();
             });
           }
         })
@@ -334,40 +358,23 @@ export default {
         });
     },
     addSubOffice(row) {
-      var parentId = row.parentIds + row.officeId;
-      parentId = parentId.substring(3);
+      var parentIds = row.parentIds + row.officeId;
       // 添加下级
       this.$router.push({
         path: "/system/office-detail",
-        query: { parentId: parentId }
+        query: { parentIds: parentIds }
       });
     },
     handleAdd() {
       this.$router.push({ path: "/system/office-detail", query: {} });
     },
-    handleEdit() {
-      if (this.tableMultiSelection) {
-        if (this.tableMultiSelection <= 0) {
-          this.$message({
-            type: "info",
-            message: "请选择一条数据"
-          });
-          return;
-        }
-        if (this.tableMultiSelection.length > 1) {
-          this.$message({
-            type: "info",
-            message: "只能选择一条数据"
-          });
-          return;
-        }
-        let officeId = this.tableMultiSelection["0"].officeId;
-        if (officeId) {
-          this.$router.push({
-            path: "/system/office-detail",
-            query: { officeId: officeId }
-          });
-        }
+    handleEdit(row) {
+      let officeId = row.officeId;
+      if (officeId) {
+        this.$router.push({
+          path: "/system/office-detail",
+          query: { officeId: officeId }
+        });
       }
     },
     statusFmt(row, column, cellValue, index) {

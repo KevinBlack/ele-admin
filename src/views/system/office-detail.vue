@@ -9,13 +9,18 @@
       <el-card class="box-card" style="padding:15px;border-radius:0px;">
         <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
           <el-row>
+             <el-col :span="12" style="display:none">
+              <el-form-item label="机构编号" size="mini" prop="officeId">
+                <el-input v-model="detailForm.officeId" size="mini"></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
-              <el-form-item label="上级机构" size="mini" prop="parentId">
+              <el-form-item label="上级机构" size="mini" prop="parentIds">
                 <el-cascader
                   :props="props"
                   :show-all-levels="false"
                   :options="cascaderOpts"
-                  v-model="detailForm.parentId"
+                  v-model="detailForm.parentIds"
                   clearable
                   filterable
                   size="mini"
@@ -38,7 +43,7 @@
 
             <el-col :span="12">
               <el-form-item label="机构名称" size="mini" prop="officeName">
-                <el-input v-model="detailForm.officeName" size="mini"></el-input>
+                <el-input v-model="detailForm.officeName" size="mini" @change="officeNameChange"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -78,7 +83,8 @@
 </template>
 
 <script>
-import { getOffice, addOffice, getOfficeTree,updateOffice } from "@/api/office";
+import { getOffice, saveOffice, getOfficeTree,getSortNo } from "@/api/office";
+import { toPinYinUppercase } from "@/api/comm/comm";
 
 export default {
   data() {
@@ -86,7 +92,7 @@ export default {
       title: "新建机构",
       detailForm: {
         officeId: "",
-        parentId: [],
+        parentIds: [],
         officeCode: "",
         officeName: "",
         officeFullName: "",
@@ -103,13 +109,13 @@ export default {
       cascaderOpts: [],
       rules: {
         officeCode: [
-          { required: true, message: "机构编码不能为空", trigger: "blur" }
+          { required: true, message: "机构编码不能为空", trigger: ['blur', 'change'] }
         ],
         officeName: [
-          { required: true, message: "机构名称不能为空", trigger: "blur" }
+          { required: true, message: "机构名称不能为空", trigger: ['blur', 'change'] }
         ],
         treeSort: [
-          { required: true, message: "排序号不能为空", trigger: "blur" },
+          { required: true, message: "排序号不能为空", trigger: ['blur', 'change'] },
           { type: "number", message: "排序号必须为数字值" }
         ]
       }
@@ -126,12 +132,25 @@ export default {
     } else {
       this.title = "新建机构";
     }
+    // 添加下级菜单时，此处不为空
     var arr = new Array();
-    var parentIdArr = (this.$route.query.parentId||"").split(",");
-    Object.keys(parentIdArr).forEach(function(key) {
-      arr.push(parseInt(parentIdArr[key]));
-    });
-    this.detailForm.parentId = arr;
+    if (this.$route.query.parentIds) {
+      var parentIdArr = (this.$route.query.parentIds || "").split(",");
+      console.log(parentIdArr);
+      Object.keys(parentIdArr).forEach(function(key) {
+        if (parentIdArr[key]) {
+          var pid = parseInt(parentIdArr[key]);
+          if (pid > 0) {
+            arr.push(pid);
+          }
+        }
+      });
+      this.detailForm.parentIds = arr;
+    }
+    //获取排序号
+    if(arr.length>0){
+        this.getTreeSortNo(arr[arr.length-1])
+    }
   },
   methods: {
     getCascaderOpts() {
@@ -141,64 +160,73 @@ export default {
     },
     getOfficeInfo(officeId) {
       getOffice(officeId).then(response => {
-        this.detailForm = response.data;
+        this.detailForm = response.data;              
+        var parentIds = response.data.parentIds;
+        if (parentIds) {
+          var arr = new Array();
+          var parentIdArr = parentIds.split(",");
+          Object.keys(parentIdArr).forEach(function(key) {
+            if (parseInt(parentIdArr[key])) {
+              arr.push(parseInt(parentIdArr[key]));
+            }
+          });
+          this.detailForm.parentIds = arr;
+        }
       });
     },
     saveOffice() {
       const {
         officeId,
-        parentId,
+        parentIds,
         officeCode,
         officeName,
         officeFullName,
         treeSort,
         remarks
       } = this.detailForm;
-
-      let parentIds = "";
-      if (parentId && parentId.length >= 1) {
-        parentIds = parentId.join(",");
+      let parentIdsStr = "";
+      if (parentIds && parentIds.length >= 1) {
+        parentIdsStr = parentIds.join(",");
       }
-      if (!officeId) {
-        addOffice({
-          officeId,
-          parentIds,
-          officeCode,
-          officeName,
-          officeFullName,
-          treeSort,
-          remarks
-        }).then(response => {
-          this.$message({
-            type: "success",
-            message: "新增成功 !"
-          });
+      saveOffice({
+        officeId,
+        parentIds: parentIdsStr,
+        officeCode,
+        officeName,
+        officeFullName,
+        treeSort,
+        remarks
+      }).then(response => {
+        var msg = officeId ? "更新成功" : "新增成功";
+        this.$message({
+          type: "success",
+          message: msg
         });
-      }else{
-        updateOffice({
-          officeId,
-          parentIds,
-          officeCode,
-          officeName,
-          officeFullName,
-          treeSort,
-          remarks
-        }).then(response => {
-          this.$message({
-            type: "success",
-            message: "更新成功 !"
-          })
-        })
-      }
-      this.show = false;
+        this.detailForm.officeId = response.data.officeId;
+      });
     },
     resetForm(formName) {
       this.$nextTick(() => {
         this.$refs[formName].resetFields();
       });
+    },
+    officeNameChange(val){
+      if(val){
+      toPinYinUppercase(val).then(response => {
+          this.detailForm.officeCode = response.data.pinyin;
+        });
+      }
+    },
+    getTreeSortNo(parentId){
+      console.log(parentId)
+      if(parentId){
+        getSortNo(parentId).then(response => {
+          this.detailForm.treeSort = response.data;
+        });
+      }
     }
   }
-}
+};
 </script>
 <style>
 .title-cls {

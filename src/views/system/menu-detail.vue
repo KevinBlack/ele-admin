@@ -26,22 +26,19 @@
                 ></el-cascader>
               </el-form-item>
             </el-col>
+             </el-row>
+              <el-row>
             <el-col :span="12"></el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="菜单名称" size="mini" prop="menuName">
-                <el-input v-model="detailForm.menuName" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
             <el-col :span="12">
               <el-form-item label="菜单编号" size="mini" prop="menuCode">
                 <el-input v-model="detailForm.menuCode" size="mini"></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
+            <el-col :span="12">
+              <el-form-item label="菜单名称" size="mini" prop="menuName">
+                <el-input v-model="detailForm.menuName" size="mini"></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="菜单类型" size="mini" prop="menuType">
                 <el-radio-group v-model="detailForm.menuType" size="mini">
@@ -51,29 +48,28 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="可见" size="mini" prop="isShow">
-                <el-radio-group v-model="detailForm.isShow" size="mini">
-                  <el-radio label="1">显示</el-radio>
-                  <el-radio label="0">隐藏</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
               <el-form-item label="链接" size="mini" prop="menuHref">
                 <el-input v-model="detailForm.menuHref" size="mini"></el-input>
               </el-form-item>
             </el-col>
-
+             <el-col :span="12">
+              <el-form-item label="按钮类型" size="mini" prop="isBatchBtn">
+                <el-radio-group v-model="detailForm.isBatchBtn" size="mini">
+                  <el-radio label="1">常规按钮</el-radio>
+                  <el-radio label="2">批量按钮</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+             <el-col :span="12">
+              <el-form-item label="jsMethodName" size="mini" prop="jsMethodName">
+                <el-input v-model="detailForm.jsMethodName" size="mini"></el-input>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="排序号" size="mini" prop="treeSort">
                 <el-input v-model.number="detailForm.treeSort" size="mini"></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
-
-          <el-row>
             <el-col :span="24">
               <el-form-item label="备注" size="mini" prop="remarks">
                 <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
@@ -83,7 +79,7 @@
           <el-row>
             <el-col :span="24">
               <div style="text-align: center;">
-                <el-button type="primary" icon="el-icon-check" @click="saveMenu()">保存</el-button>
+                <el-button type="primary" icon="el-icon-check" @click="saveMenu">保存</el-button>
                 <el-button icon="el-icon-close" @click="resetForm('detailForm')">重置</el-button>
               </div>
             </el-col>
@@ -95,8 +91,7 @@
 </template>
 
 <script>
-import { getMenu, addMenu, getMenuTree, updateMenu } from "@/api/menu";
-// import { closeSelectedTag } from '@/layout/components/TagsView'
+import { getMenu, getMenuTree, saveMenu,getSortNo } from "@/api/menu";
 
 export default {
   data() {
@@ -110,16 +105,16 @@ export default {
         menuType: "1",
         menuHref: "",
         treeSort: "",
-        isShow: "1",
-        remarks: ""
+        remarks: "",
+        isBatchBtn:"1",
+        jsMethodName:''
       },
       props: {
         checkStrictly: true,
         expandTrigger: "hover",
         value: "id",
         label: "menuName",
-        children: "childs",
-        ref: "tag"
+        children: "childs"
       },
       cascaderOpts: [],
       rules: {
@@ -135,8 +130,7 @@ export default {
         ],
         menuType: [
           { required: true, message: "菜单不能为空", trigger: "blur" }
-        ],
-        isShow: [{ required: true, message: "可见不能为空", trigger: "blur" }]
+        ]
       }
     };
   },
@@ -154,11 +148,28 @@ export default {
     var arr = new Array();
     var parentIdArr = (this.$route.query.parentId || "").split(",");
     Object.keys(parentIdArr).forEach(function(key) {
-      arr.push(parseInt(parentIdArr[key]));
+      if(parentIdArr[key]&&parseInt(parentIdArr[key])>0){
+        arr.push(parseInt(parentIdArr[key]));
+      }
     });
     this.detailForm.parentId = arr;
+    //获取排序号
+    if(!menuId){
+      if(arr.length==0){
+        this.detailForm.treeSort=1000;
+         this.detailForm.menuCode=1000;
+      }else{
+        this.getSortNo(arr[arr.length-1])
+      }
+    }
   },
   methods: {
+    getSortNo(parentId){
+      getSortNo(parseInt(parentId)).then(response => {
+          this.detailForm.treeSort= response.data;
+          this.detailForm.menuCode=response.data;
+      });
+    },
     getCascaderOpts() {
       getMenuTree().then(response => {
         this.cascaderOpts = response.data;
@@ -166,15 +177,15 @@ export default {
     },
     getMenuInfo(menuId) {
       getMenu(parseInt(menuId)).then(response => {
-        this.detailForm=response.data;
-        var {parentIds} =response.data;
-        if(parentIds){
-          parentIds = parentIds.substring(3,parentIds.length-1);
+        this.detailForm = response.data;
+        var { parentIds } = response.data;
+        if (parentIds) {
+          parentIds = parentIds.substring(3, parentIds.length - 1);
         }
         var arr = new Array();
         var parentIdArr = (parentIds || "").split(",");
         Object.keys(parentIdArr).forEach(function(key) {
-            arr.push(parseInt(parentIdArr[key]));
+          arr.push(parseInt(parentIdArr[key]));
         });
         this.detailForm.parentId = arr;
       });
@@ -188,59 +199,38 @@ export default {
         menuType,
         menuHref,
         treeSort,
-        isShow,
-        remarks
+        remarks,
+        isBatchBtn,
+        jsMethodName
       } = this.detailForm;
       let parentIds = "";
       if (parentId && parentId.length >= 1) {
-        parentIds = parentId.join(",")
+        parentIds = parentId.join(",");
       }
-      if (!menuId) {
-        addMenu({
-          menuId,
-          parentIds,
-          menuCode,
-          menuName,
-          menuType,
-          menuHref,
-          treeSort,
-          isShow,
-          remarks
-        }).then(response => {
-          this.$message({
-            type: "success",
-            message: "新增成功!"
-          })
-          // closeSelectedTag(this.ref)
-          //保存完之后清空表格数据
-          this.resetForm("detailForm")
+      saveMenu({
+        menuId,
+        parentIds,
+        menuCode,
+        menuName,
+        menuType,
+        menuHref,
+        treeSort,
+        remarks,
+        isBatchBtn,
+        jsMethodName
+      }).then(response => {
+        var msg = menuId ? "更新成功" : "新增成功";
+        this.$message({
+          type: "success",
+          message: msg
         });
-      } else {
-        updateMenu({
-          menuId,
-          parentIds,
-          menuCode,
-          menuName,
-          menuType,
-          menuHref,
-          treeSort,
-          isShow,
-          remarks
-        }).then(response => {
-          this.$message({
-            type: "success",
-            message: "更新成功 !"
-          })
-          // closeSelectedTag(this.ref)
-          //保存完之后清空表格数据
-          this.resetForm("detailForm")
-        })
-      }
+        this.detailForm.menuId = response.data.menuId;
+      });
     },
     resetForm(formName) {
       this.$nextTick(() => {
         this.$refs[formName].resetFields();
-      })
+      });
     }
   }
 };

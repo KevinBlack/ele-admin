@@ -10,10 +10,10 @@
     </div>
     <unfixed-thead />
     <div slot="footer" style="margin:60px 0 0 20px;;">
-      <el-button size="mini" type="primary" icon="el-icon-check" @click="handleBtnClosTag">
+      <el-button type="primary" icon="el-icon-check">
         保存
       </el-button>
-      <el-button size="mini" icon="el-icon-close">
+      <el-button icon="el-icon-close">
         关闭
       </el-button>
     </div>
@@ -26,18 +26,7 @@ import UnfixedThead from './components/UnfixedThead'
 
 export default {
   name: 'DynamicTable',
-  components: { FixedThead, UnfixedThead },
-  data() {
-    return {
-      ref: 'tag'
-    }
-  },
-  methods: {
-    handleBtnClosTag() {
-      console.log(1);
-      this.$emit('parentFn', this.ref)
-    }
-  }
+  components: { FixedThead, UnfixedThead }
 }
 </script>
 <style scoped>

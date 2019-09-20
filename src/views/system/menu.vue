@@ -45,10 +45,9 @@
           <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
           <el-table-column prop="menuName" label="菜单名称" width="300" align="left"></el-table-column>
           <el-table-column prop="menuCode" label="菜单编号" width="200" align="center"></el-table-column>
-          <el-table-column prop="menuHref" label="链接" width="250" align="left"></el-table-column>
-          <el-table-column prop="treeSort" label="排序号" width="200" align="center"></el-table-column>
+          <el-table-column prop="menuHref" label="链接" width="320" align="left"></el-table-column>
+          <el-table-column prop="treeSort" label="排序号" width="200" align="left"></el-table-column>
           <el-table-column prop="menuType" label="类型" width="200" align="center" :formatter="menuTypeFmt"></el-table-column>
-          <el-table-column prop="menuType" label="可见" width="200" align="center" :formatter="isShowFmt"></el-table-column>
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template slot-scope="scope">
               <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
@@ -86,14 +85,6 @@ export default {
         return "菜单";
       } else if (menuType === "2") {
         return "权限";
-      } 
-    },
-    isShowFmt(row, column, cellValue, index){
-      let isShow = row.isShow;
-      if (isShow === "0") {
-        return "隐藏";
-      } else if (isShow === "1") {
-        return "显示";
       } 
     },
     getTableList() {
