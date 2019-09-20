@@ -23,17 +23,9 @@ export function getOffice(officeId) {
   })
 }
 
-export function addOffice(data) {
+export function saveOffice(data) {
   return request({
-    url: '/jqSysOffice/add',
-    method: 'post',
-    data
-  })
-}
-
-export function updateOffice(data) {
-  return request({
-    url: `/jqSysOffice/modify`,
+    url: `/jqSysOffice/save`,
     method: 'post',
     data
   })
@@ -62,3 +54,12 @@ export function stopOffice(officeIds) {
     data: { officeIds }
   })
 }
+
+export function getSortNo(parentId) {
+  return request({
+    url: `/jqSysOffice/getSortNo`,
+    method: 'post',
+    data: { parentId }
+  })
+}
+

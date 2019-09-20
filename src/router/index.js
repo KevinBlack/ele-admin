@@ -54,14 +54,14 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: '首页', icon: 'home', affix: true }
-      }
+     }
     ]
   }
 ]
 
 /**
  * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
+ * the routes that need to be dynamically loaded based on user menuCodes
  * 业务相关所有路由。具体用户登录时，会根据一定规则规律此处路由
  */
 export const asyncRoutes = [

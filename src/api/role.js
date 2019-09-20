@@ -9,9 +9,16 @@ export function getRoles() {
 
 export function getRoleList(data) {
   return request({
-    url: '/jqSysRole/list',
+    url: '/article/list',
     method: 'post',
-    data
+    params: data
+  })
+}
+
+export function getMenuTree() {
+  return request({
+    url: '/jqSysRole/getMenuTree',
+    method: 'post'
   })
 }
 
@@ -23,17 +30,9 @@ export function getRole(roleId) {
   })
 }
 
-export function addRole(data) {
+export function saveRole(data) {
   return request({
-    url: '/jqSysRole/add',
-    method: 'post',
-    data
-  })
-}
-
-export function updateRole(data) {
-  return request({
-    url: `/jqSysRole/modify`,
+    url: '/jqSysRole/save',
     method: 'post',
     data
   })
@@ -60,5 +59,12 @@ export function stopRole(roleIds) {
     url: `/jqSysRole/stop`,
     method: 'post',
     data: { roleIds }
+  })
+}
+
+export function getSortNo() {
+  return request({
+    url: `/jqSysRole/getSortNo`,
+    method: 'post'
   })
 }

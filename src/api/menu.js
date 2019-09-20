@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 export function getMenuTree() {
   return request({
-    url: '/jqSysMenu/listTree',
-    method: 'get'
+    url: '/jqSysMenu/getMenuTree',
+    method: 'post'
   })
 }
 
 export function getMenuList(data) {
   return request({
     url: '/jqSysMenu/list',
-    method: 'get',
+    method: 'post',
     data
   })
 }
@@ -23,17 +23,9 @@ export function getMenu(menuId) {
   })
 }
 
-export function addMenu(data) {
+export function saveMenu(data) {
   return request({
-    url: '/jqSysMenu/add',
-    method: 'post',
-    data
-  })
-}
-
-export function updateMenu(data) {
-  return request({
-    url: `/jqSysMenu/modify`,
+    url: '/jqSysMenu/save',
     method: 'post',
     data
   })
@@ -44,6 +36,14 @@ export function deleteMenu(menuId) {
     url: `/jqSysMenu/delete`,
     method: 'post',
     data: { menuId }
+  })
+}
+
+export function getSortNo(parentId) {
+  return request({
+    url: `/jqSysMenu/getSortNo`,
+    method: 'post',
+    data: { parentId }
   })
 }
 

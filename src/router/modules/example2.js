@@ -16,7 +16,7 @@ const example2Router = {
       path: 'leftTree',
       component: () => import('@/views/example2/leftTree'),
       name: 'leftTree',
-      meta: { title: '左侧菜单树布局' }
+      meta: { title: '左侧菜单树布局', menuCodes: '200010' }
     },
     {
       path: 'detailLayout',
@@ -29,6 +29,42 @@ const example2Router = {
       component: () => import('@/views/example2/input-list'),
       name: 'InputList',
       meta: { title: '各种input', noCache: true }
+    },
+    {
+      path: 'verify',
+      component: () => import('@/views/example2/verify'),
+      name: 'verify',
+      meta: { title: '各类校验' }
+    },
+    {
+      path: 'details-tab',
+      component: () => import('@/views/example2/details-tab'),
+      name: 'details-tab',
+      meta: { title: '详情页切换' }
+    },
+    {
+      path: 'details-table',
+      component: () => import('@/views/example2/details-table'),
+      name: 'details-table',
+      meta: {
+        title: '详情页表格'
+      }
+    },
+    {
+      path: 'transfer-dialog',
+      component: () => import('@/views/example2/transfer-dialog'),
+      name: 'transfer-dialog',
+      meta: {
+        title: '模态框'
+      }
+    },
+    {
+      path: 'dynamic-table',
+      component: () => import('@/views/example2/dynamic-table'),
+      name: 'dynamic-table',
+      meta: {
+        title: '动态表格'
+      }
     }
   ]
 }
