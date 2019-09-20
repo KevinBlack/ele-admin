@@ -34,9 +34,9 @@
     <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <!-- <navbar /> -->
-        <tags-view v-if="needTagsView" ref="tagsView" />
+        <tags-view v-if="needTagsView" />
       </div>
-      <app-main  @parentFn="handleBtnClosTag" />
+      <app-main />
       <!-- <right-panel v-if="showSettings">
         <settings />
       </right-panel> -->
@@ -85,15 +85,12 @@ export default {
     }
   },
   methods: {
-    handleBtnClosTag(param) {
-      console.log(0);
-      this.$refs.tagsView.closeSelectedTag(param)
-    },
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
-    logout() {
-      this.$router.push({path: '/login'})
+    async logout() {
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
 }

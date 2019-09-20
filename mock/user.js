@@ -1,7 +1,6 @@
-
 const tokens = {
   admin: {
-    token: 'admin-token'
+    token: 'eyJhbGciOiJIUzI1NiIsIlR5cGUiOiJKd3QiLCJ0eXAiOiJKV1QifQ.eyJwYXNzV29yZCI6ImUxMGFkYzM5NDliYTU5YWJiZTU2ZTA1N2YyMGY4ODNlIiwidXNlck5hbWUiOiJhZG1pbiIsImV4cCI6MTU2NzY1MDEyNH0.OzrqO7lgGXd6fFoXLbrceBOjVOIQat0nDRF2M2-pr60'
   },
   editor: {
     token: 'editor-token'
@@ -9,60 +8,59 @@ const tokens = {
 }
 
 const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
+  'eyJhbGciOiJIUzI1NiIsIlR5cGUiOiJKd3QiLCJ0eXAiOiJKV1QifQ.eyJwYXNzV29yZCI6ImUxMGFkYzM5NDliYTU5YWJiZTU2ZTA1N2YyMGY4ODNlIiwidXNlck5hbWUiOiJhZG1pbiIsImV4cCI6MTU2NzY1MDEyNH0.OzrqO7lgGXd6fFoXLbrceBOjVOIQat0nDRF2M2-pr60': {
+    menuCodes: ['admin'],
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    btns: {
+      '1': '新增',
+      '2': '删除',
+      '3': '查看',
+      '4': '修改'
+    },
+    name: '管理员',
+    introduction: '管理员'
   },
   'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
+    menuCodes: ['editor'],
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    btns: {
+      '3': '查看',
+      '4': '修改'
+    },
+    name: '普通用户',
+    introduction: '普通用户'
   }
 }
 
 export default [
   // user login
   {
-    url: '/user/login',
+    url: '/u/user/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
-
-      // mock error
-      if (!token) {
-        return {
-          code: 60204,
-          message: '账户或者密码不正确'
-        }
-      }
-
       return {
         code: 200,
-        data: token
+        message: '成功!',
+        data: { token: 'xxxx' }
       }
     }
   },
 
   // get user info
   {
-    url: '/user/info\.*',
-    type: 'get',
+    url: '/u/user/info\.*',
+    type: 'post',
     response: config => {
-      const { token } = config.query
-      const info = users[token]
-
-      // mock error
-      if (!info) {
-        return {
-          code: 50008,
-          message: 'Login failed, unable to get user details.'
-        }
+      const info = {
+        menuCodes: ['editor'],
+        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        btns: {
+          '3': '查看',
+          '4': '修改'
+        },
+        name: '普通用户',
+        introduction: '普通用户'
       }
-
       return {
         code: 200,
         data: info
@@ -72,7 +70,7 @@ export default [
 
   // user logout
   {
-    url: '/user/logout',
+    url: '/u/user/logout',
     type: 'post',
     response: _ => {
       return {

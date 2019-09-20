@@ -141,7 +141,6 @@ export default {
       })
     },
     closeSelectedTag(view) {
-      console.log(2);
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)

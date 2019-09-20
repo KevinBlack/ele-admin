@@ -6,9 +6,9 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+NProgress.configure({ showSpinner: false }) // NProgress进度条
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect'] // 白名单
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -26,18 +26,18 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      // determine whether the user has obtained his permission roles through getInfo
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      if (hasRoles) {
+      // 确定用户是否通过getInfo获得了他的权限角色
+      const hasMenuCodes = store.getters.menuCodes && store.getters.menuCodes.length > 0
+      if (hasMenuCodes) {
         next()
       } else {
         try {
           // get user info
-          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-          const { roles } = await store.dispatch('user/getInfo')
+          // note: menuCodes must be a object array! such as: ['admin'] or ,['developer','editor']
+          const { menuCodes } = await store.dispatch('user/getInfo')
 
-          // generate accessible routes map based on roles
-          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          // generate accessible routes map based on menuCodes
+          const accessRoutes = await store.dispatch('permission/generateRoutes', menuCodes)
 
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
@@ -55,7 +55,7 @@ router.beforeEach(async(to, from, next) => {
       }
     }
   } else {
-    /* has no token*/
+    // has no token
 
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
