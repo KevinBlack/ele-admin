@@ -3,20 +3,20 @@ import store from '@/store'
 export default {
   inserted(el, binding, vnode) {
     const { value } = binding
-    const roles = store.getters && store.getters.roles
+    const menuCodes = store.getters && store.getters.menuCodes
 
     if (value && value instanceof Array && value.length > 0) {
-      const permissionRoles = value
+      const permissionMenuCodes = value
 
-      const hasPermission = roles.some(role => {
-        return permissionRoles.includes(role)
+      const hasPermission = menuCodes.some(role => {
+        return permissionMenuCodes.includes(role)
       })
 
       if (!hasPermission) {
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {
-      throw new Error(`need roles! Like v-permission="['admin','editor']"`)
+      throw new Error(`need menuCodes! Like v-permission="['1000','20000']"`)
     }
   }
 }

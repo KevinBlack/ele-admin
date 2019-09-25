@@ -1,10 +1,10 @@
 <template>
   <div>
     <div style="margin-bottom:15px;">
-      Your roles: {{ roles }}
+      Your menuCodes: {{ menuCodes }}
     </div>
-    Switch roles:
-    <el-radio-group v-model="switchRoles">
+    Switch menuCodes:
+    <el-radio-group v-model="switchMenuCodes">
       <el-radio-button label="editor" />
       <el-radio-button label="admin" />
     </el-radio-group>
@@ -14,15 +14,15 @@
 <script>
 export default {
   computed: {
-    roles() {
-      return this.$store.getters.roles
+    menuCodes() {
+      return this.$store.getters.menuCodes
     },
-    switchRoles: {
+    switchMenuCodes: {
       get() {
-        return this.roles[0]
+        return this.menuCodes[0]
       },
       set(val) {
-        this.$store.dispatch('user/changeRoles', val).then(() => {
+        this.$store.dispatch('user/changeMenuCodes', val).then(() => {
           this.$emit('change')
         })
       }

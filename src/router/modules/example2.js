@@ -55,6 +55,14 @@ const example2Router = {
       component: () => import('@/views/example2/transfer-dialog'),
       name: 'transfer-dialog',
       meta: {
+        title: '表格弹框'
+      }
+    },
+    {
+      path: 'new-dialog',
+      component: () => import('@/views/example2/new-dialog'),
+      name: 'MoDialog',
+      meta: {
         title: '模态框'
       }
     },

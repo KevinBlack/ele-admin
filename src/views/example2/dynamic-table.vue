@@ -13,7 +13,7 @@
     >
       <el-table-column
         type="selection"
-        width="40"
+        width="50"
       />
       <el-table-column prop="bookname" label="书名">
         <template slot-scope="scope">
@@ -86,44 +86,41 @@
 </template>
 
 <script>
-import { fetchList, createTable, updateTable } from '@/api/table'
-
 export default {
   name: 'TestWorld',
   data() {
     return {
-      // modifyData: [
-      //   {
-      //     bookid: 1,
-      //     bookname: '笑傲江湖',
-      //     bookbuytime: '2016-05-04',
-      //     bookbuyer: '李晓月',
-      //     bookborrower: '王小虎',
-      //     bookvolume: '1',
-      //     editing: false
-      //   },
-      //   {
-      //     bookid: 2,
-      //     bookname: '天龙八部',
-      //     bookbuytime: '2016-05-04',
-      //     bookbuyer: '李晓月',
-      //     bookborrower: '李小虎',
-      //     bookvolume: '1',
-      //     editing: false
-      //   },
-      //   {
-      //     bookid: 3,
-      //     bookname: '神雕侠侣',
-      //     bookbuytime: '2017-12-04',
-      //     bookbuyer: '张晓月',
-      //     bookborrower: '王而虎',
-      //     bookvolume: '1',
-      //     editing: false
-      //   }
-      // ],
-      modifyData: [],
+      modifyData: [
+        {
+          bookid: 1,
+          bookname: '笑傲江湖',
+          bookbuytime: '2016-05-04',
+          bookbuyer: '李晓月',
+          bookborrower: '王小虎',
+          bookvolume: '1',
+          editing: false
+        },
+        {
+          bookid: 2,
+          bookname: '天龙八部',
+          bookbuytime: '2016-05-04',
+          bookbuyer: '李晓月',
+          bookborrower: '李小虎',
+          bookvolume: '1',
+          editing: false
+        },
+        {
+          bookid: 3,
+          bookname: '神雕侠侣',
+          bookbuytime: '2017-12-04',
+          bookbuyer: '张晓月',
+          bookborrower: '王而虎',
+          bookvolume: '1',
+          editing: false
+        }
+      ],
       listQuery: {
-        bookid: NaN,
+        bookid: 0,
         bookname: '',
         bookbuytime: '',
         bookbuyer: '',
@@ -136,21 +133,7 @@ export default {
       selectItem: new Set()
     }
   },
-  created() {
-    this.getList()
-  },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList().then(response => {
-        this.modifyData = response.data.items
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1000)
-      }).catch(error => {
-        console.log(error)
-      })
-    },
     handleSelectionChange(val) {
       if (val.length !== 0) {
         for (let i = 0; i < val.length; i++) {
@@ -171,23 +154,32 @@ export default {
         bookbuytime: '',
         bookbuyer: '',
         bookborrower: '',
-        bookvolume: ''
+        bookvolume: '',
+        editing: true
       }
       // 添加新的行数
       this.modifyData.push(newValue)
-      this.modifyData[(this.modifyData.length - 1)].editing = true
     },
     handleDelete(index) { // 删除行数
       const selectArr = Array.from(this.selectItem)
-      for (let i = 0; i < selectArr.length; i++) {
-        this.modifyData = this.modifyData.filter(ele => !selectArr.includes(ele.bookid))
+      if (selectArr.length <= 0) {
+        this.$notify({
+          title: '提示',
+          message: '请选择要删除的项',
+          type: 'warning',
+          duration: 2000
+        })
+      } else {
+        for (let i = 0; i < selectArr.length; i++) {
+          this.modifyData = this.modifyData.filter(ele => !selectArr.includes(ele.bookid))
+        }
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
       }
-      this.$notify({
-        title: 'Success',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
     },
     handleEdit(index, row) { // 编辑
       row.editing = true
@@ -204,12 +196,13 @@ export default {
         this.currentRow.forEach(ele => {
           ele.editing = false
         })
+        console.log(1)
+        this.currentRow = []
       } else {
-        // this.modifyData = this.modifyData.forEach(ele => {
-        //   ele.editing = false
-        // });
-        this.modifyData[this.modifyData.length - 1].editing = false
-        console.log(this.modifyData)
+        const lastChild = this.modifyData[this.modifyData.length - 1]
+        console.log(2)
+        lastChild.editing = false
+        // this.selectItem.clear()
         return this.modifyData
       }
     }

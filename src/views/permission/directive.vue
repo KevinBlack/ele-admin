@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <switch-roles @change="handleRolesChange" />
+    <switch-roles @change="handleMenuCodesChange" />
     <div :key="key" style="margin-top:30px;">
       <div>
         <span v-permission="['admin']" class="permission-alert">
@@ -69,11 +69,11 @@
 <script>
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import checkPermission from '@/utils/permission' // 权限判断函数
-import SwitchRoles from './components/SwitchRoles'
+import SwitchMenuCodes from './components/SwitchMenuCodes'
 
 export default {
   name: 'DirectivePermission',
-  components: { SwitchRoles },
+  components: { SwitchMenuCodes },
   directives: { permission },
   data() {
     return {
@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     checkPermission,
-    handleRolesChange() {
+    handleMenuCodesChange() {
       this.key++
     }
   }

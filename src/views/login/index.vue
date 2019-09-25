@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -31,7 +31,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -45,9 +45,31 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-row :gutter="24">
+        <el-col :span="17">
+          <el-form-item prop="identifyCode">
+            <el-input
+              ref="identifyCode"
+              v-model="loginForm.identifyCode"
+              placeholder="请输入右侧验证码"
+              name="identifyCode"
+              type="text"
+              tabindex="1"
+              autocomplete="on"
+              maxlength="6"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="7">
+          <div @click="refreshCode">
+            <s-identify :identify-code="identifyCode" />
+          </div>
+        </el-col>
+      </el-row>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <div style="position:relative">
+      <!-- <div style="position:relative">
         <div class="tips">
           <span>Username : admin</span>
           <span>Password : any</span>
@@ -60,49 +82,54 @@
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
           Or connect with
         </el-button>
-      </div>
+      </div> -->
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
+    <!-- <el-dialog title="Or connect with" :visible.sync="showDialog">
       Can not be simulated on local, so please combine you own business simulation! ! !
       <br>
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
+import SIdentify from './components/identify'
+import { getValidateCode } from '@/api/comm/comm'
+// import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { SIdentify },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 8) {
+        callback(new Error('密码不能少于8个字符！'))
       } else {
         callback()
       }
     }
+    // const validateIdentifyCode = (rule, value, callback) => {
+    //   // console.log(value,this.identifyCode);
+    //   if (value && value.toLowerCase() !== this.identifyCode.toLowerCase()) {
+    //     callback(new Error('验证码不正确'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
+      identifyCode: '',
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '李科建',
+        password: '123456789',
+        identifyCode: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        // identifyCode: [{ required: true, trigger: ['blur', 'change'], validator: validateIdentifyCode }]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -133,11 +160,23 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
+    this.loginForm.identifyCode = ''
+    this.makeCode()
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    refreshCode() {
+      this.loginForm.identifyCode = ''
+      this.makeCode()
+    },
+    makeCode() {
+      getValidateCode().then(response => {
+        this.identifyCode = response.data.validateCode
+        this.loginForm.identifyCode = response.data.validateCode
+      })
+    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
@@ -161,20 +200,31 @@ export default {
       })
     },
     handleLogin() {
+      var loginFormEcode = {
+        username: this.loginForm.username,
+        password: this.$encruption(this.loginForm.password.trim()),
+        validateCode: this.loginForm.identifyCode
+      }
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/login', loginFormEcode)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
             .catch((err) => {
-              console.log(err)
+              this.$message.error(err)
+              // 清空输入框
+              this.loginForm.username = ''
+              this.loginForm.password = ''
+              // this.loginForm.identifyCode=''
+              // this.makeCode()
               this.loading = false
             })
         } else {
-          console.log('提交错误!!')
+          // this.$message.error('登录信息填写错误!!');
+          // this.makeCode()
           return false
         }
       })
@@ -274,6 +324,14 @@ $light_gray:#eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+    .login-ident {
+      vertical-align: middle;
+      .identCode {
+        display: inline-block;
+        margin-top: 5px;
+        margin-left: 20px;
+      }
+    }
   }
 
   .tips {

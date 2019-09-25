@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
-    <switch-roles @change="handleRolesChange" />
+    <switch-roles @change="handleMenuCodesChange" />
   </div>
 </template>
 
 <script>
-import SwitchRoles from './components/SwitchRoles'
+import SwitchMenuCodes from './components/SwitchMenuCodes'
 
 export default {
   name: 'PagePermission',
-  components: { SwitchRoles },
+  components: { SwitchMenuCodes },
   methods: {
-    handleRolesChange() {
+    handleMenuCodesChange() {
       this.$router.push({ path: '/permission/index?' + +new Date() })
     }
   }
