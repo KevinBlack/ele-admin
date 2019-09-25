@@ -1,88 +1,92 @@
 
 <template>
-<el-card style="margin: 0 10px;">
-  <div class="TestWorld">
-    <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="addLine">添加</el-button>
-    <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-check" @click="savemodify">保存</el-button>
-    <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-edit" @click="handleDelete">删除</el-button>
-    <el-table
-      ref="multipleTable"
-      :data="modifyData"
-      style="width: 100%; margin-top: 20px;"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column
-        type="selection"
-        width="50"
-      />
-      <el-table-column prop="bookname" label="书名">
-        <template slot-scope="scope">
-          <template v-if="scope.row.editing">
-            <el-input class="edit-input" v-model="scope.row.bookname"  placeholder="书名" />
+  <el-card style="margin: 0 10px;">
+    <div class="TestWorld">
+      <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="addLine">添加</el-button>
+      <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-check" @click="savemodify">保存</el-button>
+      <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-edit" @click="handleDelete">删除</el-button>
+      <el-table
+        ref="multipleTable"
+        :data="modifyData"
+        style="width: 100%; margin-top: 20px;"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="50"
+        />
+        <el-table-column prop="bookname" label="书名">
+          <template slot-scope="scope">
+            <template v-if="scope.row.editing">
+              <el-input v-model="scope.row.bookname" class="edit-input" placeholder="书名" />
+            </template>
+            <span v-else>{{ scope.row.bookname }}</span>
           </template>
-          <span v-else>{{ scope.row.bookname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="bookvolume" label="册数">
-        <template slot-scope="scope">
-          <template v-if="scope.row.editing">
-            <el-input class="edit-input" v-model="scope.row.bookvolume" placeholder="册数" />
+        </el-table-column>
+        <el-table-column prop="bookvolume" label="册数">
+          <template slot-scope="scope">
+            <template v-if="scope.row.editing">
+              <el-input v-model="scope.row.bookvolume" class="edit-input" placeholder="册数" />
+            </template>
+            <span v-else>{{ scope.row.bookvolume }}</span>
           </template>
-          <span v-else>{{ scope.row.bookvolume}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="bookbuyer" label="购买者">
-        <template slot-scope="scope">
-          <template v-if="scope.row.editing">
-            <el-input class="edit-input" v-model="scope.row.bookbuyer"  placeholder="购买者" />
+        </el-table-column>
+        <el-table-column prop="bookbuyer" label="购买者">
+          <template slot-scope="scope">
+            <template v-if="scope.row.editing">
+              <el-input v-model="scope.row.bookbuyer" class="edit-input" placeholder="购买者" />
+            </template>
+            <span v-else>{{ scope.row.bookbuyer }}</span>
           </template>
-          <span v-else>{{scope.row.bookbuyer}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="bookborrower" label="借阅者">
-        <template slot-scope="scope">
-          <template v-if="scope.row.editing">
-            <el-input class="edit-input" v-model="scope.row.bookborrower"  placeholder="借阅者" />
+        </el-table-column>
+        <el-table-column prop="bookborrower" label="借阅者">
+          <template slot-scope="scope">
+            <template v-if="scope.row.editing">
+              <el-input v-model="scope.row.bookborrower" class="edit-input" placeholder="借阅者" />
+            </template>
+            <span v-else>{{ scope.row.bookborrower }}</span>
           </template>
-          <span v-else>{{scope.row.bookborrower}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="bookbuytime" label="购买日期">
-        <template slot-scope="scope">
-          <template v-if="scope.row.editing">
-            <el-date-picker
-              v-model="scope.row.bookbuytime"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="购买日期">
-            </el-date-picker>
+        </el-table-column>
+        <el-table-column prop="bookbuytime" label="购买日期">
+          <template slot-scope="scope">
+            <template v-if="scope.row.editing">
+              <el-date-picker
+                v-model="scope.row.bookbuytime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="购买日期"
+              />
+            </template>
+            <span v-else>{{ scope.row.bookbuytime }}</span>
           </template>
-          <span v-else>{{scope.row.bookbuytime}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="editing" label="操作">
-        <template slot-scope="scope">
-          <el-button
-            type="danger"
-            v-if="!scope.row.editing"
-            icon="el-icon-edit"
-            size="mini"
-            v-model="scope.$index"
-            @click="handleEdit(scope.$index, scope.row)">编辑
-          </el-button>
-          <el-button
-            v-else
-            type="danger"
-            icon="el-icon-circle-close"
-            size="mini"
-            v-model="scope.$index"
-            @click="handleCancle(scope.$index, scope.row)">取消
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-  </div>
-</el-card>
+        </el-table-column>
+        <el-table-column prop="editing" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              v-if="!scope.row.editing"
+              v-model="scope.$index"
+              type="danger"
+              icon="el-icon-edit"
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              v-else
+              v-model="scope.$index"
+              type="danger"
+              icon="el-icon-circle-close"
+              size="mini"
+              @click="handleCancle(scope.$index, scope.row)"
+            >
+              取消
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </el-card>
 </template>
 
 <script>
@@ -130,23 +134,17 @@ export default {
       },
       prevValue: {},
       currentRow: [],
-      selectItem: new Set()
+      selectArr: []
     }
   },
   methods: {
     handleSelectionChange(val) {
-      if (val.length !== 0) {
-        for (let i = 0; i < val.length; i++) {
-          this.selectItem.add(val[i].bookid)
-        }
-        this.multipleSelection = val
-        console.log(this.selectItem)
-        return this.selectItem
-      }
+      console.log(val)
+      this.selectArr = val
     },
     addLine() { // 添加行数
       const len = this.modifyData.length - 1
-      const sum = this.modifyData[len].bookid
+      const sum = (len >= 0) ? this.modifyData[len].bookid : 0
       const result = sum + 1
       var newValue = {
         bookid: result,
@@ -161,8 +159,7 @@ export default {
       this.modifyData.push(newValue)
     },
     handleDelete(index) { // 删除行数
-      const selectArr = Array.from(this.selectItem)
-      if (selectArr.length <= 0) {
+      if (this.selectArr.length <= 0) {
         this.$notify({
           title: '提示',
           message: '请选择要删除的项',
@@ -170,9 +167,13 @@ export default {
           duration: 2000
         })
       } else {
-        for (let i = 0; i < selectArr.length; i++) {
-          this.modifyData = this.modifyData.filter(ele => !selectArr.includes(ele.bookid))
+        const delArr = []
+        for (var i = 0; i < this.modifyData.length; i++) {
+          if (this.selectArr.indexOf(this.modifyData[i]) === -1) {
+            delArr.push(this.modifyData[i])
+          }
         }
+        this.modifyData = delArr
         this.$notify({
           title: '成功',
           message: '删除成功',
@@ -187,9 +188,13 @@ export default {
       this.prevValue = JSON.parse(JSON.stringify(row))
     },
     handleCancle(index, row) { // 取消
-      row.editing = false
-      const prevContent = this.prevValue.bookname
-      this.$set(row, 'bookname', prevContent)
+      if (row.bookname !== '' && row.bookbuytime !== '' && row.bookbuyer !== '' && row.bookborrower !== '' && row.bookvolume !== '') {
+        row.editing = false
+        const prevContent = this.prevValue.bookname
+        this.$set(row, 'bookname', prevContent)
+      } else {
+        this.modifyData.pop()
+      }
     },
     savemodify() {
       if (this.currentRow.length !== 0) {
@@ -199,11 +204,25 @@ export default {
         console.log(1)
         this.currentRow = []
       } else {
-        const lastChild = this.modifyData[this.modifyData.length - 1]
-        console.log(2)
-        lastChild.editing = false
-        // this.selectItem.clear()
-        return this.modifyData
+        const len = this.modifyData.length - 1
+        const row = this.modifyData[len]
+        if (row.bookname !== '' && row.bookbuytime !== '' && row.bookbuyer !== '' && row.bookborrower !== '' && row.bookvolume !== '') {
+          const lastChild = this.modifyData[this.modifyData.length - 1]
+          console.log(2)
+          lastChild.editing = false
+          return this.modifyData
+        } else {
+          this.$notify({
+            title: '提示',
+            message: '请完善数据',
+            type: 'warning',
+            duration: 2000
+          })
+          const lastChild = this.modifyData[this.modifyData.length - 1]
+          console.log(3)
+          lastChild.editing = true
+          return this.modifyData
+        }
       }
     }
   }
