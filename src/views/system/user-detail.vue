@@ -1,5 +1,6 @@
 <template>
-  <div class="app-container">
+  <div >
+    <el-card class="box-card" style="margin: 0 10px;">
     <el-card class="box-card" style="height:60px">
       <span>{{title}}</span>
     </el-card>
@@ -8,38 +9,7 @@
       <el-card class="box-card" style="padding:15px;border-radius:0px;">
         <el-form ref="detailForm" :model="detailForm" label-width="200px" :rules="rules">
           <el-row>
-            <el-col :span="12">
-              <el-form-item label="归属Id" size="mini" prop="companyId" style="display:none;">
-                <el-input v-model="detailForm.companyId" size="mini"></el-input>
-              </el-form-item>
-              <el-form-item label="归属公司" size="mini" prop="companyName">
-                <el-input
-                  v-model="detailForm.companyName"
-                  size="mini"
-                  :readonly="true"
-                  @focus="chooseCompany"
-                >
-                  <template slot="append">
-                    <el-button slot="append" icon="el-icon-search" @click="chooseCompany"></el-button>
-                  </template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="归属机构" size="mini" prop="officeIds">
-                <el-cascader
-                  :props="props"
-                  :show-all-levels="false"
-                  :options="cascaderOpts"
-                  v-model="detailForm.officeIds"
-                  clearable
-                  filterable
-                  size="mini"
-                  style="width:100%;"
-                  change-on-select
-                ></el-cascader>
-              </el-form-item>
-            </el-col>
+           
             <el-col :span="12">
               <el-form-item label="登录账号" size="mini" prop="loginCode">
                 <el-input v-model="detailForm.loginCode" size="mini"></el-input>
@@ -104,24 +74,7 @@
                 </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="角色" size="mini" prop="roleIdArr">
-                <el-select
-                  v-model="detailForm.roleIdArr"
-                  multiple
-                  placeholder="请选择"
-                  size="mini"
-                  style="width:100%"
-                >
-                  <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
+         
             <el-col :span="12">
               <el-form-item label="用户类型" size="mini" prop="userType">
                 <el-input v-model="detailForm.userType" size="mini"></el-input>
@@ -145,6 +98,57 @@
                 </el-select>
               </el-form-item>
             </el-col>
+                <el-col :span="24">
+              <el-form-item label="归属Id" size="mini" prop="companyId" style="display:none;">
+                <el-input v-model="detailForm.companyId" size="mini"></el-input>
+              </el-form-item>
+              <el-form-item label="归属公司" size="mini" prop="companyName">
+                <el-input
+                  v-model="detailForm.companyName"
+                  size="mini"
+                  :readonly="true"
+                  @focus="chooseCompany"
+                >
+                  <template slot="append">
+                    <el-button slot="append" icon="el-icon-search" @click="chooseCompany"></el-button>
+                  </template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="归属机构" size="mini" prop="officeIds">
+                <el-cascader
+                  :props="props"
+                  :show-all-levels="false"
+                  :options="cascaderOpts"
+                  v-model="detailForm.officeIds"
+                  clearable
+                  filterable
+                  size="mini"
+                  style="width:100%;"
+                  change-on-select
+                ></el-cascader>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="角色" size="mini" prop="roleIdArr">
+                <el-select
+                  v-model="detailForm.roleIdArr"
+                  multiple
+                  placeholder="请选择"
+                  size="mini"
+                  style="width:100%"
+                >
+                  <el-option
+                    v-for="item in roleOptions"
+                    :key="item.roleId"
+                    :label="item.roleName"
+                    :value="item.roleId"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            
             <el-col :span="24">
               <el-form-item label="备注" size="mini" prop="remarks">
                 <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
@@ -206,6 +210,7 @@
           border
           highlight-current-row
           @current-change="currentRowChange"
+          @row-click="rowClick"
           height="300"
         >
           <el-table-column
@@ -233,14 +238,15 @@
         <el-button type="primary" @click="dialogOk">确定</el-button>
       </div>
     </el-dialog>
+    </el-card>
   </div>
 </template>
 
 <script>
-import { getUser, saveUser } from "@/api/user";
-import { getCompanyList } from "@/api/company";
-import { getOfficeTree } from "@/api/office";
-import { getRoleList } from "@/api/role";
+import { getUser, saveUser } from "@/api/system/user";
+import { getCompanyList } from "@/api/system/company";
+import { getOfficeTree } from "@/api/system/office";
+import { getRoleList } from "@/api/system/role";
 import { constants } from "crypto";
 
 export default {
@@ -265,8 +271,9 @@ export default {
         sex: ""
       },
       props: {
+        multiple: true,
         checkStrictly: true,
-        expandTrigger: "hover",
+        showAllLevels:true,
         value: "id",
         label: "officeName",
         children: "childs"
@@ -416,7 +423,7 @@ export default {
     },
     getUserInfo(userId) {
       getUser(userId).then(response => {
-        this.detailForm = response.data;
+        // this.detailForm = response.data;
         var {
           userId,
           companyId,
@@ -432,16 +439,26 @@ export default {
           password,
           sex
         } = response.data;
-        var { officeIds, roleIds } = response.data;
-        // 组织机构回显
+        var { officeFullPaths, roleIds } = response.data;
+        //组织机构回显
         var tempArr = new Array();
-        var parentIdArr = officeIds.substring(2).split(",");
-        Object.keys(parentIdArr).forEach(function(key) {
-          if (parentIdArr[key] && parseInt(parentIdArr[key]) != 0) {
-            tempArr.push(parseInt(parentIdArr[key]));
+        if(officeFullPaths){
+          var officeFullPathArr=officeFullPaths.split(",");
+          if(officeFullPathArr&&officeFullPathArr.length>0){
+           Object.keys(officeFullPathArr).forEach(function(key) {
+            if (officeFullPathArr[key]) {
+            var fullPathArr=officeFullPathArr[key].split(".");
+            var temp3 = new Array();
+            Object.keys(fullPathArr).forEach(function(key) {
+              if (Number(fullPathArr[key]) > 0) {
+                temp3.push(Number(fullPathArr[key]));
+              }
+            });
+             tempArr.push(temp3);
+            }
+           });
           }
-        });
-        // this.detailForm.officeIds = tempArr;
+        }
         // 角色回显
         var parentIdArr2 = roleIds.split(",");
         var temp2 = new Array();
@@ -486,9 +503,12 @@ export default {
         password,
         sex
       } = this.detailForm;
-      let officeId = "";
+      var officeIdArr = new Array();
       if (officeIds && officeIds.length >= 1) {
-        officeId = officeIds[officeIds.length - 1];
+        Object.keys(officeIds).forEach(function(key) {
+         var officeFullPathArr=officeIds[key];
+         officeIdArr.push(officeFullPathArr[officeFullPathArr.length - 1]);
+        });
       }
       let roleIds = "";
       if (roleIdArr && roleIdArr.length >= 1) {
@@ -510,7 +530,7 @@ export default {
         mgrType,
         remarks,
         roleIds,
-        officeId,
+        officeIds:officeIdArr.join(","),
         password,
         sex
       };
@@ -523,7 +543,7 @@ export default {
           return false;
         }
         saveUser(user).then(response => {
-          this.detailForm.userId = response.userId;
+          this.detailForm.userId = response.data.userId;
           var msg = userId ? "更新成功" : "新增成功";
           this.$message({
             type: "success",
@@ -604,6 +624,12 @@ export default {
       if (newVal) {
         this.companyDialog.selectedTags.push(newVal);
       }
+    },
+    rowClick(row, column, event){
+        //当找不到元素时，执行操作
+        if(this.companyDialog.selectedTags.indexOf(row)<0){
+              this.companyDialog.selectedTags.push(row);
+        }
     }
   }
 };

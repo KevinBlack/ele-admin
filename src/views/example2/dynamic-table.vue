@@ -2,7 +2,7 @@
 <template>
   <el-card style="margin: 0 10px;">
     <div class="TestWorld">
-      <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="addLine">添加</el-button>
+      <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-plus" :disabled="disabled" @click="addLine">添加</el-button>
       <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-check" @click="savemodify">保存</el-button>
       <el-button style="margin-left: 10px;" type="primary" size="mini" icon="el-icon-edit" @click="handleDelete">删除</el-button>
       <el-table
@@ -134,7 +134,8 @@ export default {
       },
       prevValue: {},
       currentRow: [],
-      selectArr: []
+      selectArr: [],
+      disabled: false
     }
   },
   methods: {
@@ -143,6 +144,7 @@ export default {
       this.selectArr = val
     },
     addLine() { // 添加行数
+      this.disabled = true
       const len = this.modifyData.length - 1
       const sum = (len >= 0) ? this.modifyData[len].bookid : 0
       const result = sum + 1
@@ -194,9 +196,10 @@ export default {
         this.$set(row, 'bookname', prevContent)
       } else {
         this.modifyData.pop()
+        this.disabled = false
       }
     },
-    savemodify() {
+    savemodify() { // 保存
       if (this.currentRow.length !== 0) {
         this.currentRow.forEach(ele => {
           ele.editing = false
@@ -210,6 +213,7 @@ export default {
           const lastChild = this.modifyData[this.modifyData.length - 1]
           console.log(2)
           lastChild.editing = false
+          this.disabled = false
           return this.modifyData
         } else {
           this.$notify({

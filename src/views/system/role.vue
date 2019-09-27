@@ -1,95 +1,98 @@
 <template>
-  <div class="app-container">
-    <div class="filter-container">
-      <el-card class="box-card" shadow="never">
-        <el-form ref="formQuery" :model="formQuery" label-width="80px" :inline="true">
-          <el-row>
-            <el-col :md="8" :lg="8" :xl="6">
-              <el-form-item label="角色编号" size="mini" prop="roleCode">
-                <el-input v-model="formQuery.roleCode" size="mini" style="width: 200px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="8" :lg="8" :xl="6">
-              <el-form-item label="角色名称" size="mini" prop="roleName">
-                <el-input v-model="formQuery.roleName" size="mini" style="width: 200px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="8" :lg="8" :xl="6">
-              <el-form-item label="状态" size="mini" prop="status">
-                <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
-                  <el-option
-                    v-for="item in statusOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :md="8" :lg="8" :xl="6" >
-              <el-form-item size="mini">
-                <el-button type="primary" size="mini" @click="search">查询</el-button>
-                <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </el-card>
-
-      <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-        <!-- 按钮区 -->
-        <el-card
-          shadow="never"
-          style="padding:15px;border-radius:0px;"
-          :body-style="{ padding: '0px' }"
-        >
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
-          <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
-            <el-button type="primary" size="mini">
-              批量操作
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-close" command="batchStop">停用</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-check" command="batchStart">启用</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+  <div>
+    <el-card class="box-card" style="margin: 0 10px;">
+      <div class="filter-container">
+        <el-card class="box-card" shadow="never">
+          <el-form ref="formQuery" :model="formQuery" label-width="80px" :inline="true">
+            <el-row>
+              <el-col :md="8" :lg="8" :xl="6">
+                <el-form-item label="角色编号" size="mini" prop="roleCode">
+                  <el-input v-model="formQuery.roleCode" size="mini" style="width: 200px"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="8" :lg="8" :xl="6">
+                <el-form-item label="角色名称" size="mini" prop="roleName">
+                  <el-input v-model="formQuery.roleName" size="mini" style="width: 200px"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :md="8" :lg="8" :xl="6">
+                <el-form-item label="状态" size="mini" prop="status">
+                  <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
+                    <el-option
+                      v-for="item in statusOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :md="8" :lg="8" :xl="6">
+                <el-form-item size="mini">
+                  <el-button type="primary" size="mini" @click="search">查询</el-button>
+                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
         </el-card>
 
-        <el-table
-          ref="roleTable"
-          :data="tableData"
-          style="width:100%"
-          :header-row-style="headRowStyle"
-          :row-style="rowStyle"
-          :header-cell-style="getCellStyle"
-          v-loading="tableLoading"
-          border
-          highlight-current-row
-          @selection-change="selectionChange"
-        >
-          <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column prop="roleCode" label="角色编码" width="200" align="center"></el-table-column>
-          <el-table-column prop="roleName" label="角色名称" width="200" align="center"></el-table-column>
-          <el-table-column
-            align="center"
-            prop="status"
-            width="150"
-            :formatter="statusFmt"
-            label="状态"
-          ></el-table-column>
-          <el-table-column prop="roleSort" label="排序号" width="150" align="center"></el-table-column>
-          <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
-          <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
-          <el-table-column fixed="right" label="操作" width="150" align="center">
-            <template slot-scope="scope">
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </div>
+        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
+          <!-- 按钮区 -->
+          <el-card
+            shadow="never"
+            style="padding:15px;border-radius:0px;"
+            :body-style="{ padding: '0px' }"
+          >
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
+            <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
+              <el-button type="primary" size="mini">
+                批量操作
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-close" command="batchStop">停用</el-dropdown-item>
+                <el-dropdown-item icon="el-icon-check" command="batchStart">启用</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-card>
+
+          <el-table
+            ref="roleTable"
+            :data="tableData"
+            style="width:100%"
+            :header-row-style="headRowStyle"
+            :row-style="rowStyle"
+            :header-cell-style="getCellStyle"
+            v-loading="tableLoading"
+            border
+            highlight-current-row
+            @selection-change="selectionChange"
+          >
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column prop="roleCode" label="角色编码" width="200" align="center"></el-table-column>
+            <el-table-column prop="roleName" label="角色名称" width="200" align="center"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="status"
+              width="150"
+              :formatter="statusFmt"
+              label="状态"
+            ></el-table-column>
+            <el-table-column prop="roleSort" label="排序号" width="150" align="center"></el-table-column>
+            <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
+            <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="150" align="center">
+              <template slot-scope="scope">
+                <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button @click="editDataScope(scope.row)" type="text" size="small">数据权限</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -100,7 +103,7 @@ import {
   deleteRole,
   stopRole,
   startRole
-} from "@/api/role";
+} from "@/api/system/role";
 
 export default {
   data() {
@@ -125,18 +128,13 @@ export default {
           value: "2",
           label: "停用"
         }
-      ]      
+      ]
     };
   },
   created() {
     this.getTableList();
   },
   methods: {
-    test(){
-      var bb={m:"xxx","bb.c":"c","bb.d":"d"}
-       test(bb).then(response => {
-      });
-    },
     statusFmt(row, column, cellValue, index) {
       let status = row.status;
       if (status === "0") {
@@ -305,17 +303,23 @@ export default {
         });
     },
     handleAdd() {
-      this.$router.push({ path: "/system/role-detail", query: {} });
+      this.$router.push({ path: "/sys/role-detail", query: {} });
     },
     handleEdit(row) {
       var roleId = row.roleId;
       if (roleId) {
         this.$router.push({
-          path: "/system/role-detail",
+          path: "/sys/role-detail",
           query: { roleId: roleId }
         });
       }
-    },   
+    },
+    editDataScope(row) {
+      this.$router.push({
+        path: "/sys/role-datascope",
+        query: { roleId: row.roleId }
+      });
+    },
     rowStyle(row, rowIndex) {
       return "height:15pxfont-size: 13pxcolor: #333font-weight: normal ";
     },

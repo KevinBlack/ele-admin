@@ -1,23 +1,22 @@
 <template>
-  <div class="app-container">
-    <el-row>
-      <el-col>
+  <div >
+    <el-card class="box-card" style="margin: 0 10px;">
         <!-- 查询面板 -->
         <el-card class="box-card" shadow="never">
           <!-- label-width='65px' -->
-          <el-form ref="formQuery" :model="formQuery" :inline="true">
+          <el-form ref="formQuery" :model="formQuery"  label-width="100px">
             <el-row>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :md="6" :lg="6" :xl="4">
                 <el-form-item label="公司编号" size="mini" prop="companyCode">
                   <el-input v-model="formQuery.companyCode" size="mini" />
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :md="6" :lg="6" :xl="4">
                 <el-form-item label="公司名称" size="mini" prop="companyName">
                   <el-input v-model="formQuery.companyName" size="mini" />
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :md="6" :lg="6" :xl="4">
                 <el-form-item label="状态" size="mini" prop="status">
                   <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
                     <el-option
@@ -29,25 +28,17 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :md="6" :lg="6" :xl="4">
                 <el-form-item size="mini">
                   <el-button type="primary" size="mini" @click="search">查询</el-button>
                   <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
                 </el-form-item>
               </el-col>
             </el-row>
-            <!-- <el-row>
-              <el-col :span='24' style='text-align:center'>
-                <el-form-item size='mini'>
-                  <el-button type='primary' size='mini' @click='search'>查询</el-button>
-                  <el-button size='mini' @click='resetForm('formQuery')'>重置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>-->
           </el-form>
         </el-card>
         <!-- 表格区 -->
-        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
+        <el-card class="box-card" shadow="never" >
           <!-- 按钮区 -->
           <el-card
             shadow="never"
@@ -110,8 +101,7 @@
             @current-change="handleCurrentChange"
           />
         </el-card>
-      </el-col>
-    </el-row>
+    </el-card>
   </div>
 </template>
 
@@ -122,7 +112,7 @@ import {
   deleteCompany,
   stopCompany,
   startCompany
-} from '@/api/company'
+} from '@/api/system/company'
 
 export default {
   props: {
@@ -350,13 +340,13 @@ export default {
         })
     },
     handleAdd() {
-      this.$router.push({ path: '/system/company-detail', query: {}})
+      this.$router.push({ path: '/sys/company-detail', query: {}})
     },
     handleEdit(row) {
       const companyId = row.companyId
       if (companyId) {
         this.$router.push({
-          path: '/system/company-detail',
+          path: '/sys/company-detail',
           query: { companyId: companyId }
         })
       }

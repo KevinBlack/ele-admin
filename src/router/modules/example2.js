@@ -73,6 +73,31 @@ const example2Router = {
       meta: {
         title: '动态表格'
       }
+    },
+    {
+      path: 'likejian-table',
+      component: () => import('@/views/example2/likejian-table'),
+      name: 'likejian-table',
+      meta: {
+        title: '李科建测试'
+      }
+    },
+    {
+      path: 'likejian-table-detail',
+      hidden: true,
+      component: () => import('@/views/example2/dynamic-table'),
+      name: 'likejian-table',
+      meta: {
+        title: '李科建测试详情页'
+      }
+    },
+    {
+      path: 'file-download-upload',
+      component: () => import('@/views/example2/file-download-upload'),
+      name: 'file-download-upload',
+      meta: {
+        title: '文件上传下载'
+      }
     }
   ]
 }

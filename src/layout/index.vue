@@ -1,7 +1,7 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <el-header class="header-throw">
-      假装有logo
+      <img src="../assets/img/logo.png" style="margin-top: 11px;"  height="38" />
       <div class="right-menu">
         <span class="ritMnuTitle">王二小，欢迎你！</span>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -13,15 +13,6 @@
             <router-link to="/profile/index">
               <el-dropdown-item>个人中心</el-dropdown-item>
             </router-link>
-            <!-- <router-link to="/">
-              <el-dropdown-item>首页</el-dropdown-item>
-            </router-link>
-            <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-              <el-dropdown-item>Github</el-dropdown-item>
-            </a>
-            <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-              <el-dropdown-item>Docs</el-dropdown-item>
-            </a> -->
             <el-dropdown-item divided>
               <span style="display:block;" @click="logout">退出登录</span>
             </el-dropdown-item>
@@ -29,7 +20,6 @@
         </el-dropdown>
       </div>
     </el-header>
-    <!-- <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" /> -->
     <sidebar class="sidebar-container" />
     <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
@@ -37,10 +27,6 @@
         <tags-view v-if="needTagsView" />
       </div>
       <app-main />
-      <!-- <right-panel v-if="showSettings">
-        <settings />
-      </right-panel> -->
-      <el-footer class="footer-throw">底部信息</el-footer>
     </div>
 
   </div>

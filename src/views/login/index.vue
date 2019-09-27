@@ -1,11 +1,9 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">系统登录</h3>
       </div>
-
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -20,7 +18,6 @@
           autocomplete="on"
         />
       </el-form-item>
-
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -44,7 +41,6 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
       <el-row :gutter="24">
         <el-col :span="17">
           <el-form-item prop="identifyCode">
@@ -66,9 +62,8 @@
           </div>
         </el-col>
       </el-row>
-
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
+      <el-button type="primary" style="width:100%;margin:0px !important;" @click.native.prevent="handleRegister">注册</el-button>
       <!-- <div style="position:relative">
         <div class="tips">
           <span>Username : admin</span>
@@ -97,7 +92,7 @@
 
 <script>
 import SIdentify from './components/identify'
-import { getValidateCode } from '@/api/comm/comm'
+import { getValidateCode } from '@/api/system/comm/comm'
 // import SocialSign from './components/SocialSignin'
 
 export default {
@@ -198,6 +193,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
+    },
+    handleRegister() {
+      this.$router.push({ path: "/register", query: {} });
     },
     handleLogin() {
       var loginFormEcode = {

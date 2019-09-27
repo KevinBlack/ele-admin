@@ -1,90 +1,96 @@
 <template>
-  <div class="app-container">
-    <el-card class="box-card" style="height:60px">
-      <span>{{title}}</span>
-      <!-- <el-divider direction="vertical"></el-divider> -->
-    </el-card>
-    <el-card class="box-card">
-      <div class="title-cls">基本信息</div>
-      <el-card class="box-card" style="padding:15px;border-radius:0px;">
-        <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
-          <el-row>
-             <el-col :span="12" style="display:none">
-              <el-form-item label="机构编号" size="mini" prop="officeId">
-                <el-input v-model="detailForm.officeId" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="上级机构" size="mini" prop="parentIds">
-                <el-cascader
-                  :props="props"
-                  :show-all-levels="false"
-                  :options="cascaderOpts"
-                  v-model="detailForm.parentIds"
-                  clearable
-                  filterable
-                  size="mini"
-                  style="width:100%;"
-                  change-on-select
-                ></el-cascader>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <!-- 此处为占位符，不能删除，否则el-cascader 长度显示不正常 -->
-            </el-col>
-          </el-row>
+  <div>
+    <el-card class="box-card" style="margin: 0 10px;">
+      <el-card class="box-card" style="height:60px">
+        <span>{{title}}</span>
+        <!-- <el-divider direction="vertical"></el-divider> -->
+      </el-card>
+      <el-card class="box-card">
+        <div class="title-cls">基本信息</div>
+        <el-card class="box-card" style="padding:15px;border-radius:0px;">
+          <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
+            <el-row>
+              <el-col :span="12" style="display:none">
+                <el-form-item label="机构编号" size="mini" prop="officeId">
+                  <el-input v-model="detailForm.officeId" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="上级机构" size="mini" prop="parentIds">
+                  <el-cascader
+                    :props="props"
+                    :show-all-levels="false"
+                    :options="cascaderOpts"
+                    v-model="detailForm.parentIds"
+                    clearable
+                    filterable
+                    size="mini"
+                    style="width:100%;"
+                    change-on-select
+                  ></el-cascader>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <!-- 此处为占位符，不能删除，否则el-cascader 长度显示不正常 -->
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="机构编号" size="mini" prop="officeCode">
+                  <el-input v-model="detailForm.officeCode" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="机构名称" size="mini" prop="officeName">
+                  <el-input v-model="detailForm.officeName" size="mini" @change="officeNameChange"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="机构全称" size="mini" prop="officeFullName">
+                  <el-input v-model="detailForm.officeFullName" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="机构全路径" size="mini" prop="officeFullPath">
+                  <el-input v-model="detailForm.officeFullPath" size="mini" :disabled="true"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="排序号" size="mini" prop="treeSort">
+                  <el-input v-model.number="detailForm.treeSort" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
 
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="机构编号" size="mini" prop="officeCode">
-                <el-input v-model="detailForm.officeCode" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
+              <el-col :span="24">
+                <el-form-item label="备注" size="mini" prop="remarks">
+                  <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
 
-            <el-col :span="12">
-              <el-form-item label="机构名称" size="mini" prop="officeName">
-                <el-input v-model="detailForm.officeName" size="mini" @change="officeNameChange"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="机构全称" size="mini" prop="officeFullName">
-                <el-input v-model="detailForm.officeFullName" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item label="排序号" size="mini" prop="treeSort">
-                <el-input v-model.number="detailForm.treeSort" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="备注" size="mini" prop="remarks">
-                <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row>
-            <el-col :span="24">
-              <div style="text-align: center;">
-                <el-button type="primary" icon="el-icon-check" @click="saveOffice">保存</el-button>
-                <el-button icon="el-icon-close" @click="resetForm('detailForm')">重置</el-button>
-              </div>
-            </el-col>
-          </el-row>
-        </el-form>
+            <el-row>
+              <el-col :span="24">
+                <div style="text-align: center;">
+                  <el-button type="primary" icon="el-icon-check" @click="saveOffice">保存</el-button>
+                  <el-button icon="el-icon-close" @click="resetForm('detailForm')">重置</el-button>
+                </div>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-card>
       </el-card>
     </el-card>
   </div>
 </template>
 
 <script>
-import { getOffice, saveOffice, getOfficeTree,getSortNo } from "@/api/office";
-import { toPinYinUppercase } from "@/api/comm/comm";
+import {
+  getOffice,
+  saveOffice,
+  getOfficeTree,
+  getSortNo
+} from "@/api/system/office";
+import { toPinYinUppercase } from "@/api/system/comm/comm";
 
 export default {
   data() {
@@ -97,7 +103,8 @@ export default {
         officeName: "",
         officeFullName: "",
         treeSort: "",
-        remarks: ""
+        remarks: "",
+        officeFullPath: ""
       },
       props: {
         checkStrictly: true,
@@ -109,13 +116,25 @@ export default {
       cascaderOpts: [],
       rules: {
         officeCode: [
-          { required: true, message: "机构编码不能为空", trigger: ['blur', 'change'] }
+          {
+            required: true,
+            message: "机构编码不能为空",
+            trigger: ["blur", "change"]
+          }
         ],
         officeName: [
-          { required: true, message: "机构名称不能为空", trigger: ['blur', 'change'] }
+          {
+            required: true,
+            message: "机构名称不能为空",
+            trigger: ["blur", "change"]
+          }
         ],
         treeSort: [
-          { required: true, message: "排序号不能为空", trigger: ['blur', 'change'] },
+          {
+            required: true,
+            message: "排序号不能为空",
+            trigger: ["blur", "change"]
+          },
           { type: "number", message: "排序号必须为数字值" }
         ]
       }
@@ -135,7 +154,7 @@ export default {
     // 添加下级菜单时，此处不为空
     var arr = new Array();
     if (this.$route.query.parentIds) {
-      var parentIdArr = (this.$route.query.parentIds || "").split(",");
+      var parentIdArr = (this.$route.query.parentIds || "").split(".");
       console.log(parentIdArr);
       Object.keys(parentIdArr).forEach(function(key) {
         if (parentIdArr[key]) {
@@ -148,8 +167,10 @@ export default {
       this.detailForm.parentIds = arr;
     }
     //获取排序号
-    if(arr.length>0){
-        this.getTreeSortNo(arr[arr.length-1])
+    if (arr.length > 0) {
+      this.getTreeSortNo(arr[arr.length - 1]);
+    } else {
+      this.getTreeSortNo(0);
     }
   },
   methods: {
@@ -160,11 +181,11 @@ export default {
     },
     getOfficeInfo(officeId) {
       getOffice(officeId).then(response => {
-        this.detailForm = response.data;              
+        this.detailForm = response.data;
         var parentIds = response.data.parentIds;
         if (parentIds) {
           var arr = new Array();
-          var parentIdArr = parentIds.split(",");
+          var parentIdArr = parentIds.split(".");
           Object.keys(parentIdArr).forEach(function(key) {
             if (parseInt(parentIdArr[key])) {
               arr.push(parseInt(parentIdArr[key]));
@@ -186,7 +207,7 @@ export default {
       } = this.detailForm;
       let parentIdsStr = "";
       if (parentIds && parentIds.length >= 1) {
-        parentIdsStr = parentIds.join(",");
+        parentIdsStr = parentIds.join(".");
       }
       saveOffice({
         officeId,
@@ -210,19 +231,21 @@ export default {
         this.$refs[formName].resetFields();
       });
     },
-    officeNameChange(val){
-      if(val){
-      toPinYinUppercase(val).then(response => {
+    officeNameChange(val) {
+      if (val) {
+        toPinYinUppercase(val).then(response => {
           this.detailForm.officeCode = response.data.pinyin;
         });
       }
     },
-    getTreeSortNo(parentId){
-      console.log(parentId)
-      if(parentId){
+    getTreeSortNo(parentId) {
+      console.log(parentId);
+      if (parentId) {
         getSortNo(parentId).then(response => {
           this.detailForm.treeSort = response.data;
         });
+      } else {
+        this.detailForm.treeSort = 1000;
       }
     }
   }

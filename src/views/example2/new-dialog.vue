@@ -52,4 +52,7 @@ export default {
 .tsfDlg{
   margin: 0 10px;
 }
+.sl-dialog {
+  width: 70% !important;
+}
 </style>

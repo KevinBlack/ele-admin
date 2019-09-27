@@ -10,6 +10,10 @@ import Layout from '@/layout'
 // import componentsRouter from './modules/components'
 import systemRouter from './modules/system'
 import example2Router from './modules/example2'
+import membershipfeemangeRouter from './modules/membership-fee-mange'
+import hxxdRouter from './modules/hxxd'
+import complaintManageRouter from './modules/complaintManage'
+
 // import nestedRouter from './modules/nested'
 // 系统基础路由
 export const constantRoutes = [
@@ -23,6 +27,17 @@ export const constantRoutes = [
         component: () => import('@/views/redirect/index')
       }
     ]
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    // name: 'register',
+    hidden: true
+  },
+  {
+    path: '/newlogin',
+    component: () => import('@/views/login/newlogin'),
+    hidden: true
   },
   {
     path: '/login',
@@ -54,7 +69,7 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: '首页', icon: 'home', affix: true }
-     }
+      }
     ]
   }
 ]
@@ -70,12 +85,15 @@ export const asyncRoutes = [
   // nestedRouter,
   systemRouter,
   example2Router,
+  membershipfeemangeRouter,
+  hxxdRouter,
+  complaintManageRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  base: '/hkysxh/',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

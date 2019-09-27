@@ -120,9 +120,9 @@
 </template>
 
 <script>
-// import { fetchList, createArticle, updateArticle } from '@/api/article'
-import { createArticle, updateArticle } from '@/api/article'
-import { getRoleList } from '@/api/role'
+// import { fetchList, createArticle, updateArticle } from '@/api/system/article'
+import { createArticle, updateArticle } from '@/api/system/article'
+import { getRoleList } from '@/api/system/role'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination

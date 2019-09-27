@@ -6,15 +6,15 @@ import { getToken } from '@/utils/auth'
 
 // 建立一个axios链接
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 10000 // request timeout
+  timeout: 10000
 })
 
 // interceptors.request.use 设置拦截规则
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
+    // 当Content-Type 不存在时
     if (config.data) {
       config.data = qs.stringify(config.data)
     }
@@ -48,7 +48,13 @@ service.interceptors.response.use(
   response => {
     // const res = response.data
     const res = response
-
+    // 过滤文件流格式
+    if (
+      res.headers['content-type'] === 'application/octet-stream' ||
+      res.headers['content-type'] === 'image/Jpeg'
+    ) {
+      return Promise.resolve(res)
+    }
     // if the custom code is not 200, it is judged as an error.
     if (res.status !== 200) {
       Message({

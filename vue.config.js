@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Element Admin' // page title
+const name = defaultSettings.title || '销售代理管理系统' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -24,7 +24,9 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  // 项目打包时请修改此处
+  // publicPath: '/',
+  publicPath: '/hkysxh/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -39,16 +41,24 @@ module.exports = {
     proxy: {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:${port}/mock`,
-        // target: `http://127.0.0.1:8003/system`,
+      '/sys': {
+        // target: `http://127.0.0.1:${port}/mock`,
+        target: `http://127.0.0.1:8003/system`,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/sys': ''
+        }
+      },
+      '/hxxd': {
+        target: `http://127.0.0.1:8003/hxxd`,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/hxxd': ''
         }
       }
     }
-    ,after: require('./mock/mock-server.js')
+    // },
+    // after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

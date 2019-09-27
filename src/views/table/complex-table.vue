@@ -124,7 +124,7 @@
     fetchList,
     createArticle,
     updateArticle
-  } from '@/api/article'
+  } from '@/api/system/article'
   import waves from '@/directive/waves' // waves directive
   import {
     parseTime

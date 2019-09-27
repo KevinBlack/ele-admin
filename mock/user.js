@@ -35,7 +35,7 @@ const users = {
 export default [
   // user login
   {
-    url: '/u/user/login',
+    url: '/sys/u/user/login',
     type: 'post',
     response: config => {
       return {
@@ -48,7 +48,7 @@ export default [
 
   // get user info
   {
-    url: '/u/user/info\.*',
+    url: '/sys/u/user/info\.*',
     type: 'post',
     response: config => {
       const info = {
@@ -70,7 +70,7 @@ export default [
 
   // user logout
   {
-    url: '/u/user/logout',
+    url: '/sys/u/user/logout',
     type: 'post',
     response: _ => {
       return {

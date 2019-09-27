@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div style="margin: 0 10px;">
     <el-row>
       <el-col :md="5" :lg="5" :xl="4">
         <el-card class="box-card" style="height:736px">
@@ -37,8 +37,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :md="8" :lg="8" :xl="6">
-                  <el-form-item size="mini">
+                <el-col :md="24" >
+                  <el-form-item size="mini" >
                     <el-button type="primary" size="mini" @click="search">查询</el-button>
                     <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
                   </el-form-item>
@@ -125,7 +125,7 @@ import {
   deleteOffice,
   stopOffice,
   startOffice
-} from "@/api/office";
+} from "@/api/system/office";
 
 export default {
   data() {
@@ -361,18 +361,18 @@ export default {
       var parentIds = row.parentIds + row.officeId;
       // 添加下级
       this.$router.push({
-        path: "/system/office-detail",
+        path: "/sys/office-detail",
         query: { parentIds: parentIds }
       });
     },
     handleAdd() {
-      this.$router.push({ path: "/system/office-detail", query: {} });
+      this.$router.push({ path: "/sys/office-detail", query: {} });
     },
     handleEdit(row) {
       let officeId = row.officeId;
       if (officeId) {
         this.$router.push({
-          path: "/system/office-detail",
+          path: "/sys/office-detail",
           query: { officeId: officeId }
         });
       }
@@ -390,7 +390,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 <style>
 .el-aside {

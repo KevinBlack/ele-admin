@@ -4,7 +4,7 @@ import { asyncRoutes, constantRoutes } from './routes.js'
 
 const routes = deepClone([...constantRoutes, ...asyncRoutes])
 
-const roles = [
+const menuCodes = [
   {
     key: 'admin',
     name: 'admin',
@@ -55,7 +55,7 @@ export default [
     response: _ => {
       return {
         code: 200,
-        data: roles
+        data: menuCodes
       }
     }
   },
