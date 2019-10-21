@@ -13,7 +13,6 @@
         </el-button-group>
       </el-col>
     </el-row>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
         <!-- part1 -->
         <el-row :gutter="10">
           <el-col :span="24">
@@ -92,32 +91,13 @@
             style="padding:15px;border-radius:0px;"
             :body-style="{ padding: '0px' }"
            >
-           <el-popover
-                placement="right"
-                width="1000"
-                trigger="click"
-                :ref="'popover-1'">
-                <el-card>
-                  <el-button type="primary" icon="el-icon-right" size="mini" @click="pSubmit()">选择</el-button> 
-                  <el-button type="primary" icon="el-icon-close" size="mini" @click="pCancel()">关闭</el-button> 
-                </el-card>
-                <el-table :data="gridData"
-                  @selection-change="selectionChange"
-                  style="width:100%"
-                  :header-row-style="headRowStyle"
-                  :row-style="rowStyle"
-                  :header-cell-style="getCellStyle"
-                  border
-                  highlight-current-row
-                 >
-                  <el-table-column type="selection" width="55" align="center" />
-                  <el-table-column width="" property="date" label="日期"></el-table-column>
-                  <el-table-column width="" property="name" label="姓名"></el-table-column>
-                  <el-table-column width="" property="address" label="地址"></el-table-column>
-                </el-table>
-                <el-tag id = "addBtn" type="success" slot="reference" size="mini" style="cursor: pointer;" @click="handleAdd()">新增</el-tag>
-             </el-popover>
-           <el-tag type="danger" size="mini"  style="cursor: pointer;" @click="handleDelete()">删除</el-tag>
+             <el-radio-group  size="mini">
+                <el-radio-button  class="btn_line" type="primary"  size="mini"  style="cursor: pointer;" @click="showBox()">新增</el-radio-button>
+                <el-radio-button  class="btn_line" type="primary"  size="mini"  style="cursor: pointer;" @click="handleDelete()">删除</el-radio-button>
+               </el-radio-group>
+              <el-dialog :visible.sync="isShow" width="70%">
+                  <add_modality :fdmsg="addForm" :fdshow2="isShow" @closeDalog="closeBox" style="height:300px;"/>
+               </el-dialog>
            </el-card>
         <el-table
           :data="tableData"
@@ -129,18 +109,17 @@
           height="250"
           @selection-change="selectionChange"
         >
-            <el-table-column type="selection" width="55" align="left" />
-            <el-table-column prop="id" label="ID" width="" align="left" v-if='show' />
-             <el-table-column prop="saleDate" label="交易时间" width="" align="center" />
+            <el-table-column type="selection" width="55" align="center" />
+            <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
+            <el-table-column prop="saleDate" label="交易时间" width="" align="center" />
             <el-table-column prop="saleNum" label="交易流水号" width="" align="center" />
             <el-table-column prop="creditAmount" label="贷方发生额" width="" align="center" />
             <el-table-column prop="remarks" label="摘要" width="" align="center" />
             <el-table-column prop="payerAccount" label="对方账号" width="" align="center" />
-            <el-table-column prop="payeeAccountName" label="对方账号名称" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="payerBank" label="对方开户行" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="paymentAmount" label="实缴金额" align="left" :show-overflow-tooltip="true" />
+            <el-table-column prop="payeeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="payerBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="paymentAmount" label="实缴金额" align="center" :show-overflow-tooltip="true" />
         </el-table>
-    </el-tabs>
   </el-card>
 </template>
 
@@ -149,29 +128,18 @@ import {
   getDjInfoList,
   deleteMember
 } from '@/api/hxxd/membership-fee-mange'
+import add_modality from './add_modality'
 
 export default {
+  name: 'Add',
+  components: { add_modality },
   data() {
     return {
+      show: true,
+      isShow: false,
       tableMultiSelection: [],
-      gridData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }],
       addForm: {
+                id:"",
         memberName: "",
         paymentAmount: "",
         amountDue: "",
@@ -211,22 +179,6 @@ export default {
         label: '2022'
       }
       ],
-      options: [{
-        value: '选项1',
-        label: '张三'
-      }, {
-        value: '选项2',
-        label: '李四'
-      }, {
-        value: '选项3',
-        label: '王五'
-      }, {
-        value: '选项4',
-        label: '赵六'
-      }, {
-        value: '选项5',
-        label: '刘七'
-      }],
       tableData: []
     }
   },
@@ -240,27 +192,17 @@ export default {
       // })
     },
     handleClick(tab, event) {
-      console.log(tab, event)
+      
     },
     headRowStyle(row, rowIndex) {
       return "height:15px;";
     },
-    headRowStyle(row, rowIndex) {
-      return 'height:15px'
-    },
-    getCellStyle({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 0) {
-        return 'background: #F2F2F2font-size: 13pxcolor: #333font-weight: normal'
-      } else {
-        return ''
-      }
-    },
     rowStyle(row, rowIndex) {
-      return "height:15px;font-size: 13px;color: #333;font-weight: normal; ";
+      return "height:15px;font-size:13px;color:#333;font-weight:normal; ";
     },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal;";
+        return "background:#F2F2F2;font-size:13px;color:#333;font-weight:normal;";
       } else {
         return "";
       }
@@ -268,22 +210,35 @@ export default {
     selectionChange(val) {
       this.tableMultiSelection = val
     },
-          pSubmit() {
-        // store.postData(apiUrl.unbind_front_user_api,{
-          // user_id:row.id
-        // }).then((res)=>{
-          // if(res.body.code==1){
-            this.pClose()
-            // this.fetchData()
-          // }
-        // })
-      },
-      pCancel() {
-        this.pClose()
-      },
-      pClose() {
-        this.$refs[`popover-1`].doClose()
-      },
+      // 模态框 start
+    showBox() {
+      if (!this.addForm.memberName) {
+        this.$notify({
+          title: '提示',
+          message: '请选择缴费会员',
+          type: 'warning',
+          duration: 2000
+        })
+      }else{
+        this.isShow = true
+      }
+    },
+    closeBox(chiledArr, fdshow) {
+      if (chiledArr.length <= 0) {
+        this.$notify({
+          title: '提示',
+          message: '请选择数据',
+          type: 'warning',
+          duration: 2000
+        })
+      } else {
+        for (let i = 0; i < chiledArr.length; i++) {
+          this.input3 += chiledArr[i]
+        }
+      }
+      this.isShow = fdshow
+    }
+    // 模态框 end
   }
 }
 </script>
@@ -302,5 +257,8 @@ export default {
 }
 .el-table__fixed-right::before {
   background-color: none;
+}
+.btn_line {
+  margin-right: 2px;
 }
 </style>

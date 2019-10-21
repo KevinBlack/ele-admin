@@ -101,7 +101,7 @@ export default {
   }
   .header-throwsf {
     width: 100%;
-    position: fixed;
+    // position: fixed;
     left: 0;
     height: 120px !important;
     line-height: 120px;
@@ -130,21 +130,21 @@ export default {
   }
 
   .reg-content {
-    margin-top: 100px;
     .reg-con-c {
       text-align: center;
       margin-bottom: 20px;
       h3 {
         border-bottom: 1px solid #bfbfc0;
         font-size: 30px;
-        line-height: 80px;
+        height: 60px;
+        line-height: 10px;
       }
     }
   }
 
   .footer-throwsf {
     width: 100%;
-    position: fixed;
+    // position: fixed;
     height: 120px !important;
     line-height: 120px;
     font-size: 20px;

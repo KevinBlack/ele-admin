@@ -23,7 +23,7 @@ const complaintManageRouter = {
       hidden: true,
       component: () => import('@/views/hxxd/complaintInfo/saveComplainProcessing'),
       name: 'saveComplainProcessing',
-      meta: { title: '新增' }
+      meta: { title: '投诉处理信息填写' }
     },
     {
       path: 'securityIncidents',

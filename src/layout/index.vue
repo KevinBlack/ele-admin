@@ -1,7 +1,7 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <el-header class="header-throw">
-      <img src="../assets/img/logo.png" style="margin-top: 11px;"  height="38" />
+      <img src="../assets/img/logo_w.png" style="margin-top: 11px;"  height="38" />
       <div class="right-menu">
         <span class="ritMnuTitle">王二小，欢迎你！</span>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">

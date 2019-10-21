@@ -3,6 +3,208 @@
  */
 
 /**
+ * 根据表名获取虚拟id(当真实id存在时生成真实id)
+ * @param {*} tableName
+ * @param {*} id
+ */
+export function createVId(tableName, id) {
+  if (id) {
+    return id
+  }
+  tableName = tableName ? tableName + '-' : ''
+  // 获取时间戳
+  const timestamp = new Date().getTime()
+  const randomNum = parseInt((1 + Math.random()) * 65536) + ''
+  return tableName + (+(randomNum + timestamp)).toString()
+}
+/**
+ * 字符串转一维数组
+ * @param {*} str 字符串
+ * @param {*} split 默认 ',' 分隔
+ */
+export function strToArr(str, split) {
+  // eslint-disable-next-line no-array-constructor
+  var arr = new Array()
+  if (str) {
+    split = split || ','
+    var tempArr = str.split(split)
+    if (tempArr && tempArr.length > 0) {
+      return tempArr
+    }
+  }
+  return arr
+}
+/**
+ * 字符串转二维数组
+ * @param {*} str 字符串
+ * @param {*} firstSplit 第一个分隔符
+ * @param {*} secondSplit  第二个分隔符
+ */
+export function strTo2Arr(str, firstSplit, secondSplit) {
+  // eslint-disable-next-line no-array-constructor
+  var arr = new Array()
+  if (str) {
+    firstSplit = firstSplit || ','
+    secondSplit = secondSplit || '.'
+    var firstArr = str.split(firstSplit)
+    if (firstArr && firstArr.length > 0) {
+      Object.keys(firstArr).forEach(function(key) {
+        if (firstArr[key]) {
+          // eslint-disable-next-line no-array-constructor
+          var secondArr = firstArr[key].split(secondSplit)
+          if (secondArr && secondArr.length > 0) {
+            arr.push(strArrToIntArr(secondArr))
+          }
+        }
+      })
+    }
+  }
+  return arr
+}
+/**
+ * 字符串数组转整数数组
+ * @param {*} arr
+ */
+export function strArrToIntArr(arr) {
+  // eslint-disable-next-line no-array-constructor
+  var tempArr = new Array()
+  // eslint-disable-next-line no-empty
+  if (arr && arr.length > 0) {
+    Object.keys(arr).forEach(function(key) {
+      if (arr[key] && Number(arr[key]) > 0) {
+        tempArr.push(Number(arr[key]))
+      }
+    })
+  }
+  return tempArr
+}
+/**
+ * 二维数组转字符串
+ * @param {*} arr 数组
+ * @param {*} prefix 前缀
+ * @param {*} firstSplit 第一个分隔符
+ * @param {*} secondSplit 第二个分隔符
+ */
+export function arr2ToStr(arr, prefix, suffix, firstSplit, secondSplit) {
+  var tempStr = ''
+  prefix = prefix || ''
+  suffix = suffix || ''
+  firstSplit = firstSplit || ','
+  secondSplit = secondSplit || '.'
+  if (arr && arr.length > 0) {
+    Object.keys(arr).forEach(function(key) {
+      if (arr[key] && arr[key].length > 0) {
+        console.log(arr[key])
+        if (tempStr === '') {
+          tempStr = prefix + arr[key].join(secondSplit) + suffix
+        } else {
+          tempStr = tempStr + firstSplit + prefix + arr[key].join(secondSplit) + suffix
+        }
+      }
+    })
+  }
+  return tempStr
+}
+/**
+ * 二位数组最后一个元素转字符串
+ * @param {*} arr 数组
+ * @param {*} split 分隔符
+ */
+export function arr2LastItemToStr(arr, split) {
+  var tempStr = ''
+  split = split || ','
+  if (arr && arr.length > 0) {
+    Object.keys(arr).forEach(function(key) {
+      if (arr[key] && arr[key].length > 0) {
+        var arr2 = arr[key]
+        if (tempStr === '') {
+          tempStr = arr[key][arr2.length - 1]
+        } else {
+          tempStr = tempStr + split + arr[key][arr2.length - 1]
+        }
+      }
+    })
+  }
+  return tempStr
+}
+/**
+ * data数组增加额外属性
+ * @param {*} data
+ * @param {*} hasChange 数据是否发生改变
+ */
+export function setRowsHasChange(rows, hasChange) {
+  if (!rows || rows.length <= 0) {
+    return rows
+  }
+  hasChange = hasChange || false
+  for (let index = 0; index < rows.length; index++) {
+    var element = rows[index]
+    // 判断是否可以被修改
+    element.hasChange = hasChange
+  }
+  return rows
+}
+
+/**
+ * 设置单行数据是否被修改
+ * @param {*} row
+ * @param {*} hasChange 数据是否发生改变
+ */
+export function setRowHasChange(row, hasChange) {
+  if (!row) {
+    return row
+  }
+  row.hasChange = (hasChange || false)
+  return row
+}
+
+/**
+ * 过滤已经被修改的数据行
+ * @param {*} data 数据数组
+ */
+export function getRowsHasChange(rows) {
+  if (!rows || rows.length <= 0) {
+    return rows
+  }
+  rows = rows.filter(item => {
+    return item.hasChange
+  })
+  return rows
+}
+
+/**
+ * data 数组设置是否可以编辑
+ * @param {*} data
+ * @param {*} editable editable
+ */
+export function setRowsEditable(rows, editable) {
+  if (!rows || rows.length <= 0) {
+    return rows
+  }
+  editable = editable || false
+  for (let index = 0; index < rows.length; index++) {
+    var element = rows[index]
+    // 判断是否可以被修改
+    element.editable = editable
+  }
+  return rows
+}
+/**
+ * 过滤可以编辑的行的数据行
+ * @param {*} data 数据数组
+ */
+export function getRowsEditable(rows, editable) {
+  editable = editable || false
+  if (!rows || rows.length <= 0) {
+    return rows
+  }
+  rows = rows.filter(item => {
+    return item.editable
+  })
+  return rows
+}
+
+/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat

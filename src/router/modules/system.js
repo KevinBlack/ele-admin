@@ -10,7 +10,7 @@ const systemRouter = {
   meta: {
     title: '系统管理',
     icon: 'tree'
-    //, menuCodes: [ "100010", "100020", "10001010", "10001020", "100030", "100040"]
+    //, menuCodes: [ "100010"]
   },
   children: [
     {
@@ -18,7 +18,7 @@ const systemRouter = {
       component: () => import('@/views/system/company'),
       name: 'CompanyManage',
       // meta: { title: '公司管理', menuCodes: '100010' },
-      meta: { title: '公司管理'},
+      meta: { title: '公司管理' },
       props: { pageCode: '10001020' }
     },
     {

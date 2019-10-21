@@ -1,24 +1,20 @@
 <template>
-<el-card style="margin: 0 10px;">
-  <div class="app-container">
-    <el-row>
-      <el-col>
+<el-card class="detailsContainer">
         <!-- 查询面板start -->
-        <el-card class="box-card" shadow="never">
           <!-- label-width='65px' -->
-          <el-form ref="formQuery" :model="formQuery" :inline="true">
-            <el-row>
-              <el-col :md="8" :lg="6" :xl="6">
+          <el-form ref="formQuery" :model="formQuery" :inline="true"  size="mini">
+            <el-row :gutter="20" class="area_border">
+              <el-col :span="6">
                 <el-form-item label="会员名称" size="mini" prop="memberName">
                   <el-input v-model="formQuery.memberName" size="mini" />
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :span="6">
                 <el-form-item label="会员类别" size="mini" prop="memberType">
                   <el-input v-model="formQuery.memberType" size="mini" />
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :span="7">
                 <el-form-item label="审批状态" size="mini" prop="spState">
                   <el-select v-model="formQuery.spState" filterable placeholder="请选择" size="mini">
                     <el-option
@@ -30,39 +26,45 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :md="8" :lg="6" :xl="6">
+              <el-col :span="5" style="text-align: left;padding-left: 1.3em;">
                 <el-form-item size="mini">
-                  <el-button type="primary" size="mini" @click="search">查询</el-button>
-                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+                  <el-button type="primary" size="mini" icon="el-icon-search" @click="search">查询</el-button>
+                  <el-button size="mini" icon="el-icon-refresh-right" @click="resetForm('formQuery')">重置</el-button>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
-        </el-card>
         <!-- 查询面板end -->
         <!-- 表格区 -->
-        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
           <!-- 按钮区 -->
-          <el-card
-            shadow="never"
-            style="padding:15px;border-radius:0px;"
-            :body-style="{ padding: '0px' }"
-           >
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
-            <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
-              <el-button type="primary" size="mini">
-                批量操作
-                <i class="el-icon-arrow-down el-icon--right" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-           </el-card>
+           <el-row class="area_bordes" style="margin-bottom: 0;">
+             <el-col :span="24">
+              <el-radio-group  size="mini">
+                <el-button class="btn_line" type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
+                <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
+                <el-button class="btn_line" type="primary" size="mini">
+                  批量操作
+                  <i class="el-icon-arrow-down el-icon--right" />
+                  </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+              </el-dropdown>
+              </el-radio-group>
+               <el-radio-group  size="mini" style="margin-left: 20px;">
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="handleInfo()">查看详情</el-button>
+                </el-radio-group>
+              </el-col>   
+           </el-row>
           <!-- 按钮区end -->
           <!-- 表格区2 -->
+           <el-row :gutter="10">
+              <el-col :span="24">
+                <div class="dtl-info-line">已选择{{ sum }}条<el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button></div>
+              </el-col>
+            </el-row>
           <el-table
-            ref="companyTable"
+            ref="companyTable" 
             v-loading="tableLoading"
             :data="tableData"
             style="width:100%"
@@ -80,13 +82,13 @@
             <el-table-column prop="memberType" label="会员类别" width="" align="center" />
             <el-table-column prop="memberGrade" label="会员等级" width="" align="center" />
             <el-table-column prop="paymentYear" label="缴费年度" width="" align="center" />
-            <el-table-column prop="paymentDate" label="缴纳日期" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="contributionStandard" label="会费标准" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="discount" label="折扣" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="amountDue" label="应缴金额" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="paymentAmount" label="实缴金额" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="agent" label="经办人" align="left" :show-overflow-tooltip="true" />
-            <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true" />
+            <el-table-column prop="paymentDate" label="缴纳日期" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="contributionStandard" label="会费标准" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="discount" label="折扣" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="amountDue" label="应缴金额" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="paymentAmount" label="实缴金额" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="agent" label="经办人" align="center" :show-overflow-tooltip="true" />
+            <el-table-column prop="remarks" label="备注" align="center" :show-overflow-tooltip="true" />
             <!-- <el-table-column
               align="center"
               prop="spState"
@@ -105,21 +107,23 @@
           </el-table>
           <!-- 表格区2end -->
           <!-- 分页 -->
-          <el-pagination
-            :total="pageTotal"
-            layout="total, sizes, prev, pager, next, jumper"
-            :current-page.sync="formQuery.pageNo"
-            :page-size.sync="formQuery.pageSize"
-            :page-sizes="[15, 30, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+           <el-row class="area_bordes" style = "margin-top:20px">
+              <el-col :span="24" style="text-align: right;">
+                <el-pagination
+                  background
+                  :total="pageTotal"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :current-page.sync="formQuery.pageNo"
+                  :page-size.sync="formQuery.pageSize"
+                  :page-sizes="[10, 20, 30, 40]"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
+              </el-col>
+            </el-row>
           <!-- 分页end -->
-        </el-card>
+        
          <!-- 表格区end -->
-      </el-col>
-    </el-row>
-  </div>
 </el-card>
 </template>
 
@@ -139,6 +143,7 @@ export default {
   // data 开始
   data() {
     return {
+      sum: 0,
       show:false,
       treeData: [],
       treeDefaultProps: {
@@ -188,8 +193,23 @@ export default {
     this.getTableList()
   },
   methods: {
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.companyTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.companyTable.clearSelection()
+      }
+    },
     selectionChange(val) {
       this.tableMultiSelection = val
+      if (val.length !== 0) {
+        this.added = val.length
+        this.sum = this.added
+      } else if (val.length === 0) {
+        this.sum -= this.added
+      }
     },
     search() {
       this.getTableList()
@@ -214,14 +234,14 @@ export default {
       this.getTableList()
     },
     rowStyle(row, rowIndex) {
-      return 'height:15pxfont-size: 13pxcolor: #333font-weight: normal '
+      return 'height:15px;font-size: 13px;color: #333;font-weight: normal'
     },
     headRowStyle(row, rowIndex) {
       return 'height:15px'
     },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background: #F2F2F2font-size: 13pxcolor: #333font-weight: normal'
+        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
       } else {
         return ''
       }
@@ -277,6 +297,31 @@ export default {
     handleAdd() {
       this.$router.push({ path: '/membership-fee-mange/add', query: {}})
     },
+    handleInfo() {
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中要处理的数据!"
+        });
+        return;
+      }
+      let selectRows = this.tableMultiSelection;
+      if (selectRows.length == 0) {
+        this.$message({
+          type: "info",
+          message: "请选中要处理的数据!"
+        });
+        return;
+      } else if (selectRows.length >= 2) {
+        this.$message({
+          type: "info",
+          message: "请选中单条数据!"
+        });
+        return;
+      } 
+      var selectId = selectRows[0].id;
+      this.$router.push({ path: '/membership-fee-mange/dj_Info', query: {selectId: selectId }})
+    },
     // handleEdit(row) {
     //   const id = row.id
     //   if (id) {
@@ -301,39 +346,47 @@ export default {
 }
 </script>
 <style>
-.el-aside {
-  /* background-color: #d3dce6 */
-  color: #333;
-  margin-top: 12px;
-  width: 250px;
-  min-height: 600px;
-  margin-bottom: 0px;
-  padding-right: 1px;
+*{
+  font-weight: normal;
 }
-
-.el-main {
-  padding-left: 1px;
-  background-color: #e9eef3;
-  color: #333;
-  /* text-align: center */
-  /* line-height: 0px */
-  min-height: 600px;
+.detailsContainer {
+  margin: 0 10px;
 }
-
-body > .el-container {
-  margin-bottom: 40px;
+.dtl-title-line {
+  display: inline-block;
+  border-left: 5px solid #409EFF;
+  padding-left: 5px;
 }
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
+.el-table__fixed-right::before {
+  background-color: none;
 }
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
+.dtl-info-line {
+  height: 40px;
+  line-height: 40px;
+  margin: 10px auto;
+  border-radius: 3px;
+  font-size: 12px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  color: #000;
+  background-color: #dcecfd;
 }
-.el-table--medium th,
-.el-table--medium td {
-  padding: 0px 0;
+.el-table>th {
+  background-color: #eee !important;
+}
+.area_border, .area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
+}
+.btn_line {
+  margin-right: 2px;
 }
 </style>

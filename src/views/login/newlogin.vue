@@ -5,11 +5,11 @@
         <el-header class="header-throwsf">
           <el-row>
             <el-col :span="20">
-              <img src="../../assets/img/logo.png" style="margin-top: 20px;" height="60"/>
+              <img src="../../assets/img/logo.png" style="margin-top: 20px;" height="60">
             </el-col>
             <el-col :span="4">
               <el-row>
-                <img src='../../assets/img/menology_n.png' style="vertical-align: middle;margin-right: 5px;" height="30" />
+                <img src='../../assets/img/menology_n.png' style="vertical-align: middle;margin-right: 5px;" height="30">
                 <div class="head_group">
                   <span class="head_group_day">2019年9月26日</span>
                   <span class="head_group_week">星期四&nbsp;&nbsp;&nbsp;&nbsp;<span class="head_group_time">14:44</span></span>
@@ -26,14 +26,14 @@
             <div class="nl_l">
               <ul>
                 <li><h2>用户登录&nbsp;&nbsp;<span>USER&nbsp;LOGIN</span></h2></li>
-                <li><el-input placeholder="请输入您的登录账号" prefix-icon="el-icon-s-custom" size="big"  /></li>
+                <li><el-input placeholder="请输入您的登录账号" prefix-icon="el-icon-s-custom" size="big" /></li>
                 <li><el-input placeholder="请输入正确的登录密码" prefix-icon="el-icon-lock" size="big" /></li>
                 <li><el-input placeholder="请输入验证码" prefix-icon="el-icon-house" size="big" class="ipt_login" style="margin-right: 2%;" /><el-input size="big" class="ipt_login" /></li>
                 <li><el-button type="primary" class="btn_login">立即登录</el-button></li>
                 <li><a href="javascript:;">账户注册</a> | <a href="javascript:;">忘记密码</a> | <a href="javascript:;">修改密码</a></li>
               </ul>
-              <a href="javascript:;" class="nl_l_btn"><img src="../../assets/img/online.png"/>在线投诉处理</a>
-              <a href="javascript:;" class="nl_l_btn"><img src="../../assets/img/menology_h.png"/>企业信息查询</a>
+              <router-link :to="{ name: 'saveComplainInfo' }" class="nl_l_btn"><img src="../../assets/img/online.png">在线投诉处理</router-link>
+              <router-link :to="{ path: '/firmInfo-search' }" class="nl_l_btn"><img src="../../assets/img/menology_h.png">企业信息查询</router-link>
             </div>
           </el-col>
           <el-col :span="16">
@@ -92,7 +92,7 @@
 
 <script>
 export default {
-  name: 'register',
+  name: 'newLogin',
   data() {
     return {
 
@@ -115,7 +115,7 @@ export default {
 
   .header-throwsf {
     width: 100%;
-    position: fixed;
+    // position: fixed;
     left: 0;
     height: 120px !important;
     line-height: 120px;
@@ -144,7 +144,6 @@ export default {
   }
 
   .newlog {
-    margin-top: 130px;
     .nl_l {
       box-sizing: border-box;
       padding-right: 10px;
@@ -249,11 +248,9 @@ export default {
       }
     }
   }
-
-
   .footer-throwsf {
     width: 100%;
-    position: fixed;
+    // position: fixed;
     height: 120px !important;
     line-height: 120px;
     font-size: 20px;

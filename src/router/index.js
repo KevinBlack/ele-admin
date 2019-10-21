@@ -9,10 +9,12 @@ import Layout from '@/layout'
 /* Router Modules */
 // import componentsRouter from './modules/components'
 import systemRouter from './modules/system'
-import example2Router from './modules/example2'
+import exampleRouter from './modules/example'
 import membershipfeemangeRouter from './modules/membership-fee-mange'
 import hxxdRouter from './modules/hxxd'
+import jyycglRouter from './modules/jyycgl'
 import complaintManageRouter from './modules/complaintManage'
+import hxxdMemberRouter from './modules/member'
 
 // import nestedRouter from './modules/nested'
 // 系统基础路由
@@ -37,6 +39,26 @@ export const constantRoutes = [
   {
     path: '/newlogin',
     component: () => import('@/views/login/newlogin'),
+    hidden: true
+  },
+  {
+    path: '/firmInfo-search',
+    component: () => import('@/views/example/firmInfo-search'),
+    hidden: true
+  },
+  {
+    path: '/firmInfo-list',
+    component: () => import('@/views/example/firmInfo-list'),
+    hidden: true
+  },
+  {
+    path: '/firmInfo',
+    component: () => import('@/views/example/firmInfo'),
+    hidden: true
+  },
+  {
+    path: '/online-complaints',
+    component: () => import('@/views/example/online-complaints'),
     hidden: true
   },
   {
@@ -84,9 +106,11 @@ export const asyncRoutes = [
   // componentsRouter,
   // nestedRouter,
   systemRouter,
-  example2Router,
+  exampleRouter,
   membershipfeemangeRouter,
+  hxxdMemberRouter,
   hxxdRouter,
+  jyycglRouter,
   complaintManageRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

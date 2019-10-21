@@ -1,10 +1,13 @@
 <template>
-  <div class="app-container">
-    <el-card class="box-card">
-      <div class="title-cls">投诉信息</div>
+    <el-card class="detailsContainer">
+      <el-row>
+      <el-col :span="12">
+        <h3><i class="el-icon-tickets" style="color: #67C23A;margin-right: 5px;" />投诉信息</h3>
+      </el-col>
+    </el-row>
       <el-card class="box-card" style="padding:15px;border-radius:0px;">
         <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
-          <el-row>
+          <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="投诉主题" size="mini" prop="complaintTheme">
                 <el-input v-model="detailForm.complaintTheme" size="mini"></el-input>
@@ -15,6 +18,8 @@
                 <el-input v-model="detailForm.complainant" size="mini"></el-input>
               </el-form-item>
             </el-col>
+            </el-row>
+            <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="联系方式" size="mini" prop="contractInformation">
                 <el-input v-model.number="detailForm.contractInformation" size="mini"></el-input>
@@ -25,6 +30,8 @@
                 <el-input v-model.number="detailForm.contractEmail" size="mini"></el-input>
               </el-form-item>
             </el-col>
+             </el-row>
+            <el-row :gutter="20">
             <el-col :span="24">
               <el-form-item label="投诉内容" size="mini" prop="complaintsContents">
                 <el-input
@@ -47,7 +54,6 @@
         </el-form>
       </el-card>
     </el-card>
-  </div>
 </template>
 
 <script>
@@ -97,10 +103,19 @@ export default {
   }
 }
 </script>
-<style>
-.title-cls {
-  color: #409eff;
-  border-bottom: 1px solid #409eff;
-  padding-bottom: 10px;
+<style scoped>
+*{
+  font-weight: normal;
+}
+.detailsContainer {
+  margin: 0 10px;
+}
+.dtl-title-line {
+  display: inline-block;
+  border-left: 3px solid #409EFF;
+  padding-left: 5px;
+}
+.el-table__fixed-right::before {
+  background-color: none;
 }
 </style>

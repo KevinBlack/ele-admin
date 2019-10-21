@@ -16,7 +16,7 @@ service.interceptors.request.use(
   config => {
     // 当Content-Type 不存在时
     if (config.data) {
-      config.data = qs.stringify(config.data)
+      config.data = qs.stringify(config.data, { allowDots: true })
     }
     if (store.getters.token) {
       // let each request carry token 必须要有token

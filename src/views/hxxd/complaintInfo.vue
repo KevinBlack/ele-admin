@@ -64,7 +64,7 @@
                 align="center"
                 v-if="show"
               />
-              <el-table-column prop="complaintsContents" label="投诉内容"  align="center" />
+              <el-table-column prop="complaintsContents" label="投诉内容" align="center" />
               <el-table-column prop="complainant" label="投诉人" align="center" />
               <el-table-column prop="handlePerson" label="处理人" align="center" :show-overflow-tooltip="true" />
               <el-table-column

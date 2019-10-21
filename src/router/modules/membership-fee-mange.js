@@ -1,4 +1,4 @@
-/** When your routing table is too long, you can split it into small modules**/
+/** 会费管理**/
 
 import Layout from '@/layout'
 
@@ -27,6 +27,13 @@ const membershipfeemangeRouter = {
       component: () => import('@/views/membership-fee-mange/add'),
       name: 'add',
       meta: { title: '新增登记' }
+    },
+    {
+      path: 'dj_Info',
+      hidden: true,
+      component: () => import('@/views/membership-fee-mange/dj_Info'),
+      name: 'dj_Info',
+      meta: { title: '查看详情' }
     },
     {
       path: 'sp_list',

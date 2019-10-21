@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card class="box-card">
-      <div class="title-cls">处理信息</div>
+      <div class="title-cls">投诉处理信息</div>
       <el-card class="box-card" style="padding:15px;border-radius:0px;">
         <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
           <el-row>
@@ -11,13 +11,14 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="处理时间" size="mini" prop="processingTime">
+              <el-form-item label="处理时间"  size="mini" prop="processingTime">
                 <el-date-picker
                   v-model="detailForm.processingTime"
                   type="date"
                   format="yyyy-MM-dd HH:mm:ss"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期"
+                  style="width:100%"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
