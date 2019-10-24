@@ -34,39 +34,4 @@ export function saveSp(ids, state) {
     data: { ids, state }
   })
 }
-export function selectMemberFeeInfo(data) {
-  return request({
-    url: '/hxxd/memberFeeInfo/selectMemberFeeInfo',
-    method: 'post',
-    data
-  })
-}
-export function getFeeInfoByCode(code) {
-  return request({
-    url: '/hxxd/memberFeeInfo/getFeeInfoByCode',
-    method: 'post',
-    data: { code }
-  })
-}
-export function insertMemberFeeInfo(data) {
-  return request({
-    url: '/hxxd/memberFeeInfo/insertMemberFeeInfo',
-    method: 'post',
-    data
-  })
-}
-export function deleteMemberFeeInfo(ids) {
-  return request({
-    url: '/hxxd/memberFeeInfo/deleteMemberFeeInfo',
-    method: 'post',
-    data: { ids }
-  })
-}
-export function updateMemberFeeInfo(data) {
-  return request({
-    url: '/hxxd/memberFeeInfo/updateMemberFeeInfo',
-    method: 'post',
-    data
-  })
-}
 

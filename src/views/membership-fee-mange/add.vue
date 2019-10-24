@@ -6,10 +6,10 @@
       </el-col>
       <el-col :span="12" style="text-align:right;">
         <el-button-group>
-          <el-button icon="el-icon-edit" size="mini">保存</el-button>
-          <el-button icon="el-icon-share" size="mini">刷新</el-button>
+          <el-button icon="el-icon-edit"   size="mini" @click="saveMemberPay">保存</el-button>
+          <el-button icon="el-icon-share"  size="mini" @click="reload()">刷新</el-button>
           <el-button icon="el-icon-delete" size="mini">删除</el-button>
-          <el-button icon="el-icon-check" size="mini">提交</el-button>
+          <el-button icon="el-icon-check"  size="mini">提交</el-button>
         </el-button-group>
       </el-col>
     </el-row>
@@ -21,9 +21,19 @@
         </el-row>
         <el-form ref="ruleForm" label-width="100px" size="mini">
           <el-row >
+             <el-col :span="6">
+              <el-form-item label="缴费会员" prop="memberName">
+               <el-input v-model="addForm.memberName" style="width: 100%;">
+                  <el-button slot="append" icon="el-icon-search" @click="showSelect()" />
+               </el-input>
+              </el-form-item>
+                <el-dialog :visible.sync="isShowSelect">
+                  <add_member_modality :fdmsg="memberForm" :fdshow3="isShowSelect" @closeDalog="closeSelect" />
+                </el-dialog>
+            </el-col>
             <el-col :span="6">
-               <el-form-item label="缴费会员" prop="memberName">
-                <el-input v-model="addForm.memberName" style="width: 100%;"></el-input>
+               <el-form-item label="会员ID" prop="memberId">
+                <el-input v-model="addForm.memberId" style="width: 100%;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -39,13 +49,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="会员ID" prop="memberId">
-               <el-input v-model="addForm.memberId" style="width: 100%;"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
               <el-form-item label="会员类别" prop="memberType">
-                <el-select v-model="addForm.memberType" placeholder="请选择" style="width: 100%;">
+                <el-select v-model="addForm.memberType" placeholder="请选择" style="width: 100%;" @change="selectGet">
                   <el-option
                     v-for="item in hyTypeOptions"
                     :key="item.value"
@@ -91,11 +96,11 @@
             style="padding:15px;border-radius:0px;"
             :body-style="{ padding: '0px' }"
            >
-             <el-radio-group  size="mini">
-                <el-radio-button  class="btn_line" type="primary"  size="mini"  style="cursor: pointer;" @click="showBox()">新增</el-radio-button>
-                <el-radio-button  class="btn_line" type="primary"  size="mini"  style="cursor: pointer;" @click="handleDelete()">删除</el-radio-button>
-               </el-radio-group>
-              <el-dialog :visible.sync="isShow" width="70%">
+             <el-button-group  size="mini">
+                <el-button class="btn_line" type="primary" size="mini" style="cursor: pointer;" @click="showBox()">新增</el-button>
+                <el-button class="btn_line" type="primary" size="mini" style="cursor: pointer;" @click="handleDelete()">删除</el-button>
+              </el-button-group>
+              <el-dialog title="新增" :visible.sync="isShow" width="70%">
                   <add_modality :fdmsg="addForm" :fdshow2="isShow" @closeDalog="closeBox" style="height:300px;"/>
                </el-dialog>
            </el-card>
@@ -126,16 +131,25 @@
 <script>
 import {
   getDjInfoList,
+  getFeeInfoByCode,
+  saveMemberPay,
   deleteMember
 } from '@/api/hxxd/membership-fee-mange'
+import add_member_modality from './add_member_modality'
 import add_modality from './add_modality'
 
 export default {
   name: 'Add',
-  components: { add_modality },
+  components: { add_modality, add_member_modality },
   data() {
     return {
+      memberForm:{
+      id:"",
+      memberName: "",
+      memberId: "",
+      },
       show: true,
+      isShowSelect:false,
       isShow: false,
       tableMultiSelection: [],
       addForm: {
@@ -146,7 +160,7 @@ export default {
         discount: "",
         memberGrade: "",
         memberId: "",
-        paymentYear: "",
+        paymentYear: "2019",
         memberType: ""
       },
       yearOptions:[
@@ -166,8 +180,8 @@ export default {
       ],
       hyTypeOptions:[
       {
-        value: '2019',
-        label: '2019'
+        value: 'A101',
+        label: '航空公司'
       }, {
         value: '2020',
         label: '2020'
@@ -183,6 +197,26 @@ export default {
     }
   },
   methods: {
+    saveMemberPay(){
+       saveMemberPay(this.addForm).then(response => {
+           if (response.status == 200) {
+              //保存成功
+              this.$message({
+                type: "success",
+                message: '保存成功!'
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: '保存失败!'
+              });
+            }
+          })
+    },
+    reload () {
+      this.$router.go(0);
+    }  ,
      handleAdd() {
       // this.$router.push({ path: '/membership-fee-mange/add', query: {}})
     },
@@ -210,6 +244,22 @@ export default {
     selectionChange(val) {
       this.tableMultiSelection = val
     },
+    selectGet(val) {
+      let obj = {};
+      obj = this.hyTypeOptions.find((item)=>{
+          return item.value === val;//筛选出匹配数据
+          });
+       getFeeInfoByCode(obj.value).then(response => {
+            this.addForm.memberGrade = response.data.memberDj
+            this.addForm.discount = response.data.memberZk
+            this.addForm.amountDue = response.data.amountPay
+            this.addForm.paymentAmount = response.data.actualPay
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+             })
+          })
+    },
       // 模态框 start
     showBox() {
       if (!this.addForm.memberName) {
@@ -223,7 +273,18 @@ export default {
         this.isShow = true
       }
     },
+    showSelect() {
+        this.isShowSelect = true
+    },
     closeBox(chiledArr, fdshow) {
+      if (chiledArr.length > 0) {
+        for (let i = 0; i < chiledArr.length; i++) {
+          this.input3 += chiledArr[i]
+        }
+      } 
+      this.isShow = fdshow
+    },
+    closeSelect(chiledArr, fdshow) {
       if (chiledArr.length <= 0) {
         this.$notify({
           title: '提示',
@@ -232,11 +293,11 @@ export default {
           duration: 2000
         })
       } else {
-        for (let i = 0; i < chiledArr.length; i++) {
-          this.input3 += chiledArr[i]
-        }
+          this.addForm.id =chiledArr.id
+          this.addForm.memberName =chiledArr.name
+          this.addForm.memberId =chiledArr.code
       }
-      this.isShow = fdshow
+      this.isShowSelect = fdshow
     }
     // 模态框 end
   }

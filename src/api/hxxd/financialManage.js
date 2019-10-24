@@ -25,13 +25,13 @@ export function financialDataConfirm(ids) {
   return request({
     url: '/hxxd/hx-xd-financial-manage/financialDataConfirm',
     method: 'post',
-    params: {ids}
+    params: { ids }
   })
 }
 export function deleteFinancialData(ids) {
   return request({
     url: '/hxxd/hx-xd-financial-manage/deleteFinancialData',
     method: 'post',
-    params: {ids}
+    params: { ids }
   })
 }

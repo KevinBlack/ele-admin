@@ -51,7 +51,8 @@ service.interceptors.response.use(
     // 过滤文件流格式
     if (
       res.headers['content-type'] === 'application/octet-stream' ||
-      res.headers['content-type'] === 'image/Jpeg'
+      res.headers['content-type'] === 'image/Jpeg' ||
+      res.headers['content-type'] === 'multipart/form-data'
     ) {
       return Promise.resolve(res)
     }

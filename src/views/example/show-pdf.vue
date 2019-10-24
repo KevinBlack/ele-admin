@@ -1,95 +1,212 @@
 <template>
-<div class="pdf">
-  <el-button class="pdf-tab">
-    <el-button type="primary" size="mini" class="btn-def btn-pre" @click.stop="prePage">上一页</el-button>
-    <el-button type="primary" size="mini" class="btn-def btn-next" @click.stop="nextPage">下一页</el-button>
-    <el-button type="primary" size="mini" class="btn-def" @click.stop="clock">顺时针</el-button>
-    <el-button type="primary" size="mini" class="btn-def" @click.stop="counterClock">逆时针</el-button>
-    <!-- <el-button class="btn-def" @click.stop="pdfPrintAll">全部打印</el-button>
-    <el-button class="btn-def" @click.stop="pdfPrint">部分打印</el-button> -->
-  </el-button>
-  <div>{{pageNum}}/{{pageTotalNum}}</div>
-  <el-progress :text-inside="true" :stroke-width="20" :percentage="loadedRatio" class="progres"></el-progress>
-  <!-- <div>进度：{{loadedRatio}}</div> -->
-  <p>页面加载成功: {{curPageNum}}</p>
-  <pdf
-    ref="pdf"
-    :src="pdfUrl"
-    :page="pageNum"
-    :rotate="pageRotate"
-    @password="password"
-    @progress="loadedRatio = $event"
-    @page-loaded="pageLoaded($event)"
-    @num-pages="pageTotalNum=$event"
-    @error="pdfError($event)"
-    @link-clicked="page = $event">
-  </pdf>
-</div>
+  <div class="app-container">
+    <el-dialog
+      v-loading="loading"
+      :visible.sync="dialogSeeVisible"
+      :title="dialogTitle"
+      :close-on-click-modal="closeModel"
+      modal
+      width="80%"
+      @close="closeDialog"
+      @open="onOpen"
+    >
+      <el-card class="cpdf">
+        <div class="center">
+          <div class="contor">
+            <el-button @click="prev">上一页</el-button>
+            <el-button @click="next">下一页</el-button>
+            <span>Page: <span v-text="page_num"/> / <span v-text="page_count"/></span>
+            <el-button icon="el-icon-plus" @click="addscale"/>
+            <el-button icon="el-icon-minus" @click="minus"/>
+            <el-button id="prev" @click="closeDialog">关闭</el-button>
+          </div>
+          <canvas id="the-canvas" class="canvasstyle"/>
+        </div>
+      </el-card>
+    </el-dialog>
+  </div>
 </template>
 <script>
-import pdf from 'vue-pdf'
+
+import PDFJS from 'pdfjs-dist'
+PDFJS.GlobalWorkerOptions.workerSrc = './../../../node_modules/pdfjs-dist/build/pdf.worker.js'
+import request from '@/utils/request'
+import { Message } from 'element-ui'
+
 export default {
-  name: 'Pdf',
-  components:{ pdf },
-  data(){
-    return {
-      pdfUrl:"../../assets/img/clbxd.pdf",
-      pageNum:1,
-      pageTotalNum:1,
-      pageRotate:0,
-      // 加载进度
-      loadedRatio:0,
-      curPageNum:0,
+  name: 'pdf',
+  props: {
+    dialogSeeVisible: {
+      type: Boolean,
+      default: false
+    },
+    seeFileId: {
+      type: Number,
+      default: null
     }
   },
-  mounted: function() {
+  data() {
+    return {
+      closeModel: false,
+      clearable: false,
+      urlPrefix: process.env.BASE_API,
+      dialogTitle: '浏览技术文档',
+      pdfurl: '',
+      loading: false,
+      pdfDoc: null, // pdfjs 生成的对象
+      pageNum: 1, //
+      pageRendering: false,
+      pageNumPending: null,
+      scale: 1.2, // 放大倍数
+      page_num: 0, // 当前页数
+      page_count: 0, // 总页数
+      maxscale: 2, // 最大放大倍数
+      minscale: 0.8// 最小放大倍数
+    }
+  },
+  computed: {
+    ctx() {
+      const id = document.getElementById('the-canvas')
+      return id.getContext('2d')
+    }
+  },
+  created() {
+    this.onOpen()
   },
   methods: {
-    prePage(){
-      var p = this.pageNum
-      p = p>1?p-1:this.pageTotalNum
-      this.pageNum = p
+    closeDialog(freshList) {
+      const _this = this
+      _this.pdfurl = ''
+      _this.pdfDoc = null
+      _this.pageNum = 1
+      _this.pageRendering = false
+      _this.pageNumPending = null
+      _this.scale = 1.2
+      _this.page_num = 0
+      _this.page_count = 0
+      // PDFJS.getDocument(_this.pdfurl).then(function(pdfDoc_) {
+      //   _this.pdfDoc = pdfDoc_
+      //   _this.page_count = _this.pdfDoc.numPages
+      //   _this.renderPage(_this.pageNum)
+      // })
+      this.$emit('refreshValue', freshList)
     },
-    nextPage(){
-      var p = this.pageNum
-      p = p<this.pageTotalNum?p+1:1
-      this.pageNum = p
+    onOpen() {
+      const _this = this
+      _this.loading = true
+      request({ url: '/document/info/preview/' + _this.seeFileId, method: 'get' }).then(
+        function(value) {
+          if (value.code === 200) {
+            _this.pdfurl = _this.urlPrefix + '/' + value.data.fileVirtualPath
+            _this.loading = false
+            // 初始化pdf
+            PDFJS.getDocument(_this.pdfurl).then(function(pdfDoc_) {
+              _this.pdfDoc = pdfDoc_
+              _this.page_count = _this.pdfDoc.numPages
+              _this.renderPage(_this.pageNum)
+            })
+          } else {
+            Message.error(value.message)
+            _this.loading = false
+            _this.closeDialog()
+          }
+        }
+      )
     },
-    clock(){
-      this.pageRotate += 90
+    renderPage(num) { // 渲染pdf
+      const vm = this
+      this.pageRendering = true
+      const canvas = document.getElementById('the-canvas')
+      // Using promise to fetch the page
+      this.pdfDoc.getPage(num).then(function(page) {
+        var viewport = page.getViewport(vm.scale)
+        // alert(vm.canvas.height)
+        canvas.height = viewport.height
+        canvas.width = viewport.width
+        // Render PDF page into canvas context
+        var renderContext = {
+          canvasContext: vm.ctx,
+          viewport: viewport
+        }
+        var renderTask = page.render(renderContext)
+        // Wait for rendering to finish
+        renderTask.promise.then(function() {
+          vm.pageRendering = false
+          if (vm.pageNumPending !== null) {
+          // New page rendering is pending
+            vm.renderPage(vm.pageNumPending)
+            vm.pageNumPending = null
+          }
+        })
+      })
+      vm.page_num = vm.pageNum
     },
-    counterClock(){
-      this.pageRotate -= 90
+    addscale() { // 放大
+      if (this.scale >= this.maxscale) {
+        return
+      }
+      this.scale += 0.1
+      this.queueRenderPage(this.pageNum)
     },
-    password(updatePassword, reason) {
-      updatePassword(prompt('password is "123456"'))
-      console.log('...reason...')
-      console.log(reason)
-      console.log('...reason...')
+    minus() { // 缩小
+      if (this.scale <= this.minscale) {
+        return
+      }
+      this.scale -= 0.1
+      this.queueRenderPage(this.pageNum)
     },
-    pageLoaded(e){
-      this.curPageNum = e
+    prev() { // 上一页
+      const vm = this
+      if (vm.pageNum <= 1) {
+        return
+      }
+      vm.pageNum--
+      vm.queueRenderPage(vm.pageNum)
     },
-    pdfError(error){
-      console.error(error)
+    next() { // 下一页
+      const vm = this
+      if (vm.pageNum >= vm.page_count) {
+        return
+      }
+      vm.pageNum++
+      vm.queueRenderPage(vm.pageNum)
     },
-    pdfPrintAll(){
-      this.$refs.pdf.print()
-    },
-    pdfPrint(){
-      this.$refs.pdf.print(100,[1,2])
-    },
+    queueRenderPage(num) {
+      if (this.pageRendering) {
+        this.pageNumPending = num
+      } else {
+        this.renderPage(num)
+      }
+    }
   }
 }
 </script>
-<style scoped>
-.pdf {
-  width: 98%;
-  margin: auto;
-  text-align: center;
+<style scoped="" type="text/css">
+.cpdf {
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.progres {
-  width: 40%;
-  margin: auto;
+.center {
+    text-align: center;
+    height: 100%;
+    overflow: auto;
+    padding-top: 20px;
+}
+.contor {
+    margin-bottom: 10px;
+}
+.button-group {
+  float: right;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>
+————————————————
+版权声明：本文为CSDN博主「SophiaLeo」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/Amor_Leo/article/details/89389889

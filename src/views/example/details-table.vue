@@ -38,10 +38,26 @@
         </el-col>
       </el-row>
     </el-form>
+    <el-row><el-col :span="24">&nbsp;</el-col></el-row>
     <!-- part3 -->
     <el-row :gutter="10">
       <el-col :span="24">
-        <div class="dtl-info-line">已选择{{ sum }}条<el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button></div>
+        <!-- <div class="dtl-info-line">已选择{{ sum }}条<el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button></div> -->
+        <div v-show="isShow" class="dtl-info-line">
+          <ul>
+            <li>
+              <el-tag
+                v-for="tag in this.multipleSelection"
+                :key="tag.data"
+                closable
+                type=""
+                @close="handleClose(tag)"
+                style="margin-right: 10px;">
+                {{tag.date}}
+              </el-tag>
+            </li>
+          </ul>
+        </div>
       </el-col>
     </el-row>
     <el-table
@@ -57,14 +73,17 @@
         width="55"
       />
       <el-table-column
-        label="日期"
+        label="系统名"
         width="120"
       >
-        <template slot-scope="scope">{{ scope.row.date }}</template>
+        <template slot-scope="scope">
+          <router-link :to="scope.row.url">{{ scope.row.date }}</router-link>
+        </template>
+        <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
       </el-table-column>
       <el-table-column
         prop="name"
-        label="姓名"
+        label="手机"
         width="120"
       />
       <el-table-column
@@ -91,71 +110,70 @@ export default {
     return {
       activeName: 'princeInfo',
       value: '',
-      sum: 0,
+      // sum: 0,
       added: 0,
       tableData: [
         {
-          date: '2016-05-03',
+          id: 0,
+          url: './',
+          date: '民航系统',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: '2016-05-02',
+          id: 1,
+          url: './',
+          date: '去哪儿网',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: '2016-05-04',
+          id: 2,
+          url: './',
+          date: '携程网',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: '2016-05-01',
+          id: 3,
+          url: './',
+          date: '马蜂窝',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: '2016-05-08',
+          id: 4,
+          url: './',
+          date: '美团网',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: '2016-05-06',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-07',
+          id: 5,
+          url: './',
+          date: '电话热线',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         }
       ],
-      multipleSelection: []
+      isShow: false,
+      multipleSelection: [],
+      middleSelection: []
     }
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event)
-    },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
+    handleClose(tag) {
+      this.multipleSelection.splice(this.multipleSelection.findIndex(item => item.date === tag.date), 1)
+      console.log(tag.id)
+      this.$refs.multipleTable.toggleRowSelection(this.tableData[tag.id], false)
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      if (val.length !== 0) {
-        this.added = val.length
-        console.log(val)
-        console.log(this.added)
-        this.sum = this.added
-        console.log(this.sum)
-      } else if (val.length === 0) {
-        this.sum -= this.added
+      this.added = this.multipleSelection.length
+      if (this.added) {
+        this.isShow = true
+      } else {
+        this.isShow = false
       }
     }
   }
@@ -165,6 +183,9 @@ export default {
 <style scoped>
 *{
   font-weight: normal;
+}
+ul, li {
+  list-style: none;
 }
 .detailsContainer {
   margin: 0 10px;
@@ -178,15 +199,17 @@ export default {
   background-color: none;
 }
 .dtl-info-line {
-  height: 40px;
-  line-height: 40px;
   margin: 10px auto;
-  border-radius: 3px;
   font-size: 12px;
   box-sizing: border-box;
-  padding-left: 10px;
   color: #000;
-  background-color: #dcecfd;
+  border: 1px solid #dedede;
+}
+.dtl-info-line ul {
+  padding-left: 10px !important;
+}
+.dtl-info-line ul li {
+  line-height: 40px;
 }
 .el-table>th {
   background-color: #eee !important;

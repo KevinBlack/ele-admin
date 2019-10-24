@@ -13,9 +13,9 @@ import exampleRouter from './modules/example'
 import membershipfeemangeRouter from './modules/membership-fee-mange'
 import hxxdRouter from './modules/hxxd'
 import jyycglRouter from './modules/jyycgl'
+import msgManageRouter from './modules/msgManage'
 import complaintManageRouter from './modules/complaintManage'
 import hxxdMemberRouter from './modules/member'
-
 // import nestedRouter from './modules/nested'
 // 系统基础路由
 export const constantRoutes = [
@@ -39,6 +39,12 @@ export const constantRoutes = [
   {
     path: '/newlogin',
     component: () => import('@/views/login/newlogin'),
+    hidden: true
+  },
+  {
+    path: '/newsInfo',
+    component: () => import('@/views/newsInfo/index'),
+    name: 'NewsInfo',
     hidden: true
   },
   {
@@ -111,6 +117,7 @@ export const asyncRoutes = [
   hxxdMemberRouter,
   hxxdRouter,
   jyycglRouter,
+  msgManageRouter,
   complaintManageRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

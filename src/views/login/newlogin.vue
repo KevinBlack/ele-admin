@@ -30,7 +30,7 @@
                 <li><el-input placeholder="请输入正确的登录密码" prefix-icon="el-icon-lock" size="big" /></li>
                 <li><el-input placeholder="请输入验证码" prefix-icon="el-icon-house" size="big" class="ipt_login" style="margin-right: 2%;" /><el-input size="big" class="ipt_login" /></li>
                 <li><el-button type="primary" class="btn_login">立即登录</el-button></li>
-                <li><a href="javascript:;">账户注册</a> | <a href="javascript:;">忘记密码</a> | <a href="javascript:;">修改密码</a></li>
+                <li><router-link to="/register">账户注册</router-link> | <a href="javascript:;">忘记密码</a> | <a href="javascript:;">修改密码</a></li>
               </ul>
               <router-link :to="{ name: 'saveComplainInfo' }" class="nl_l_btn"><img src="../../assets/img/online.png">在线投诉处理</router-link>
               <router-link :to="{ path: '/firmInfo-search' }" class="nl_l_btn"><img src="../../assets/img/menology_h.png">企业信息查询</router-link>
@@ -41,7 +41,7 @@
               <el-col class="nl_r_list">
                 <h5>公示信息<a href="javascript:;" class="btn_more">更多</a></h5>
                 <ul>
-                  <li><b>&nbsp;</b><a href="javascript:;">航协数据显示：全球航空客运需求增长放缓</a><span>2019-02-07</span></li>
+                  <li><b>&nbsp;</b><router-link to="/newsInfo">国人免签国家新增27个</router-link><span>2019-02-07</span></li>
                   <li><b>&nbsp;</b><a href="javascript:;">全球最高级别！山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
                   <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
                   <li><b>&nbsp;</b><a href="javascript:;">航空工业金城：党建引领 助推经营</a><span>2019-02-07</span></li>

@@ -6,12 +6,12 @@
           <!-- label-width='65px' -->
           <el-form ref="formQuery" :model="formQuery" :inline="true">
             <el-row>
-              <el-col :span="20">
-                <el-form-item label="交易流水号" size="mini" prop="saleNum">
-                  <el-input v-model="formQuery.saleNum" size="mini" />
+              <el-col :span="18">
+                <el-form-item label="会员名称" size="mini" prop="name">
+                  <el-input v-model="formQuery.name" size="mini" />
                 </el-form-item>
               </el-col>
-              <el-col :span="4">
+              <el-col :span="6">
                 <el-form-item size="mini">
                   <el-button type="primary" size="mini" @click="search">查询</el-button>
                   <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
@@ -34,13 +34,9 @@
     >
       <el-table-column type="selection" width="55"  align="center" />
       <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
-      <el-table-column prop="saleDate" label="交易时间" width="" align="center" />
-      <el-table-column prop="saleNum" label="交易流水号" width="" align="center" />
-      <el-table-column prop="creditAmount" label="贷方发生额" width="" align="center" />
-      <el-table-column prop="remarks" label="摘要" width="" align="center" />
-      <el-table-column prop="payerAccount" label="对方账号" width="" align="center" />
-      <el-table-column prop="payeeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
-      <el-table-column prop="payerBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="code" label="会员编号" width="" align="center" />
+      <el-table-column prop="name" label="会员名称" width="" align="center" />
+      <el-table-column prop="remarks" label="备注" width="" align="center" />
     </el-table>
     <el-row style="margin-top: 20px;text-align: center;">
       <el-col :span="8" :offset="16">
@@ -53,11 +49,10 @@
 
 <script>
 import {
-  getFinancialInfoList,
-  saveCheck
-} from '@/api/hxxd/financial'
+  getMemberList
+} from '@/api/hxxd/member'
 export default {
-  name: 'add_modality',
+  name: 'add_member_modality',
   props: {
     fdmsg: {
       type: [String, Number,Object],
@@ -65,7 +60,7 @@ export default {
       default: ''
     }
     ,
-    fdshow2:{
+    fdshow3:{
       type: [Boolean],
       required: true,
       default: false
@@ -76,16 +71,11 @@ export default {
       show:false,
       formQuery: {
         id:'',
-        saleDate:'',
-        saleNum:'',
-        creditAmount:'',
-        remarks:'',
-        payerAccount:'',
-        payeeAccountName:'',
-        payerBank:''
+        code:'',
+        name:'',
+        remarks:''
       },
       fdshow: false,
-      memberIds:'',
       selectArr: [],
       childArr: [],
       tableData: []
@@ -95,9 +85,8 @@ export default {
     this.getTableList()
   },
   watch:{
-    'fdshow2':function(val, oldVal) {
+    'fdshow3':function(val, oldVal) {
       if(val){
-        this.memberIds =this.fdmsg.memberId
         this.getTableList()
       }
     }
@@ -105,10 +94,8 @@ export default {
   methods: {
      getTableList() {
       this.tableLoading = true
-      getFinancialInfoList(this.formQuery).then(response => {
+      getMemberList(this.formQuery).then(response => {
         this.tableData = response.data
-        this.pageTotal = response.page.total
-        this.tableLoading = false
       })
     },
      search() {
@@ -151,6 +138,13 @@ export default {
         })
         return
       }
+      if (selectRows.length > 1) {
+        this.$message({
+          type: 'info',
+          message: '请选中一条操作数据!'
+        })
+        return
+      }
       this.$confirm('是否执行选择操作?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -165,14 +159,11 @@ export default {
           })
           if (idArr && idArr.length > 0) {
             var Ids = idArr.join()
-            saveCheck(Ids).then(response => {
-              this.$message({
-                type: 'success',
-                message: '操作成功!'
-              })
               this.getTableList()
-            })
           }
+        this.$emit('closeDalog', this.selectArr[0], this.fdshow)
+        this.selectArr = []
+        this.$refs.multipleTable.clearSelection() // 清空所有选择
         })
         .catch(() => {
           // 取消时执行此处
@@ -181,9 +172,7 @@ export default {
      handleClose(e) {
       if (e === 'saveBtn') {
         this.batchCheck();
-        this.$emit('closeDalog', '', this.fdshow)
-        this.$refs.multipleTable.clearSelection() // 清空所有选择
-        this.selectArr = []
+     
       } else if (e === 'canselBtn') {
        this.$emit('closeDalog', '', this.fdshow)
       }

@@ -27,6 +27,22 @@ const exampleRouter = {
       }
     },
     {
+      path: 'upload-demo',
+      component: () => import('@/views/example/upload-demo'),
+      name: 'upload-demo',
+      meta: {
+        title: '上传demo'
+      }
+    },
+    {
+      path: 'rich-text',
+      component: () => import('@/views/example/rich-text'),
+      name: 'RichText',
+      meta: {
+        title: '富文本Demo'
+      }
+    },
+    {
       path: 'detailLayout',
       component: () => import('@/views/example/detail-layout/index'),
       name: 'DetailLayout',

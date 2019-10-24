@@ -41,13 +41,6 @@ export function selectMemberFeeInfo(data) {
     data
   })
 }
-export function getFeeInfoByCode(code) {
-  return request({
-    url: '/hxxd/memberFeeInfo/getFeeInfoByCode',
-    method: 'post',
-    data: { code }
-  })
-}
 export function insertMemberFeeInfo(data) {
   return request({
     url: '/hxxd/memberFeeInfo/insertMemberFeeInfo',
@@ -59,7 +52,7 @@ export function deleteMemberFeeInfo(ids) {
   return request({
     url: '/hxxd/memberFeeInfo/deleteMemberFeeInfo',
     method: 'post',
-    data: { ids }
+    data: {ids}
   })
 }
 export function updateMemberFeeInfo(data) {
