@@ -16,6 +16,8 @@ import jyycglRouter from './modules/jyycgl'
 import msgManageRouter from './modules/msgManage'
 import complaintManageRouter from './modules/complaintManage'
 import hxxdMemberRouter from './modules/member'
+import industryInfoPublishRouter from './modules/industryInfoPublish'
+import financialManageRouter from './modules/financialManage'
 // import nestedRouter from './modules/nested'
 // 系统基础路由
 export const constantRoutes = [
@@ -37,14 +39,50 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/successPage',
+    component: () => import('@/views/successPage'),
+    name: 'SuccessPage',
+    hidden: true
+  },
+  {
     path: '/newlogin',
     component: () => import('@/views/login/newlogin'),
+    hidden: true
+  },
+  {
+    path: '/resetPwd',
+    component: () => import('@/views/resetPwd/index'),
+    name: 'ResetPwd',
+    hidden: true
+  },
+  {
+    path: '/forgetPwd',
+    component: () => import('@/views/forgetPwd/index'),
+    name: 'ForgetPwd',
+    hidden: true
+  },
+  {
+    path: '/checkPwd',
+    component: () => import('@/views/forgetPwd/checkPwd'),
+    name: 'CheckPwd',
     hidden: true
   },
   {
     path: '/newsInfo',
     component: () => import('@/views/newsInfo/index'),
     name: 'NewsInfo',
+    hidden: true
+  },
+  {
+    path: '/news',
+    component: () => import('@/views/newsInfo/news'),
+    name: 'News',
+    hidden: true
+  },
+  {
+    path: '/newslist',
+    component: () => import('@/views/newsInfo/newslist'),
+    name: 'NewsList',
     hidden: true
   },
   {
@@ -119,6 +157,8 @@ export const asyncRoutes = [
   jyycglRouter,
   msgManageRouter,
   complaintManageRouter,
+  industryInfoPublishRouter,
+  financialManageRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

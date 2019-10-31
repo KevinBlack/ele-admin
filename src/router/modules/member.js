@@ -18,10 +18,17 @@ const hxxdMemberRouter = {
       meta: { title: '会员申请' }
     },
     {
-      path: 'member-apply-check',
-      component: () => import('@/views/hxxd/member/apply-check'),
-      name: 'MemberApplyCheck',
+      path: 'member-apply-audit',
+      component: () => import('@/views/hxxd/member/apply-audit'),
+      name: 'MemberApplyAudit',
       meta: { title: '会员申请审批' }
+    },
+    {
+      path: 'member-detail',
+      component: () => import('@/views/hxxd/member/detail'),
+      name: 'MemberDetail',
+      hidden: true,
+      meta: { title: '会员详情' }
     },
     {
       path: 'member-exit',
@@ -30,9 +37,9 @@ const hxxdMemberRouter = {
       meta: { title: '退会申请' }
     },
     {
-      path: 'member-exit-check',
-      component: () => import('@/views/hxxd/member/exit-check'),
-      name: 'MemberExitCheck',
+      path: 'member-exit-audit',
+      component: () => import('@/views/hxxd/member/exit-audit'),
+      name: 'MemberExitAudit',
       meta: { title: '退会申请审批' }
     },
     {

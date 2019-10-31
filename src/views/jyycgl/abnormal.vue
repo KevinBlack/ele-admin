@@ -32,6 +32,8 @@
               v-model="detailForm.inclusionTime"
               type="date"
               :readonly="prohibit"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期">
             </el-date-picker>
           </el-form-item>
@@ -62,7 +64,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" v-if="prohibit">
         <el-col :span="12">
           <el-form-item label="是否经营异常" prop="status">
               <el-radio v-model="detailForm.status" label="0" :disabled="prohibit">异常</el-radio>
@@ -80,7 +82,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" v-if="prohibit">
         <el-col :span="24">
           <el-form-item label="移出名录原因" prop="removeDirectoryReason">
             <el-input
@@ -102,7 +104,7 @@
 </template>
 
 <script>
-import {getAbnormal} from "@/api/jyycgl/input.js";
+import {getAbnormal,saveAbnormalOperation} from "@/api/jyycgl/input.js";
 
 export default {
   data() {
@@ -111,6 +113,7 @@ export default {
       showTitle: '经营异常-新增',
       prohibit: false,
       detailForm: {
+        id:'',
         companyName: '',
         inclusionTime: '',
         inclusionDirectoryReason:'',
@@ -130,6 +133,15 @@ export default {
         inclusionDirectoryReason: [
           { required: true, message: "不能为空", trigger: "blur" }
         ],
+        implementedBy: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ],
+        executionTime: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ],
+        status: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ]
       },
     }
   },
@@ -154,7 +166,35 @@ export default {
       });
     },
     saveAbnormalOperation(){
-      
+      this.$refs["detailForm"].validate(valid => {
+        if (valid) {
+          //数据校验成功
+          saveAbnormalOperation(this.detailForm).then(response => {
+            if (response.data) {
+              //保存成功
+              this.$message({
+                type: "success",
+                message: "保存成功"
+              });
+              this.$router.push({
+                path: "/jyycgl/details",query: {}
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: "保存失败"
+              });
+            }
+          });
+        } else {
+          //校验失败
+          this.$message({
+            message: "请正确录入页面数据",
+            type: "warning"
+          });
+        }
+      });
     },
 
     handleShow() {

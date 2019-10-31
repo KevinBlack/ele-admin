@@ -78,7 +78,7 @@
           >
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
-            <el-table-column prop="memberId" label="会员ID" width="" align="center" />
+            <el-table-column prop="memberId" label="会员ID" width="" align="center" :show-overflow-tooltip="true"/>
             <el-table-column prop="memberName" label="会员名称" width="" align="center" />
             <el-table-column prop="memberType" label="会员类别" width="" align="center" />
             <el-table-column prop="memberGrade" label="会员等级" width="" align="center" />
@@ -94,6 +94,8 @@
               <template scope="scope">
                   <span v-if="scope.row.spState==='GLY_SPTG'" style="color:green">同意</span>
                   <span v-else-if="scope.row.spState==='GLY_BH'"  style="color: red">驳回</span>
+                  <span v-else-if="scope.row.spState==='10'"  style="color: blue">未提交</span>
+                  <span v-else-if="scope.row.spState==='20'"  style="color: blue">待审核</span>
                   <span v-else-if="scope.row.spState==='GLY_WSP'"  style="color: blue">未审批</span>
                   <span v-else style="color: red">{{scope.row.spState}}</span>
                 </template>

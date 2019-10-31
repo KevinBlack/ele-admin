@@ -3,6 +3,27 @@
  */
 
 /**
+ * 从数组中获取id集合
+ * @param {*} arr
+ */
+export function getIdsFromArr(arr) {
+  if (!arr) {
+    return ''
+  }
+  // eslint-disable-next-line no-array-constructor
+  var idArr = new Array()
+  Object.keys(arr).forEach(function(index) {
+    if (arr[index]) {
+      var id = arr[index].id
+      if (id) {
+        idArr.push(id)
+      }
+    }
+  })
+  return idArr.join(',')
+}
+
+/**
  * 根据表名获取虚拟id(当真实id存在时生成真实id)
  * @param {*} tableName
  * @param {*} id

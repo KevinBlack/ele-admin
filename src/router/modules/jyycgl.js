@@ -24,6 +24,20 @@ const jyycglRouter = {
       component: () => import('@/views/jyycgl/abnormal'),
       name: 'abnormalSee',
       meta: { title: '经营异常查看详情' }
+    },
+    {
+      path: 'abnormalAdd',
+      hidden: true,
+      component: () => import('@/views/jyycgl/abnormal'),
+      name: 'abnormalAdd',
+      meta: { title: '经营异常新增' }
+    },
+    {
+      path: 'abnormalUpd',
+      hidden: true,
+      component: () => import('@/views/jyycgl/abnormal'),
+      name: 'abnormalUpd',
+      meta: { title: '经营异常修改' }
     }
   ]
 }

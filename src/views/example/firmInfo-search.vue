@@ -22,10 +22,25 @@
       <el-col :span="20" :offset="2">
         <el-card class="detailsContainer" style="min-height: 600px;text-align: center;padding-top: 150px;">
           <h1>企业信息查询</h1>
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select" style="width: 70%;vertical-align: middle;">
-            <el-button slot="append" type="primary" icon="el-icon-search" @click="next">查 询</el-button>
+          <el-input placeholder="请输入内容" v-model="formQuery.businessName" class="input-with-select" style="width: 70%;vertical-align: middle;">
+            <el-button slot="append" type="primary" icon="el-icon-search" @click="getTableList">查 询</el-button>
           </el-input>
+            <ul class="search_list" v-if="seeNo">
+              <li v-for="(item) in tableData" :key="item.id"><a @click="handleClick(item.id)">{{ item.businessName }}</a></li>
+            </ul>
         </el-card>
+        <!-- 分页 -->
+          <el-pagination
+            background
+            style="text-align: margin-top: 20px;"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="formQuery.pageNo"
+            :page-size.sync="formQuery.pageSize"
+            :page-sizes="[5, 30, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageTotal"
+          ></el-pagination>
       </el-col>
       <el-col>
         <el-footer class="footer-throwsf">
@@ -37,15 +52,51 @@
 </template>
 
 <script>
+import { getCompanyInfoList} from "@/api/hxxd/agent";
 export default {
   data() {
     return {
-      input3: ''
+       formQuery: {
+        businessName: "",
+        pageNo: 1,
+        pageSize: 5,
+      },
+      pageTotal: 0,
+      tableLoading: false,
+      tableData: []
     }
   },
+   created() {
+    this.seeNo=false
+  },
   methods: {
-    next() {
-      this.$router.push({ path: "/firmInfo-list", query: {} });
+    handleClick(paramId) {
+      console.log(paramId)
+      var id = paramId
+      this.$router.push({ path: "/firmInfo", query: {id} });
+    },
+    handleSizeChange(val) {
+      this.getTableList();
+    },
+    handleCurrentChange(val) {
+      this.getTableList();
+    },
+    getTableList() {
+      this.tableLoading = true;
+      getCompanyInfoList(this.formQuery).then(response => {
+        if(this.formQuery.businessName.split(" ").join("").length == 0){
+          this.seeNo=false
+              this.$message({
+                type: "false",
+                message: "请输入相关数据"
+              });
+        }else{
+          this.seeNo=true
+          this.tableData = response.data;
+          this.pageTotal = response.page.total;
+          this.tableLoading = false;
+        }
+      });
     }
   }
 }
@@ -55,6 +106,9 @@ export default {
 *{
   font-weight: normal;
   font-size: 14px;
+}
+ul, li {
+  list-style: none;
 }
 .header-throwsf {
     width: 100%;
@@ -86,108 +140,14 @@ export default {
     }
   }
 
-  .newlog {
-    .nl_l {
-      box-sizing: border-box;
-      padding-right: 10px;
-      ul {
-        border: 1px solid #007aad;
-        background-color: #e2f5ff;
-        margin-bottom: 10px;
-        padding: 0 19px 19px 19px;
-        li {
-          margin-bottom: 10px;
-          h2 {
-            height: 88px;
-            line-height: 88px;
-            border-bottom: 1px solid #999;
-            background: url('../../assets/img/login.png') left center no-repeat;
-            padding-left: 60px;
-            color: #000;
-            font-size: 25px;
-            span {
-              font-size: 18px;
-              color: #666;
-            }
-          }
-          .ipt_login {
-            display: inline-block;
-            width: 49%;
-          }
-          .btn_login {
-            width: 100%;
-            height: 60px;
-            line-height: 60px;
-            text-align: center;
-            color: #fff;
-            font-size: 24px;
-          }
-        }
-        li:last-child {
-          text-align: center;
-          margin-top: 30px;
-          color: #008dff;
-        }
-      }
-      .nl_l_btn {
-        display: block;
-        background-color: #008dff;
-        margin-bottom: 10px;
-        height: 100px;
-        width: 100%;
-        line-height: 100px;
-        color: #fff;
-        font-size: 30px;
-        text-align: center;
-        img {
-          vertical-align: middle;
-          margin-right: 5px;
-        }
-      }
-    }
-
-    .nl_r_list {
-      border: 1px solid #e5e5e5;
-      margin-bottom: 10px;
-      h5 {
-        background-color: #008dff;
-        padding-left: 20px;
-        color: #fff;
-        height: 46px;
-        line-height: 46px;
-        font-size: 16px;
-        position: relative;
-        a {
-          display: inline-block;
-          position: absolute;
-          right: 20px;
-          top: 0px;
-        }
-      }
-      ul {
-        padding: 0 20px;
-        background-color: #fff;
-        height: 250px;
-      }
-      ul li {
-        line-height: 38px;
-        border-bottom: 1px dashed #e5e5e5;
-        position: relative;
-        b {
-          display: inline-block;
-          vertical-align: middle;
-          margin-right: 10px;
-          width: 5px;
-          height: 5px !important;
-          background-color: #000;
-        }
-        span {
-          position: absolute;
-          right: 5px;;
-        }
-      }
-      ul li:last-child {
-        border: none;
+  .detailsContainer{
+    .search_list {
+      width: 70%;
+      margin: auto;
+      padding: 0;
+      li {
+        text-align: left;
+        line-height: 40px;
       }
     }
   }

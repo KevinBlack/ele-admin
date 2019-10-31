@@ -130,8 +130,8 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page.sync="this.pageNo"
-              :page-size.sync="this.pageSize"
+              :current-page.sync="formQuery.pageNo"
+              :page-size.sync="formQuery.pageSize"
               :page-sizes="[15, 30, 50, 100]"
               layout="total, sizes, prev, pager, next, jumper"
               :total="pageTotal"
@@ -216,6 +216,15 @@ export default {
         this.pageTotal = response.page.total;
         this.tableLoading = false;
       });
+    },
+     handleSelectionChange(val) {
+      this.tableMultiSelection = val;
+    },
+     handleSizeChange() {
+      this.getTableList();
+    },
+    handleCurrentChange() {
+      this.getTableList();
     },
     statusFmt(row, column, cellValue, index) {
       const status = row.status

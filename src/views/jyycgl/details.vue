@@ -4,15 +4,15 @@
     <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
       <el-row :gutter="20" class="area_border">
         <el-col :span="10">
-          <el-form-item label="签约时间从" size="mini" prop="timeValue">
+          <el-form-item label="列入日期从" size="mini" prop="timeValue">
             <el-date-picker
               type="datetimerange"
               v-model="formQuery.timeValue"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               unlink-panels
-              format="yyyy-MM-dd HH:mm:ss"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
             ></el-date-picker>
           </el-form-item>
         </el-col>
@@ -46,6 +46,8 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group  size="mini">
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="addData">新 增</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="updData">修 改</el-radio-button>
           <el-radio-button type="primary" class="btn_line" @click.native.prevent="delData">删 除</el-radio-button>
           <el-radio-button type="primary" @click.native.prevent="handleCreate">移 出</el-radio-button>
         </el-radio-group>
@@ -80,11 +82,15 @@
       <el-col :span="24" style="text-align: right;">
         <el-pagination
           background
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next"
+          style="text-align: margin-top: 20px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[5, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="pageTotal"
-        />
+        ></el-pagination>
       </el-col>
     </el-row>
     <!-- 弹框 -->
@@ -123,11 +129,11 @@ export default {
       tableData: [],
       tableMultiSelection: [],
       formQuery: {
+        pageNo: 1,
+        pageSize: 5,
         companyName: "",
         timeValue: "",
         status: "",
-        pageNo: 1,
-        pageSize: 5,
         orderBy: ""
       },
       temp: {
@@ -159,6 +165,30 @@ export default {
     this.getTableList();
   },
   methods: {
+    addData() {
+      this.$router.push({
+        path: "/jyycgl/abnormalAdd",query: {}
+      });
+    },
+    updData() {
+      if (this.tableMultiSelection.length==0) {
+        this.$message({
+          type: "info",
+          message: "请选中要查看的数据!"
+        });
+        return;
+      }
+      if (this.tableMultiSelection.length!=1) {
+        this.$message({
+          type: "info",
+          message: "请选中要一条需要查看的数据!"
+        });
+        return;
+      }
+      this.$router.push({
+        path: "/jyycgl/abnormalUpd",query: {id:this.tableMultiSelection[0].id}
+      });
+    },
     handleSee() {
        if (this.tableMultiSelection.length==0) {
         this.$message({
@@ -266,6 +296,12 @@ export default {
           })
         }
       })
+    },
+    handleSizeChange(val) {
+      this.getTableList();
+    },
+    handleCurrentChange(val) {
+      this.getTableList();
     },
     getTableList() {
       this.tableLoading = true;

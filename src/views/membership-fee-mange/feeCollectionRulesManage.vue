@@ -64,11 +64,11 @@
       @selection-change="selectionChange"
     >
               <el-table-column  type="selection" width="55"/>
+              <el-table-column prop="memberTypeCode" label="会员类型编码" />
               <el-table-column prop="memberType" width="100" :formatter="memberTypeStatus" label="会员类别" />
               <el-table-column prop="memberDj" :formatter="memberDjStatus" label="会员等级" />
               <el-table-column prop="memberZk" label="会员折扣" />
               <el-table-column prop="memberFeeBz" label="会员费用标椎" />
-              <el-table-column prop="memberTypeCode" label="会员类型编码" />
     </el-table>
     <!-- 表格区2end -->
             <el-pagination

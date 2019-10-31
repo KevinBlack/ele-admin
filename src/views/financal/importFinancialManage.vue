@@ -8,12 +8,9 @@
             class="upload-demo"
             ref="upload"
             action="/hxxd/hx-xd-financial-manage/importFile"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
             :file-list="fileList"
             :auto-upload="false"
             :headers="uploadHeaders"
-            :data="uploadData"
             :multiple="true"
           >
           <el-button slot="trigger" icon="el-icon-upload" size="small" type="primary">收款文件选取</el-button>
@@ -84,8 +81,8 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page.sync="this.pageNo"
-              :page-size.sync="this.pageSize"
+              :current-page.sync="pageNo"
+              :page-size.sync="pageSize"
               :page-sizes="[15, 30, 50, 100]"
               layout="total, sizes, prev, pager, next, jumper"
               :total="pageTotal"
@@ -134,6 +131,12 @@ export default {
         this.pageTotal = response.page.total;
         this.tableLoading = false;
       });
+    },
+     handleSizeChange() {
+      this.getTableList();
+    },
+    handleCurrentChange() {
+      this.getTableList();
     },
     //文件上传相关方法
     submitUpload() {

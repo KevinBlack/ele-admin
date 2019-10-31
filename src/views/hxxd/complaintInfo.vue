@@ -40,7 +40,6 @@
             >
               <template slot-scope="scope">
                 <el-button type="primary" size="mini" @click="handleAdd(scope.row)">投诉处理</el-button>
-                <el-button type="primary" size="mini" @click="complainInfoAdd()">投诉信息新增</el-button>
               </template>
             </el-card>
             <!-- 按钮区end -->
@@ -152,12 +151,6 @@ export default {
     this.getTableList();
   },
   methods: {
-    complainInfoAdd(){
-      this.$router.push({
-        path: "/hxxd/saveComplainInfo",
-        query: {}
-      });
-    },
     handleAdd() {
       if (!this.tableMultiSelection) {
         this.$message({
@@ -214,7 +207,6 @@ export default {
       selectComplainInfoAndProcessing(this.formQuery).then(response => {
         this.tableData = response.data;
         this.pageTotal = response.page.total;
-        console.log(this.pageTotal);
         this.tableLoading = false;
       });
     },

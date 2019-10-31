@@ -26,6 +26,7 @@
       mounted() {
         var editor = new E(this.$refs.editor)
         editor.customConfig.onchange = (html) => {
+          console.log(html)
           this.editorContent = html
         }
         editor.create()

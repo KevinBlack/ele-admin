@@ -97,15 +97,15 @@ export default {
   watch:{
     'fdshow2':function(val, oldVal) {
       if(val){
-        this.memberIds =this.fdmsg.memberId
         this.getTableList()
       }
     }
   },
   methods: {
+          
      getTableList() {
       this.tableLoading = true
-      getFinancialInfoList(this.formQuery).then(response => {
+      getFinancialInfoList(this.formQuery,this.memberIds).then(response => {
         this.tableData = response.data
         this.pageTotal = response.page.total
         this.tableLoading = false
@@ -151,12 +151,6 @@ export default {
         })
         return
       }
-      this.$confirm('是否执行选择操作?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
           var idArr = []
           Object.keys(selectRows).forEach(function(key) {
             if (selectRows[key].id) {
@@ -165,7 +159,7 @@ export default {
           })
           if (idArr && idArr.length > 0) {
             var Ids = idArr.join()
-            saveCheck(Ids).then(response => {
+            saveCheck(Ids,this.memberIds).then(response => {
               this.$message({
                 type: 'success',
                 message: '操作成功!'
@@ -173,20 +167,27 @@ export default {
               this.getTableList()
             })
           }
-        })
-        .catch(() => {
-          // 取消时执行此处
-        })
     },
      handleClose(e) {
-      if (e === 'saveBtn') {
-        this.batchCheck();
-        this.$emit('closeDalog', '', this.fdshow)
-        this.$refs.multipleTable.clearSelection() // 清空所有选择
-        this.selectArr = []
-      } else if (e === 'canselBtn') {
-       this.$emit('closeDalog', '', this.fdshow)
+      if(e=='saveBtn'){
+        if (!this.selectArr) {
+        this.$message({
+          type: 'info',
+          message: '请选中要操作的数据!'
+        })
+        return
       }
+      const selectRows = this.selectArr
+      if (selectRows.length === 0) {
+        this.$message({
+          type: 'info',
+          message: '请选中要操作的数据!'
+        })
+        return
+      }
+      }
+      this.$emit('closeDalog',e,this.selectArr)
+
     }
   }
 }

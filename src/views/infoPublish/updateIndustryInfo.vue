@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-card class="box-card" style="margin: 0 10px;">
-      <el-card class="box-card" style="height:60px">
-        <span>{{title}}</span>
-      </el-card>
-      <el-card class="box-card">
-        <div class="title-cls">基本信息</div>
-        <el-card class="box-card" style="padding:15px;border-radius:0px;">
+         <!-- part1 -->
+        <el-row :gutter="10">
+          <el-col :span="24">
+              <h5 class="dtl-title-line">基本信息</h5>
+          </el-col>
+        </el-row>
           <el-form ref="detailForm" :model="detailForm" label-width="150px">
            <el-row>
             <el-col :span="12">
@@ -46,8 +46,6 @@
               </el-col>
             </el-row>
           </el-form>
-        </el-card>
-      </el-card>
     </el-card>
   </div>
 </template>
@@ -117,5 +115,10 @@ export default {
   color: #409eff;
   border-bottom: 1px solid #409eff;
   padding-bottom: 10px;
+}
+.dtl-title-line {
+  display: inline-block;
+  border-left: 3px solid #409EFF;
+  padding-left: 5px;
 }
 </style>

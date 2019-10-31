@@ -53,7 +53,7 @@
             <h5 class="dtl-title-line">基本信息</h5>
           </el-col>
           <el-col :span="12" style="text-align:right;margin-top:20px;">
-            <el-button type="success" icon="el-icon-edit" size="mini" @click="handleNoRefresh">不刷新</el-button>
+            <el-button type="success" icon="el-icon-edit" size="mini" @click="handleUpload">上传</el-button>
             <el-button type="success" icon="el-icon-share" size="mini" @click="handleRefresh">刷新</el-button>
           </el-col>
         </el-row>
@@ -193,18 +193,25 @@
       </el-tab-pane>
       <el-tab-pane label="配置管理" name="princeList">报价单</el-tab-pane>
     </el-tabs>
+    <pop-upload v-if="isShow" :visible="isShow" :showTitle="showTitle" @close="handleClose" />
   </el-card>
 </template>
 
 <script>
+import PopUpload from "./components/upload/file-download-upload";
+
 export default {
   name: 'DetailsTab',
+  components: { PopUpload },
   data() {
     return {
       activeName: 'princeInfo',
       checkList: ['一周'],
+      showTitle: '上传',
       radio: '1',
       list: {},
+      isShow: false,
+      showTitle: '',
       pickerOptions: {
         shortcuts: [{
           text: '最近一周',
@@ -236,74 +243,55 @@ export default {
       value2: '',
       value3: true,
       value5: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)],
-      options: [{
-        value: '选项1',
-        label: '张三'
-      }, {
-        value: '选项2',
-        label: '李四'
-      }, {
-        value: '选项3',
-        label: '王五'
-      }, {
-        value: '选项4',
-        label: '赵六'
-      }, {
-        value: '选项5',
-        label: '刘七'
-      }],
+      options: [
+        {
+          value: '选项1',
+          label: '张三'
+        },
+        {
+          value: '选项2',
+          label: '李四'
+        },
+        {
+          value: '选项3',
+          label: '王五'
+        }
+      ],
       value: '',
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      },
-      {
-        date: '2016-05-08',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-06',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-07',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }]
+      tableData: [
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        },
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        }
+      ]
     }
   },
   methods: {
@@ -313,8 +301,12 @@ export default {
     handleRefresh() {
       this.$router.push({ path: 'details-refresh', query: {}})
     },
-    handleNoRefresh() {
-      this.$router.push({ path: 'details-norefresh', query: {}})
+    handleUpload() {
+      this.showTitle = '上传'
+      this.isShow = true
+    },
+    handleClose(val) {
+      this.isShow = val
     }
   }
 }

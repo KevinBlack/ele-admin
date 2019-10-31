@@ -78,11 +78,15 @@
       <el-col :span="24" style="text-align: right;">
         <el-pagination
           background
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="10"
-          layout="total, sizes, prev, pager, next"
+          style="text-align: margin-top: 20px;"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[5, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="pageTotal"
-        />
+        ></el-pagination>
       </el-col>
     </el-row>
   </el-card>
@@ -170,7 +174,7 @@ export default {
         return;
       }
       this.$router.push({
-        path: "/msgManage/abnormalSee",query: {readonly:true,id:this.tableMultiSelection[0].id}
+        path: "/msgManage/emailSee",query: {readonly:true,id:this.tableMultiSelection[0].id}
       });
     },
     delData() {
@@ -259,6 +263,13 @@ export default {
     selectionChange(val) {
       this.tableMultiSelection = val;
     },
+    handleSizeChange(val) {
+      this.getTableList();
+    },
+    handleCurrentChange(val) {
+      this.getTableList();
+    },
+
   }
 }
 </script>

@@ -141,16 +141,10 @@ export default {
       if (selectRows.length > 1) {
         this.$message({
           type: 'info',
-          message: '请选中一条操作数据!'
+          message: '只能选中一条操作数据!'
         })
         return
       }
-      this.$confirm('是否执行选择操作?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
           var idArr = []
           Object.keys(selectRows).forEach(function(key) {
             if (selectRows[key].id) {
@@ -161,21 +155,16 @@ export default {
             var Ids = idArr.join()
               this.getTableList()
           }
-        this.$emit('closeDalog', this.selectArr[0], this.fdshow)
+        this.$emit('closeDalogPay', this.selectArr[0], this.fdshow)
         this.selectArr = []
         this.$refs.multipleTable.clearSelection() // 清空所有选择
-        })
-        .catch(() => {
-          // 取消时执行此处
-        })
     },
      handleClose(e) {
       if (e === 'saveBtn') {
         this.batchCheck();
-     
-      } else if (e === 'canselBtn') {
-       this.$emit('closeDalog', '', this.fdshow)
-      }
+      }else{
+        this.$emit('closeDalogPay', '', this.fdshow)
+      } 
     }
   }
 }

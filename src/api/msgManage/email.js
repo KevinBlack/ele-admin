@@ -39,3 +39,12 @@ export function sendData(id) {
     data: { id }
   })
 }
+
+export function saveAndSend(data) {
+  return request({
+    url: '/hxxd/hxXdSysEmail/saveAndSend',
+    method: 'post',
+    data
+  })
+}
+

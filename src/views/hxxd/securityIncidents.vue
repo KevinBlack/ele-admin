@@ -195,7 +195,6 @@ export default {
       selectSecurityIncident(this.formQuery).then(response => {
         this.tableData = response.data;
         this.pageTotal = response.page.total;
-        console.log(this.pageTotal);
         this.tableLoading = false;
       });
     },

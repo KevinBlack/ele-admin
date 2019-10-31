@@ -1,6 +1,6 @@
 <template>
   <el-card class="detailsContainer">
-    <el-tabs v-model="tabView" @tab-click="handleClick">
+    <el-tabs v-model="tabView">
       <el-tab-pane label="企业信息" name="info1">
         <el-row>
           <!-- 企业信息 -->
@@ -40,12 +40,36 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="所属省份" prop="province">
-                  <el-input v-model="hxXdCompanyInfoParam.province" />
+                  <el-select
+                    v-model="hxXdCompanyInfoParam.province"
+                    filterable
+                    placeholder="请选择"
+                    size="mini"
+                  >
+                    <el-option
+                      v-for="item in ceshiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item label="所属地区" prop="area">
-                  <el-input v-model="hxXdCompanyInfoParam.area" />
+                  <el-select
+                    v-model="hxXdCompanyInfoParam.area"
+                    filterable
+                    placeholder="请选择"
+                    size="mini"
+                  >
+                    <el-option
+                      v-for="item in ceshiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -131,14 +155,105 @@
                 <h5 class="dtl-title-line bg-font-color">投资人信息</h5>
               </el-col>
             </el-row>
-            <!-- <el-table :data="tableData" border style="width: 100%;" height="250">
-      <el-table-column fixed prop label="投资人类型" />
-      <el-table-column prop label="投资人名称" />
-      <el-table-column prop label="证照/证件号码" />
-      <el-table-column prop label="投资金额（万元）" />
-      <el-table-column prop label="货币类型" />
-      <el-table-column prop label="投资比例" />
-            </el-table>-->
+            <el-button
+              style="margin-left: 10px;"
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              :disabled="disabled"
+              @click="addLine"
+            >添加</el-button>
+            <el-button
+              style="margin-left: 10px;"
+              type="primary"
+              size="mini"
+              icon="el-icon-check"
+              @click="savemodify"
+            >保存</el-button>
+            <el-button
+              style="margin-left: 10px;"
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="handleDelete"
+            >删除</el-button>
+            <el-table
+              ref="multipleTable"
+              :data="investorList"
+              style="width: 100%; margin-top: 20px;"
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column type="selection" width="50" />
+              <el-table-column prop="investorType" label="投资人类型">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.investorType" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.investorType }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="investorName" label="投资人名称">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.investorName" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.investorName }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="certificateNum" label="证照/证件号码">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.certificateNum" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.certificateNum }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="investmentAmount" label="投资金额（万元）">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.investmentAmount" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.investmentAmount }}</span>
+                </template>
+              </el-table-column>
+               <el-table-column prop="currencyType" label="货币类型">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.currencyType" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.currencyType }}</span>
+                </template>
+              </el-table-column>
+               <el-table-column prop="currencyType" label="投资比例">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.editing">
+                    <el-input v-model="scope.row.investmentsRatio" class="edit-input" />
+                  </template>
+                  <span v-else>{{ scope.row.investmentsRatio }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="editing" label="操作">
+                <template slot-scope="scope">
+                  <el-button
+                    v-if="!scope.row.editing"
+                    v-model="scope.$index"
+                    type="danger"
+                    icon="el-icon-edit"
+                    size="mini"
+                    @click="handleEdit(scope.$index, scope.row)"
+                  >编辑</el-button>
+                  <el-button
+                    v-else
+                    v-model="scope.$index"
+                    type="danger"
+                    icon="el-icon-circle-close"
+                    size="mini"
+                    @click="handleCancle(scope.$index, scope.row)"
+                  >取消</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
             <!-- 其他信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
@@ -367,6 +482,16 @@ export default {
           label: "女"
         }
       ],
+      ceshiOptions: [
+        {
+          value: "0",
+          label: "测试一"
+        },
+        {
+          value: "1",
+          label: "测试二"
+        }
+      ],
       tabView: "info1",
       hxXdCompanyInfoParam: {
         businessName: "",
@@ -393,20 +518,10 @@ export default {
         currencyType: "",
         investmentsRatio: ""
       },
-      investorList: [
-        {
-          companyInfoId: "1",
-          investorType: "2",
-          investorName: "3",
-          certificateNum: "2",
-          investmentAmount: "2",
-          currencyType: "2",
-          investmentsRatio: "2"
-        }
-      ],
-      companyInfo: {
-        hxXdCompanyInfoParam: {},
-        investorList: []
+      investorList: [],
+      hxxdCompanyInfo: {
+        companyInfo: "",
+        investorList: ""
       },
       HxXdCompanyCommonInfoParam: {
         companyInfoId: "",
@@ -431,6 +546,10 @@ export default {
         dispatchWorker: "",
         femaleEmployeesNum: ""
       },
+      prevValue: {},
+      currentRow: [],
+      selectArr: [],
+      disabled: false,
       rules1: {
         businessName: [
           { required: true, message: "不能为空", trigger: "blur" }
@@ -505,9 +624,11 @@ export default {
         debugger;
         if (valid) {
           //数据校验成功
-          this.companyInfo.hxXdCompanyInfoParam = this.hxXdCompanyInfoParam;
-          this.companyInfo.investorList = this.investorList;
-          companySave(this.hxXdCompanyInfoParam).then(response => {
+          //this.companyInfo.hxXdCompanyInfoParam = this.hxXdCompanyInfoParam;
+          // this.companyInfo.investorList = this.investorList;
+          this.hxxdCompanyInfo.companyInfo   = JSON.stringify(this.hxXdCompanyInfoParam);
+          this.hxxdCompanyInfo.investorList   = JSON.stringify(this.investorList);
+          companySave(this.hxxdCompanyInfo).then(response => {
             debugger;
             var msg = response.status == 200 ? "保存成功" : "保存失败";
             if (response.status == 200) {
@@ -566,6 +687,118 @@ export default {
           });
         }
       });
+    },
+    handleSelectionChange(val) {
+      console.log(val);
+      this.selectArr = val;
+    },
+    addLine() {
+      // 添加行数
+      debugger;
+      this.disabled = true;
+      const len = this.investorList.length - 1;
+      const sum = len >= 0 ? this.investorList[len].bookid : 0;
+      const result = sum + 1;
+      var newValue = {
+        companyInfoId: "",
+        investorType: "",
+        investorName: "",
+        certificateNum: "",
+        investmentAmount: "",
+        currencyType: "",
+        investmentsRatio: "",
+        editing: true
+      };
+      // 添加新的行数
+      this.investorList.push(newValue);
+    },
+    handleDelete(index) {
+      // 删除行数
+      if (this.selectArr.length <= 0) {
+        this.$notify({
+          title: "提示",
+          message: "请选择要删除的项",
+          type: "warning",
+          duration: 2000
+        });
+      } else {
+        const delArr = [];
+        for (var i = 0; i < this.investorList.length; i++) {
+          if (this.selectArr.indexOf(this.investorList[i]) === -1) {
+            delArr.push(this.investorList[i]);
+          }
+        }
+        this.investorList = delArr;
+        this.$notify({
+          title: "成功",
+          message: "删除成功",
+          type: "success",
+          duration: 2000
+        });
+      }
+    },
+    handleEdit(index, row) {
+      // 编辑
+      row.editing = true;
+      this.currentRow.push(row);
+      this.prevValue = JSON.parse(JSON.stringify(row));
+    },
+    handleCancle(index, row) {
+      // 取消
+      if (
+        row.investorType !== "" &&
+        row.investorName !== "" &&
+        row.certificateNum !== "" &&
+        row.investmentAmount !== "" &&
+        row.currencyType !== ""&&
+        row.investmentsRatio !== ""
+      ) {
+        row.editing = false;
+        const prevContent = this.prevValue.bookname;
+        this.$set(row, "bookname", prevContent);
+        this.disabled = false;
+      } else {
+        this.investorList.pop();
+        this.disabled = false;
+      }
+    },
+    savemodify() {
+      // 保存
+      if (this.currentRow.length !== 0) {
+        this.currentRow.forEach(ele => {
+          ele.editing = false;
+        });
+        console.log(1);
+        this.currentRow = [];
+      } else {
+        const len = this.investorList.length - 1;
+        const row = this.investorList[len];
+        if (
+          row.investorType !== "" &&
+        row.investorName !== "" &&
+        row.certificateNum !== "" &&
+        row.investmentAmount !== "" &&
+        row.currencyType !== ""&&
+        row.investmentsRatio !== ""
+        ) {
+          const lastChild = this.investorList[this.investorList.length - 1];
+          console.log(2);
+          lastChild.editing = false;
+          this.disabled = false;
+          return this.investorList;
+        } else {
+          this.$notify({
+            title: "提示",
+            message: "请完善数据",
+            type: "warning",
+            duration: 2000
+          });
+          const lastChild = this.investorList[this.investorList.length - 1];
+          console.log(3);
+          lastChild.editing = true;
+          return this.investorList;
+        }
+      }
     }
   }
 };

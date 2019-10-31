@@ -50,12 +50,16 @@ export function downloadFile(data) {
   })
 }
 
-//上传
+// 上传
 export function uploadFile(data) {
   return request({
     method: 'post',
+    timeout: 20000,
     url: '/sys/jqSysFile/fileUpload',
-    data: data
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data
   })
 }
 

@@ -48,6 +48,14 @@ export function saveUser(data) {
   })
 }
 
+// 保存用户
+export function registerSave(data) {
+  return request({
+    url: `/sys/jqSysUser/anonw/registerSave`,
+    method: 'post',
+    data
+  })
+}
 export function deleteUser(userIds) {
   return request({
     url: `/sys/jqSysUser/delete`,

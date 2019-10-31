@@ -89,6 +89,7 @@ export default {
   .app-wrapper {
     @include clearfix;
     position: relative;
+    margin-top: 65px;
     height: 100%;
     width: 100%;
 

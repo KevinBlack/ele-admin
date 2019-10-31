@@ -18,3 +18,14 @@ export function getAdminHfInfo(id) {
     data: { id }
   })
 }
+/**
+ * 会员缴费记录信息删除
+ * @param {*} ids
+ */
+export function deleteMemberPay(ids) {
+  return request({
+    url: '/hxxd/memberPay/deleteMemberPay',
+    method: 'post',
+    data: { ids }
+  })
+}

@@ -40,7 +40,8 @@
            <el-row class="area_bordes" style="margin-bottom: 0;">
              <el-col :span="24">
               <el-radio-group  size="mini">
-                <el-button class="btn_line" type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
+                <el-button class="btn_line" type="primary" icon="el-icon" size="mini" @click="handleAdd()">新建</el-button>
+                <el-button class="btn_line" type="primary" icon="el-icon" size="mini" @click="submit">提交</el-button>
                 <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
                 <el-button class="btn_line" type="primary" size="mini">
                   批量操作
@@ -77,7 +78,7 @@
           >
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
-            <el-table-column prop="memberId" label="会员ID" width="" align="center" />
+            <el-table-column prop="memberId" label="会员ID" width="" align="center" :show-overflow-tooltip="true" />
             <el-table-column prop="memberName" label="会员名称" width="" align="center" />
             <el-table-column prop="memberType" label="会员类别" width="" align="center" />
             <el-table-column prop="memberGrade" label="会员等级" width="" align="center" />
@@ -100,6 +101,8 @@
               <template scope="scope">
                   <span v-if="scope.row.spState==='GLY_SPTG'" style="color:green">同意</span>
                   <span v-else-if="scope.row.spState==='GLY_BH'"  style="color: red">驳回</span>
+                  <span v-else-if="scope.row.spState==='10'"  style="color: blue">未提交</span>
+                  <span v-else-if="scope.row.spState==='20'"  style="color: blue">待审核</span>
                   <span v-else-if="scope.row.spState==='GLY_WSP'"  style="color: blue">未审批</span>
                   <span v-else style="color: red">{{scope.row.spState}}</span>
                 </template>
@@ -129,6 +132,7 @@
 
 <script>
 import {
+  saveSp,
   getDjInfoList,
   deleteMember
 } from '@/api/hxxd/membership-fee-mange'
@@ -193,6 +197,58 @@ export default {
     this.getTableList()
   },
   methods: {
+     submit() {
+       let selectRows = this.tableMultiSelection
+       if (!this.tableMultiSelection) {
+        this.$message({
+          type: 'info',
+          message: '请选中要提交的数据!'
+        })
+        return
+      }
+      if (selectRows.length === 0) {
+        this.$message({
+          type: 'info',
+          message: '请选中要提交的数据!'
+        })
+        return
+      }
+          var idArr = []
+          Object.keys(selectRows).forEach((key) => {
+             console.log(selectRows[key].spState)
+              if (selectRows[key].spState != '10') {
+                  this.$notify({
+                    title: '提示',
+                    message: '只能操作未提交数据',
+                    type: 'warning',
+                    duration: 2000
+                  })
+                  return
+                }
+            if (selectRows[key].id) {
+              idArr.push(selectRows[key].id)
+            }
+          })
+          if (idArr && idArr.length > 0) {
+            var ids = idArr.join()
+            saveSp(ids,'20').then(response => {
+           if (response.status == 200) {
+              this.getTableList()
+              //保存成功
+              this.$message({
+                type: "success",
+                message: '提交成功!'
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: '提交失败!'
+              });
+            }
+          })
+          }
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -305,7 +361,7 @@ export default {
         });
         return;
       }
-      let selectRows = this.tableMultiSelection;
+      let  selectRows= this.tableMultiSelection;
       if (selectRows.length == 0) {
         this.$message({
           type: "info",
@@ -322,26 +378,6 @@ export default {
       var selectId = selectRows[0].id;
       this.$router.push({ path: '/membership-fee-mange/dj_Info', query: {selectId: selectId }})
     },
-    // handleEdit(row) {
-    //   const id = row.id
-    //   if (id) {
-    //     this.$router.push({
-    //       path: '/sys/company-detail',
-    //       query: { id: id }
-    //     })
-    //   }
-    // },
-    // statusFmt(row, column, cellValue, index) {
-    //   const spState = row.spState.trim()
-      
-    //   if (spState === 'GLY_SPTG') {
-    //     return '通过'
-    //   } else if (spState === 'GLY_BH') {
-    //     return '驳回'
-    //   }  else {
-    //     return row.spState
-    //   }
-    // }
   }
 }
 </script>

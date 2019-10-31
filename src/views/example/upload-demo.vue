@@ -1,17 +1,16 @@
 <template>
 <el-card>
-  <el-form ref="newform">
+  <el-form ref="uploadForm">
     <el-form-item>
       <el-upload
         class="upload-demo"
-        ref="upload"
-        action="/sys/jqSysFile/fileUpload"
-        :before-upload="fileList"
+        action=""
+        :before-upload="beforeupload"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
+        :on-change="handleChange"
         multiple
-        :headers="multipart/form-data"
         :auto-upload="false"
         :file-list="fileList"
       >
@@ -27,40 +26,39 @@
 </template>
 
 <script>
-import { uploadFile } from "@/api/system/comm/comm";
+import { uploadFile } from "@/api/system/comm/comm"
+import qs from 'qs'
+
 export default {
   data() {
     return {
       fileList: [],
-      uploadForm: new FormData()
     };
   },
   methods: {
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      // console.log(file, fileList)
     },
     handlePreview(file) {
-      console.log(file);
+      // console.log(file)
+    },
+    handleChange(file) {
+      this.fileList.push(file.raw)
     },
     beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.name }？`);
+      return this.$confirm(`确定移除 ${ file.name }？`)
     },
-    beforeupload() {
-      this.uploadForm.append('file', file)
-      // return false
+    beforeupload(file) {
     },
     submitUpload() {
-      let config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-      uploadFile(this.fileList, config).then(res => {
+      let formData = new FormData()
+      formData.append('filelist', this.fileList)
+      // console.log(this.fileList)
+      uploadFile(formData).then(res => {
         this.$message.success('上传成功！')
       }).catch(error => {
         console.log(error);
       });
-      // this.$refs.upload.submit()
     }
   }
 }

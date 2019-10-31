@@ -12,6 +12,29 @@ export function memberApply(data) {
     data
   })
 }
+/**
+ * 会员提交
+ * @param {*} id
+ */
+export function submitMember(id) {
+  return request({
+    url: '/hxxd/hxXdMember/submit',
+    method: 'post',
+    data: { id }
+  })
+}
+
+/**
+ * 会员查询（单条）
+ * @param {*} id
+ */
+export function getMemberByType() {
+  return request({
+    url: '/hxxd/hxXdMember/getByType',
+    method: 'post',
+    data: { type: 'hxMember' }
+  })
+}
 
 /**
  * 会员查询（单条）
@@ -55,7 +78,7 @@ export function modifyMember(data) {
  */
 export function deleteMember(ids) {
   return request({
-    url: '/hxxd/hxXdMember/delete',
+    url: '/hxxd/hxXdMember/deleteMember',
     method: 'post',
     data: { ids }
   })
@@ -69,32 +92,8 @@ export function deleteMember(ids) {
  */
 export function auditMember(ids, auditType, auditReason) {
   return request({
-    url: '/hxxd/hxXdMember/delete',
+    url: '/hxxd/hxXdMember/audit',
     method: 'post',
     data: { ids, auditType, auditReason }
-  })
-}
-
-/**
- * 会员退会申请(直接提交的，没在此处)
- * @param {*} data
- */
-// export function memberExitApply(data) {
-//   return request({
-//     url: '/hxxd/hxXdMember/exitApply',
-//     method: 'post',
-//     data
-//   })
-// }
-
-/**
- * 会员退会查询
- * @param {*} data
- */
-export function getMemberExit(id) {
-  return request({
-    url: '/hxxd/hxXdMember/getExit',
-    method: 'post',
-    data: { id }
   })
 }

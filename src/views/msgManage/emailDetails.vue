@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="12" style="text-align:right;">
           <el-button type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存</el-button>
-          <el-button type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存并发送</el-button>
+          <el-button type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
       </el-col>
     </el-row>
     <!-- part1 -->
@@ -58,12 +58,11 @@
 </template>
 
 <script>
-import {saveOrUpdateEmail,getEmail,send} from "@/api/msgManage/email.js";
+import {saveOrUpdateEmail,getEmail,saveAndSend} from "@/api/msgManage/email.js";
 
 export default {
   data() {
     let checkEmail = (rule, value, callback) => {
-        console.log("2222");
         const emailReg = /^((([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6}\;))*(([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})))$/
         if (!value) {
           return callback(new Error('邮箱不能为空'))
@@ -153,7 +152,37 @@ export default {
         }
       });
     },
-
+    saveAndSend(){
+      this.$refs["detailForm"].validate(valid => {
+        if (valid) {
+          //数据校验成功
+          saveAndSend(this.detailForm).then(response => {
+            if (response.data) {
+              //保存成功
+              this.$message({
+                type: "success",
+                message: "保存并发送成功"
+              });
+              this.$router.push({
+                path: "/msgManage/email",query: {}
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: "保存并发送失败"
+              });
+            }
+          });
+        } else {
+          //校验失败
+          this.$message({
+            message: "请正确录入页面数据",
+            type: "warning"
+          });
+        }
+      });
+    },
     handleShow() {
       this.isShow = true
     }

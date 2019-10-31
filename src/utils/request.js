@@ -15,9 +15,14 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 当Content-Type 不存在时
-    if (config.data) {
+    if (config.data && (!config.headers || config.headers['Content-Type'] != 'multipart/form-data')) {
       config.data = qs.stringify(config.data, { allowDots: true })
     }
+    // if (config.data) {
+    //   config.data = qs.stringify(config.data, {
+    //     allowDots: true
+    //   })
+    // }
     if (store.getters.token) {
       // let each request carry token 必须要有token
       // ['X-Token'] is a custom headers key
@@ -67,9 +72,9 @@ service.interceptors.response.use(
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.status === 50008 || res.status === 50012 || res.status === 50014) {
         // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
+        MessageBox.confirm('您已被注销，您可以关闭本页或再次登录', '确认注销', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {

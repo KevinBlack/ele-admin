@@ -107,6 +107,7 @@
           <el-table-column prop="email" label="邮箱" width="200" align="center"></el-table-column>
           <el-table-column prop="mobile" label="手机" width="200" align="center"></el-table-column>
           <el-table-column prop="phone" label="电话" width="200" align="left"></el-table-column>
+          <el-table-column prop="freezeCause" label="冻结内容" width="200" align="left"></el-table-column>
           <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template slot-scope="scope">
@@ -156,6 +157,7 @@ export default {
         mobile: "",
         phone: "",
         status: "0",
+        freezeCause: "",
         pageNo: 1,
         pageSize: 15,
         orderBy: ""
@@ -171,6 +173,10 @@ export default {
         {
           value: "2",
           label: "停用"
+        },
+        {
+          value: "3",
+          label: "僵尸账号"
         }
       ]
     };
@@ -412,6 +418,8 @@ export default {
         return "删除";
       } else if (status === "2") {
         return "停用";
+      } else if (status === "3") {
+        return "僵尸账号";
       } else {
         return row.status;
       }

@@ -146,8 +146,9 @@ const exampleRouter = {
     },
     {
       path: 'file-download-upload',
-      component: () => import('@/views/example/file-download-upload'),
+      component: () => import('@/views/example/components/upload/file-download-upload'),
       name: 'file-download-upload',
+      hidden: true,
       meta: {
         title: '文件上传下载'
       }
