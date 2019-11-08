@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function getFinancialInfoList(data, memberId) {
   return request({
-    url: '/hxxd/financial/list',
+    url: '/hxxd/hx-xd-financial-manage/list',
     method: 'post',
     data: { data, memberId }
   })
@@ -18,7 +18,7 @@ export function getFinancialInfoList(data, memberId) {
  */
 export function saveCheck(ids, memberId) {
   return request({
-    url: '/hxxd/financial/saveCheck',
+    url: '/hxxd/hx-xd-financial-manage/saveCheck',
     method: 'post',
     data: { ids, memberId }
   })

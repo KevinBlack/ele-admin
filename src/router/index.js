@@ -87,22 +87,22 @@ export const constantRoutes = [
   },
   {
     path: '/firmInfo-search',
-    component: () => import('@/views/example/firmInfo-search'),
+    component: () => import('@/views/publicPage/firmInfo-search'),
     hidden: true
   },
   {
     path: '/firmInfo-list',
-    component: () => import('@/views/example/firmInfo-list'),
+    component: () => import('@/views/publicPage/firmInfo-list'),
     hidden: true
   },
   {
     path: '/firmInfo',
-    component: () => import('@/views/example/firmInfo'),
+    component: () => import('@/views/publicPage/firmInfo'),
     hidden: true
   },
   {
     path: '/online-complaints',
-    component: () => import('@/views/example/online-complaints'),
+    component: () => import('@/views/complain/online-complaints'),
     hidden: true
   },
   {

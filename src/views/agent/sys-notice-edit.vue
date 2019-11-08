@@ -4,7 +4,7 @@
       <!-- 系统通知录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">系统通知录入</h5>
+          <h5 class="dtl-title-line">系统通知录入</h5>
         </el-col>
       </el-row>
 
@@ -35,7 +35,7 @@
       </el-form>
       <!-- 按钮区 -->
       <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+        <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="save">保存</el-button>
           <el-button type="primary" size="mini" >发送</el-button>
         </el-col>

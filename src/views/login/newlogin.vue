@@ -275,7 +275,7 @@ export default {
       ul {
         border: 1px solid #007aad;
         background-color: #e2f5ff;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         padding: 0 19px 19px 19px;
         li {
           margin-bottom: 10px;
@@ -314,8 +314,6 @@ export default {
           }
           .btn_login {
             width: 100%;
-            height: 44px;
-            line-height: 44px;
             text-align: center;
             color: #fff;
             font-size: 20px;

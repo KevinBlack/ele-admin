@@ -257,18 +257,18 @@ export default {
         });
     },
     handleAdd() {
-      this.$router.push({ path: "/sys/dict-detail", query: {} });
+      this.$router.push({ path: "/system/dict-detail", query: {} });
     },
     handleEdit(row) {
       this.$router.push({
-        path: "/sys/dict-detail",
+        path: "/system/dict-detail",
         query: { id: row.id }
       });
     },
     // 添加字典项
     handleDictData(row) {
       this.$router.push({
-        path: "/sys/dict-data",
+        path: "/system/dict-data",
         query: { dictId: row.id }
       });
     },

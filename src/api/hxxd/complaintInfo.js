@@ -35,3 +35,19 @@ export function saveSecurityIncident(data) {
     data
   })
 }
+export function selectComplainInfoAndProcessingById(id) {
+  return request({
+    url: '/hxxd/hxxd-complaint-info/selectComplainInfoAndProcessingById',
+    method: 'post',
+    data: { id }
+  })
+}
+export function sendCode(mobileNum) {
+  return request({
+    url: '/hxxd/hxxd-complaint-info/telSendCode',
+    method: 'post',
+    data: {
+      mobileNum
+    }
+  })
+}

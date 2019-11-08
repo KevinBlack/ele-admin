@@ -4,7 +4,7 @@
       <!-- 系统消息录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">消息录入</h5>
+          <h5 class="dtl-title-line">消息录入</h5>
         </el-col>
       </el-row>
 
@@ -15,7 +15,7 @@
         size="mini"
         :rules="rules1"
       >
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="12">
             <el-form-item label="日期" prop="time">
                <el-date-picker v-model="hxXdSysMessageParam.time" type="datetime" style="width: 100%;" placeholder="选择日期时间"></el-date-picker>
@@ -39,8 +39,8 @@
         </el-row>
       </el-form>
       <!-- 按钮区 -->
-      <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+      <el-row class="btn_bottom">
+        <el-col :span="24">
           <el-button type="primary" size="mini" @click="save">保存</el-button>
           <el-button type="primary" size="mini" >发送</el-button>
         </el-col>
@@ -111,23 +111,5 @@ export default {
 };
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+ @import '../../styles/hxxd.scss';
 </style>

@@ -9,7 +9,7 @@ const msgManage = {
   name: 'hxxd',
   meta: {
     title: '消息管理',
-    icon: 'tree'
+    icon: 'message'
   },
   children: [
     {

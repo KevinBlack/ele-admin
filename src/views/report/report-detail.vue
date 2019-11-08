@@ -4,7 +4,7 @@
       <!-- 年报信息录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">基本信息</h5>
+          <h5 class="dtl-title-line">基本信息</h5>
         </el-col>
       </el-row>
 
@@ -15,7 +15,7 @@
         size="mini"
         :disabled="true"
       >
-        <el-row :gutter="20">
+        <el-row class='line_bottom'>
           <el-col :span="12">
             <el-form-item label="企业名称" prop="businessName">
               <el-input v-model="hxXdAnnualReportParam.businessName" />
@@ -99,13 +99,13 @@
         </el-row>
 
         <!-- 投资人信息 -->
-        <el-row :gutter="10">
+        <el-row class='line_bottom'>
           <el-col :span="24">
             <h5 class="dtl-title-line bg-font-color">投资人信息</h5>
           </el-col>
         </el-row>
         <!-- 资质认可信息 -->
-        <el-row :gutter="10">
+        <el-row class='line_bottom'>
           <el-col :span="24">
             <h5 class="dtl-title-line bg-font-color">资质认可信息</h5>
           </el-col>
@@ -116,7 +116,7 @@
             <h5 class="dtl-title-line bg-font-color">从业人员信息</h5>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row class='line_bottom'>
           <el-col :span="6">
             <el-form-item label="从业人员总数" prop="totalNumber">
               <el-input v-model="hxXdAnnualReportParam.totalNumber" />
@@ -194,7 +194,7 @@
             <h5 class="dtl-title-line bg-font-color">岗位证书信息</h5>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row class='line_bottom'>
           <el-col :span="6">
             <el-form-item label="国内岗位技能证书" prop="homeSkillsCert1">
               <el-input v-model="hxXdAnnualReportParam.homeSkillsCert1" />
@@ -229,7 +229,7 @@
             <h5 class="dtl-title-line bg-font-color">经营状况（万元/万张/万吨）</h5>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row class='line_bottom'>
           <el-col :span="6">
             <el-form-item label="国内客运" prop="homeTransNum">
               <el-input v-model="hxXdAnnualReportParam.homeTransNum" />
@@ -290,7 +290,7 @@
             <h5 class="dtl-title-line bg-font-color">财务状况（万元）</h5>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="6">
             <el-form-item label="资产总额" prop="generalAssets">
               <el-input v-model="hxXdAnnualReportParam.generalAssets" />
@@ -314,11 +314,11 @@
         </el-row>
       </el-form>
       <!-- 按钮区 -->
-      <el-row :gutter="10">
+      <!-- <el-row :gutter="10">
         <el-col :span="22" style="text-align:right;margin-top:20px;">
           <el-button type="primary" size="mini" @click="goback">返回列表</el-button>
         </el-col>
-      </el-row>
+      </el-row> -->
     </el-row>
   </el-card>
 </template>
@@ -326,6 +326,7 @@
 <script>
 import { getReportInfoById } from "@/api/hxxd/agent";
 export default {
+  name: 'ReportDetail',
   data() {
     return {
       hxXdAnnualReportParam: {
@@ -420,23 +421,5 @@ export default {
 };
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+ @import '../../styles/hxxd.scss';
 </style>

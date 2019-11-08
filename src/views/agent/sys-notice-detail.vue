@@ -4,13 +4,14 @@
       <!-- 系统通知录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">系统通知录入</h5>
+          <h5 class="dtl-title-line">{{ title }}</h5>
         </el-col>
       </el-row>
 
       <el-form
         ref="ruleForm"
         :model="hxXdSysNoticeParam"
+        :disabled='disabled'
         label-width="135px"
         size="mini"
         :rules="rules"
@@ -34,8 +35,8 @@
         </el-row>
       </el-form>
       <!-- 按钮区 -->
-      <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+      <el-row v-if="isButton" :gutter="10">
+        <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="save">保存</el-button>
           <el-button type="primary" size="mini" >发送</el-button>
         </el-col>
@@ -49,6 +50,9 @@ import { sysNoticeSave,getSysNoticeById ,sysNoticeUpdate} from "@/api/hxxd/agent
 export default {
   data() {
     return {
+      title: '',
+      disabled: true,
+      isButton: true,
       hxXdSysNoticeParam: {
         time: "",
         header: "",
@@ -69,16 +73,19 @@ export default {
     //初始化页面时
     // 参数传递 router.push({ path: 'register', query: { plan: 'private' }})
     // 参数接受 let id = this.$route.query.jId;
-    let id = this.$route.query.id;
-    let type = this.$route.query.type;
-    if (type == "update") {
-      this.disabled = false;
-    } else if (type == "show") {
-      this.disabled = true;
+    let id = this.$route.query.id
+    let type = this.$route.query.type
+    if (type === "update") {
+      this.title = '系统通知详情修改'
+      this.disabled = false
+    } else if (type === "show") {
+      this.title = '系统通知详情查看'
+      this.disabled = true
+      this.isButton = false
     }
     debugger;
     if (id) {
-      this.getSysNoticeById(id);
+      this.getSysNoticeById(id)
     }
   },
   methods: {
@@ -88,23 +95,22 @@ export default {
       // if (valid) {
       //数据校验成功
       sysNoticeUpdate(this.hxXdSysNoticeParam).then(response => {
-        debugger;
-        var msg = response.status == 200 ? "保存成功" : "保存失败";
+        var msg = response.status == 200 ? "保存成功" : "保存失败"
         if (response.status == 200) {
           //保存成功
           this.$message({
             type: "success",
             message: msg
-          });
+          })
         } else {
           //保存失败
           this.$message({
             type: "success",
             error: msg
-          });
-          console.log(response.message);
+          })
+          console.log(response.message)
         }
-      });
+      })
       // } else {
       //   //校验失败
       //   this.$message({
@@ -116,32 +122,14 @@ export default {
     },
     //通知公告查询
     getSysNoticeById(id) {
-      this.hxXdSysNoticeParam.id = id;
+      this.hxXdSysNoticeParam.id = id
       getSysNoticeById(this.hxXdSysNoticeParam).then(response => {
-        this.hxXdSysNoticeParam = response.data;
-      });
+        this.hxXdSysNoticeParam = response.data
+      })
     }
   }
-};
+}
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+@import '../../styles/hxxd.scss';
 </style>

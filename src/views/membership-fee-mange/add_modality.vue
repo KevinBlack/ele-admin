@@ -1,25 +1,21 @@
 <template>
   <div class="detailsContainer">
     <!-- part1 -->
-    
-    <el-card class="box-card" shadow="never">
-          <!-- label-width='65px' -->
-          <el-form ref="formQuery" :model="formQuery" :inline="true">
-            <el-row>
-              <el-col :span="20">
-                <el-form-item label="交易流水号" size="mini" prop="saleNum">
-                  <el-input v-model="formQuery.saleNum" size="mini" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item size="mini">
-                  <el-button type="primary" size="mini" @click="search">查询</el-button>
-                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
+    <el-form ref="formQuery" :model="formQuery" :inline="true">
+      <el-row>
+        <el-col :span="20">
+          <el-form-item label="交易流水号" size="mini" prop="saleNum">
+            <el-input v-model="formQuery.saleNum" size="mini" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="4">
+          <el-form-item size="mini">
+            <el-button type="primary" size="mini" @click="search">查询</el-button>
+            <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <!--  tooltip-effect="dark" -->
     <el-table
       ref="multipleTable"
@@ -27,25 +23,27 @@
       border
       tooltip-effect="dark"
       style="width: 100%;"
+      height="200px"
       @selection-change="handleSelectionChange"
       :header-row-style="headRowStyle"
       :row-style="rowStyle"
       :header-cell-style="getCellStyle"
+      class="table-hxxd"
     >
       <el-table-column type="selection" width="55"  align="center" />
       <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
-      <el-table-column prop="saleDate" label="交易时间" width="" align="center" />
-      <el-table-column prop="saleNum" label="交易流水号" width="" align="center" />
-      <el-table-column prop="creditAmount" label="贷方发生额" width="" align="center" />
-      <el-table-column prop="remarks" label="摘要" width="" align="center" />
-      <el-table-column prop="payerAccount" label="对方账号" width="" align="center" />
-      <el-table-column prop="payeeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
-      <el-table-column prop="payerBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="tradeTime" label="交易时间" width="" align="center" />
+      <el-table-column prop="tradePipelineNum" label="交易流水号" width="" align="center" />
+      <el-table-column prop="tradeMoney" label="贷方发生额" width="" align="center" />
+      <el-table-column prop="abstractContent" label="摘要" width="" align="center" />
+      <el-table-column prop="oppositeAccount" label="对方账号" width="" align="center" />
+      <el-table-column prop="oppositeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="openingBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
     </el-table>
-    <el-row style="margin-top: 20px;text-align: center;">
-      <el-col :span="8" :offset="16">
-        <el-button type="primary" icon="el-icon-check" size="mini" @click="handleClose('saveBtn')">保存</el-button>
-        <el-button type="primary" icon="el-icon-close" size="mini" @click="handleClose('canselBtn')">取消</el-button>
+    <el-row class="btn_bottom">
+        <el-col :span="24">
+        <el-button type="primary" size="mini" @click="handleClose('saveBtn')">保存</el-button>
+        <el-button type="primary" size="mini" @click="handleClose('canselBtn')">取消</el-button>
       </el-col>
     </el-row>
   </div>
@@ -76,13 +74,13 @@ export default {
       show:false,
       formQuery: {
         id:'',
-        saleDate:'',
-        saleNum:'',
-        creditAmount:'',
-        remarks:'',
-        payerAccount:'',
-        payeeAccountName:'',
-        payerBank:''
+        tradeTime:'',
+        tradePipelineNum:'',
+        tradeMoney:'',
+        abstractContent:'',
+        oppositeAccount:'',
+        oppositeAccountName:'',
+        openingBank:''
       },
       fdshow: false,
       memberIds:'',
@@ -102,7 +100,7 @@ export default {
     }
   },
   methods: {
-          
+
      getTableList() {
       this.tableLoading = true
       getFinancialInfoList(this.formQuery,this.memberIds).then(response => {
@@ -194,37 +192,5 @@ export default {
 </script>
 
 <style scoped>
-*{
-  font-weight: normal;
-}
-.detailsContainer {
-  background: none;
-  width: 100%;
-  height: 100%;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 5px solid #409EFF;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
-.dtl-info-line {
-  height: 40px;
-  line-height: 40px;
-  margin: 10px auto;
-  border-radius: 3px;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  color: #000;
-  background-color: #dcecfd;
-}
-.el-table>th {
-  background-color: #eee !important;
-}
-.el-dialog {
-  width: 70% !important;
-}
+ @import '../../styles/hxxd.scss';
 </style>

@@ -4,18 +4,18 @@ import request from '@/utils/request'
  * 获取会员缴费记录信息列表信息HxxdadminHfInfo
  * @param {*} data
  */
-export function getMemberPayInfoList(id) {
+export function getMemberPayInfoList(id, status) {
   return request({
     url: '/hxxd/memberPay/getMemberPayInfoList',
     method: 'post',
-    data: { id }
+    data: { id, status }
   })
 }
-export function getAdminHfInfo(id) {
+export function getAdminHfInfo(data) {
   return request({
     url: '/hxxd/hxxdadminHfInfo/getAdminHfInfo',
     method: 'post',
-    data: { id }
+    data
   })
 }
 /**

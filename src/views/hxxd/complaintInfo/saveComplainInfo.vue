@@ -21,7 +21,7 @@
             </el-row>
             <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item label="联系方式" size="mini" prop="contractInformation">
+              <el-form-item label="手机号码" size="mini" prop="contractInformation">
                 <el-input v-model.number="detailForm.contractInformation" size="mini"></el-input>
               </el-form-item>
             </el-col>
@@ -66,7 +66,8 @@ export default {
         complainant: "",
         contractInformation: "",
         contractEmail: "",
-        complaintsContents: ""
+        complaintsContents: "",
+        complaintType: ""
       }
     };
   },

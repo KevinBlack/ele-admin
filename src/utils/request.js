@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 
 // 建立一个axios链接
 const service = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000
 })
@@ -18,11 +18,6 @@ service.interceptors.request.use(
     if (config.data && (!config.headers || config.headers['Content-Type'] != 'multipart/form-data')) {
       config.data = qs.stringify(config.data, { allowDots: true })
     }
-    // if (config.data) {
-    //   config.data = qs.stringify(config.data, {
-    //     allowDots: true
-    //   })
-    // }
     if (store.getters.token) {
       // let each request carry token 必须要有token
       // ['X-Token'] is a custom headers key

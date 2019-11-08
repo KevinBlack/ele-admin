@@ -2,14 +2,14 @@ import request from '@/utils/request'
 
 export function getOfficeTree() {
   return request({
-    url: '/sys/jqSysOffice/listTree',
+    url: '/system/jqSysOffice/listTree',
     method: 'post'
   })
 }
 
 export function getOfficeList(data) {
   return request({
-    url: '/sys/jqSysOffice/list',
+    url: '/system/jqSysOffice/list',
     method: 'post',
     data
   })
@@ -17,7 +17,7 @@ export function getOfficeList(data) {
 
 export function getOffice(officeId) {
   return request({
-    url: '/sys/jqSysOffice/get',
+    url: '/system/jqSysOffice/get',
     method: 'post',
     data: { officeId }
   })
@@ -25,7 +25,7 @@ export function getOffice(officeId) {
 
 export function saveOffice(data) {
   return request({
-    url: `/sys/jqSysOffice/save`,
+    url: `/system/jqSysOffice/save`,
     method: 'post',
     data
   })
@@ -33,7 +33,7 @@ export function saveOffice(data) {
 
 export function deleteOffice(officeIds) {
   return request({
-    url: `/sys/jqSysOffice/delete`,
+    url: `/system/jqSysOffice/delete`,
     method: 'post',
     data: { officeIds }
   })
@@ -41,7 +41,7 @@ export function deleteOffice(officeIds) {
 
 export function startOffice(officeIds) {
   return request({
-    url: `/sys/jqSysOffice/start`,
+    url: `/system/jqSysOffice/start`,
     method: 'post',
     data: { officeIds }
   })
@@ -49,7 +49,7 @@ export function startOffice(officeIds) {
 
 export function stopOffice(officeIds) {
   return request({
-    url: `/sys/jqSysOffice/stop`,
+    url: `/system/jqSysOffice/stop`,
     method: 'post',
     data: { officeIds }
   })
@@ -57,7 +57,7 @@ export function stopOffice(officeIds) {
 
 export function getSortNo(parentId) {
   return request({
-    url: `/sys/jqSysOffice/getSortNo`,
+    url: `/system/jqSysOffice/getSortNo`,
     method: 'post',
     data: { parentId }
   })

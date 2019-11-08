@@ -116,15 +116,15 @@ export default {
           label: "全部"
         },
         {
-          value: "0",
+          value: 0,
           label: "未发送"
         },
         {
-          value: "1",
+          value: 1,
           label: "发送中"
         },
         {
-          value: "2",
+          value: 2,
           label: "已发送"
         }
       ]
@@ -243,11 +243,11 @@ export default {
         this.tableData = response.data;
         for(var i=0;i<response.data.length;i++){
           var data=response.data[i];
-          if(data.status=="0"){
+          if(data.status==0){
             this.tableData[i].statusName="未发送";
-          }else if(data.status=="1"){
+          }else if(data.status==1){
             this.tableData[i].statusName="发送中";
-          }else if(data.status=="2"){
+          }else if(data.status==2){
             this.tableData[i].statusName="已发送";
           }
         }

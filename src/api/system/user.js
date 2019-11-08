@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/sys/u/user/login',
+    url: '/system/u/user/login',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/sys/u/user/info',
+    url: '/system/u/user/info',
     method: 'post',
     params: { token }
   })
@@ -18,14 +18,14 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/sys/u/user/logout',
+    url: '/system/u/user/logout',
     method: 'post'
   })
 }
 // 获取用户集合
 export function getUserList(data) {
   return request({
-    url: '/sys/jqSysUser/list',
+    url: '/system/jqSysUser/list',
     method: 'post',
     data
   })
@@ -33,7 +33,7 @@ export function getUserList(data) {
 // 获取用户信息
 export function getUser(userId) {
   return request({
-    url: '/sys/jqSysUser/get',
+    url: '/system/jqSysUser/get',
     method: 'post',
     data: { userId }
   })
@@ -42,7 +42,7 @@ export function getUser(userId) {
 // 保存用户
 export function saveUser(data) {
   return request({
-    url: `/sys/jqSysUser/save`,
+    url: `/system/jqSysUser/save`,
     method: 'post',
     data
   })
@@ -51,14 +51,14 @@ export function saveUser(data) {
 // 保存用户
 export function registerSave(data) {
   return request({
-    url: `/sys/jqSysUser/anonw/registerSave`,
+    url: `/system/jqSysUser/anonw/registerSave`,
     method: 'post',
     data
   })
 }
 export function deleteUser(userIds) {
   return request({
-    url: `/sys/jqSysUser/delete`,
+    url: `/system/jqSysUser/delete`,
     method: 'post',
     data: { userIds }
   })
@@ -66,7 +66,7 @@ export function deleteUser(userIds) {
 
 export function startUser(userIds) {
   return request({
-    url: `/sys/jqSysUser/start`,
+    url: `/system/jqSysUser/start`,
     method: 'post',
     data: { userIds }
   })
@@ -74,7 +74,7 @@ export function startUser(userIds) {
 
 export function stopUser(userIds) {
   return request({
-    url: `/sys/jqSysUser/stop`,
+    url: `/system/jqSysUser/stop`,
     method: 'post',
     data: { userIds }
   })

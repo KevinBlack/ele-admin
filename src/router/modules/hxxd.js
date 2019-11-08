@@ -9,7 +9,7 @@ const hxxdRouter = {
   name: 'hxxd',
   meta: {
     title: '航协销代',
-    icon: 'tree'
+    icon: 'guide'
   },
   children: [
     {
@@ -32,12 +32,12 @@ const hxxdRouter = {
       name: 'info-detail',
       meta: { title: '代理人信息查看详情' }
     },
-    {
-      path: 'report-edit',
-      component: () => import('@/views/report/report-edit'),
-      name: 'report-edit',
-      meta: { title: '年报信息录入' }
-    },
+    // {
+    //   path: 'report-edit',
+    //   component: () => import('@/views/report/report-edit'),
+    //   name: 'report-edit',
+    //   meta: { title: '年报信息录入' }
+    // },
     {
       path: 'report-query',
       component: () => import('@/views/report/report-query'),
@@ -48,7 +48,7 @@ const hxxdRouter = {
       path: 'report-detail',
       hidden: true,
       component: () => import('@/views/report/report-detail'),
-      name: 'report-detail',
+      name: 'ReportDetail',
       meta: { title: '年报信息详情查看' }
     },
     {
@@ -62,6 +62,14 @@ const hxxdRouter = {
       component: () => import('@/views/agent/company-register-edit'),
       name: 'company-register-edit',
       meta: { title: '企业注册信息录入' }
+    },
+    {
+      path: 'sys-message-query',
+      component: () => import('@/views/agent/sys-message-query'),
+      name: 'SysMessageQuery',
+      meta: {
+        title: '系统消息查询'
+      }
     },
     {
       path: 'sys-message-edit',
@@ -78,16 +86,19 @@ const hxxdRouter = {
       meta: { title: '系统消息详情查看' }
     },
     {
-      path: 'sys-message-query',
-      component: () => import('@/views/agent/sys-message-query'),
-      name: 'sys-message-query',
-      meta: { title: '系统消息查询' }
-    },
-    {
       path: 'sys-notice-query',
       component: () => import('@/views/agent/sys-notice-query'),
-      name: 'sys-notice-query',
+      name: 'SysNoticeQuery',
       meta: { title: '系统通知查询' }
+    },
+    {
+      path: 'sys-notice-edit',
+      hidden: true,
+      component: () => import('@/views/agent/sys-notice-edit'),
+      name: 'sys-notice-edit',
+      meta: {
+        title: '系统通知录入'
+      }
     },
     {
       path: 'sys-notice-detail',
@@ -97,11 +108,12 @@ const hxxdRouter = {
       meta: { title: '系统通知详情查看' }
     },
     {
-      path: 'sys-notice-edit',
-      hidden: true,
-      component: () => import('@/views/agent/sys-notice-edit'),
-      name: 'sys-notice-edit',
-      meta: { title: '系统通知录入' }
+      path: 'sys-leaveword-query',
+      component: () => import('@/views/agent/sys-leaveword-query'),
+      name: 'SysLeavewordQuery',
+      meta: {
+        title: '留言消息查询'
+      }
     },
     {
       path: 'sys-leaveword-edit',
@@ -118,23 +130,10 @@ const hxxdRouter = {
       meta: { title: '留言消息详情查看' }
     },
     {
-      path: 'sys-leaveword-query',
-      component: () => import('@/views/agent/sys-leaveword-query'),
-      name: 'sys-leaveword-query',
-      meta: { title: '留言消息查询' }
-    },
-    {
       path: 'call-info-manage',
       component: () => import('@/views/agent/call-info-manage'),
-      name: 'call-info-manage',
+      name: 'CallInfoManage',
       meta: { title: '催缴信息管理' }
-    },
-    {
-      path: 'call-info-detail',
-      hidden: true,
-      component: () => import('@/views/agent/call-info-detail'),
-      name: 'call-info-detail',
-      meta: { title: '系催缴信息详情查看' }
     },
     {
       path: 'call-info-edit',
@@ -142,6 +141,15 @@ const hxxdRouter = {
       component: () => import('@/views/agent/call-info-edit'),
       name: 'call-info-edit',
       meta: { title: '催缴信息新增' }
+    },
+    {
+      path: 'call-info-detail',
+      hidden: true,
+      component: () => import('@/views/agent/call-info-detail'),
+      name: 'call-info-detail',
+      meta: {
+        title: '系催缴信息详情查看'
+      }
     }
   ]
 }

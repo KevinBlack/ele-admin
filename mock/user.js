@@ -70,7 +70,7 @@ export default [
 
   // user logout
   {
-    url: '/sys/u/user/logout',
+    url: '/system/u/user/logout',
     type: 'post',
     response: _ => {
       return {

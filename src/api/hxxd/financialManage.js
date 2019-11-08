@@ -1,17 +1,20 @@
 import request from '@/utils/request'
 
-export function importFile(data) {
+export function downloadTemplate(data) {
   return request({
-    url: '/hxxd/hx-xd-financial-manage/importFile',
+    url: '/hxxd/hxXdSysFile/fileDownload',
     method: 'post',
     data
   })
 }
-export function downloadTemplate(data) {
+export function uploadTemplate(formData) {
   return request({
-    url: '/hxxd/hx-xd-financial-manage/downloadTemplate',
+    url: '/hxxd//hx-xd-financial-manage/importFile',
     method: 'post',
-    data
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
 export function selectFinancialManageByParam(data) {
@@ -21,13 +24,6 @@ export function selectFinancialManageByParam(data) {
     data
   })
 }
-export function financialDataConfirm(ids) {
-  return request({
-    url: '/hxxd/hx-xd-financial-manage/financialDataConfirm',
-    method: 'post',
-    params: { ids }
-  })
-}
 export function deleteFinancialData(ids) {
   return request({
     url: '/hxxd/hx-xd-financial-manage/deleteFinancialData',
@@ -35,3 +31,4 @@ export function deleteFinancialData(ids) {
     params: { ids }
   })
 }
+

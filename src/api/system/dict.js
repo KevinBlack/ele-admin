@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取字典列表
 export function getDictList(data) {
   return request({
-    url: '/sys/jqSysDict/listDict',
+    url: '/system/jqSysDict/listDict',
     method: 'post',
     data
   })
@@ -12,7 +12,7 @@ export function getDictList(data) {
 // 获取字典项列表
 export function getDictDataList(data) {
   return request({
-    url: '/sys/jqSysDict/listDictData',
+    url: '/system/jqSysDict/listDictData',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export function getDictDataList(data) {
 // 获取字典
 export function getDict(id) {
   return request({
-    url: '/sys/jqSysDict/getDict',
+    url: '/system/jqSysDict/getDict',
     method: 'post',
     data: { id }
   })
@@ -28,7 +28,7 @@ export function getDict(id) {
 // 获取字典项
 export function getDictData(id) {
   return request({
-    url: '/sys/jqSysDict/getDictData',
+    url: '/system/jqSysDict/getDictData',
     method: 'post',
     data: { id }
   })
@@ -36,7 +36,7 @@ export function getDictData(id) {
 // 保存字典
 export function saveDict(data) {
   return request({
-    url: '/sys/jqSysDict/saveDict',
+    url: '/system/jqSysDict/saveDict',
     method: 'post',
     data
   })
@@ -44,7 +44,7 @@ export function saveDict(data) {
 // 保存字典项
 export function saveDictData(data) {
   return request({
-    url: '/sys/jqSysDict/saveDictData',
+    url: '/system/jqSysDict/saveDictData',
     method: 'post',
     data
   })
@@ -52,7 +52,7 @@ export function saveDictData(data) {
 // 删除字典
 export function deleteDict(ids) {
   return request({
-    url: `/sys/jqSysDict/deleteDict`,
+    url: `/system/jqSysDict/deleteDict`,
     method: 'post',
     data: { ids }
   })
@@ -60,7 +60,7 @@ export function deleteDict(ids) {
 // 删除字典
 export function deleteDictData(ids) {
   return request({
-    url: `/sys/jqSysDict/deleteDictData`,
+    url: `/system/jqSysDict/deleteDictData`,
     method: 'post',
     data: { ids }
   })
@@ -68,7 +68,7 @@ export function deleteDictData(ids) {
 // 获取json对象
 export function getDictJson(dictType) {
   return request({
-    url: `/sys/jqSysDict/getDictJson`,
+    url: `/system/jqSysDict/getDictJson`,
     method: 'post',
     data: { dictType }
   })

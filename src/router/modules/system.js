@@ -3,9 +3,9 @@
 import Layout from '@/layout'
 
 const systemRouter = {
-  path: '/sys',
+  path: '/system',
   component: Layout,
-  redirect: '/sys/role',
+  redirect: '/system/role',
   name: 'System',
   meta: {
     title: '系统管理',

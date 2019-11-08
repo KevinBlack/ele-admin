@@ -34,6 +34,10 @@ export function saveSp(ids, state) {
     data: { ids, state }
   })
 }
+/**
+ * 获取会费规则列表信息
+ * @param {*} data
+ */
 export function selectMemberFeeInfo(data) {
   return request({
     url: '/hxxd/memberFeeInfo/selectMemberFeeInfo',
@@ -41,6 +45,10 @@ export function selectMemberFeeInfo(data) {
     data
   })
 }
+/**
+ * 根据人员类型编码获取会费规则信息
+ * @param {*} code 人员类型编码
+ */
 export function getFeeInfoByCode(code) {
   return request({
     url: '/hxxd/memberFeeInfo/getFeeInfoByCode',
@@ -69,4 +77,42 @@ export function updateMemberFeeInfo(data) {
     data
   })
 }
-
+export function getFeeInfoById(id) {
+  return request({
+    url: '/hxxd/memberFeeInfo/getFeeInfoById',
+    method: 'post',
+    data: { id }
+  })
+}
+/**
+ * 保存会费登记信息
+ * @param {*} data
+ */
+export function saveMemberPay(saveData) {
+  return request({
+    url: '/hxxd/hxxdadminHfInfo/saveMemberPay',
+    method: 'post',
+    data: saveData
+  })
+}
+/**
+ * 根据人员id获取会员登记信息
+ * @param {*} id 人员id
+ */
+export function getAdminHfInfoById(id) {
+  return request({
+    url: '/hxxd/hxxdadminHfInfo/getAdminHfInfoById',
+    method: 'post',
+    data: { id }
+  })
+}
+/**
+ * 按大区查询会费统计信息
+ */
+export function statisticalList(data) {
+  return request({
+    url: '/hxxd/hxxdadminHfInfo/statisticalList',
+    method: 'post',
+    data
+  })
+}

@@ -340,13 +340,13 @@ export default {
         })
     },
     handleAdd() {
-      this.$router.push({ path: '/sys/company-detail', query: {}})
+      this.$router.push({ path: '/system/company-detail', query: {}})
     },
     handleEdit(row) {
       const companyId = row.companyId
       if (companyId) {
         this.$router.push({
-          path: '/sys/company-detail',
+          path: '/system/company-detail',
           query: { companyId: companyId }
         })
       }

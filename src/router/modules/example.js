@@ -9,7 +9,7 @@ const exampleRouter = {
   name: 'Example',
   meta: {
     title: '开发例子',
-    icon: 'tree'
+    icon: 'example'
   },
   children: [
     {
@@ -24,14 +24,6 @@ const exampleRouter = {
       name: 'demo-echarts',
       meta: {
         title: '图标样例'
-      }
-    },
-    {
-      path: 'upload-demo',
-      component: () => import('@/views/example/upload-demo'),
-      name: 'upload-demo',
-      meta: {
-        title: '上传demo'
       }
     },
     {

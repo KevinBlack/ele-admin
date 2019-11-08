@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getCompanyList(data) {
   return request({
-    url: '/sys/jqSysCompany/list',
+    url: '/system/jqSysCompany/list',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function getCompanyList(data) {
 
 export function getCompany(companyId) {
   return request({
-    url: '/sys/jqSysCompany/get',
+    url: '/system/jqSysCompany/get',
     method: 'post',
     data: { companyId }
   })
@@ -18,7 +18,7 @@ export function getCompany(companyId) {
 
 export function saveCompany(data) {
   return request({
-    url: '/sys/jqSysCompany/save',
+    url: '/system/jqSysCompany/save',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function saveCompany(data) {
 
 export function deleteCompany(companyIds) {
   return request({
-    url: `/sys/jqSysCompany/delete`,
+    url: `/system/jqSysCompany/delete`,
     method: 'post',
     data: { companyIds }
   })
@@ -34,7 +34,7 @@ export function deleteCompany(companyIds) {
 
 export function startCompany(companyIds) {
   return request({
-    url: `/sys/jqSysCompany/start`,
+    url: `/system/jqSysCompany/start`,
     method: 'post',
     data: { companyIds }
   })
@@ -42,7 +42,7 @@ export function startCompany(companyIds) {
 
 export function stopCompany(companyIds) {
   return request({
-    url: `/sys/jqSysCompany/stop`,
+    url: `/system/jqSysCompany/stop`,
     method: 'post',
     data: { companyIds }
   })
@@ -50,7 +50,7 @@ export function stopCompany(companyIds) {
 
 export function getSortNo() {
   return request({
-    url: `/sys/jqSysCompany/getSortNo`,
+    url: `/system/jqSysCompany/getSortNo`,
     method: 'post'
   })
 }

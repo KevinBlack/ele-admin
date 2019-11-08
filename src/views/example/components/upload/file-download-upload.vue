@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="handleBeforeClose" width="60%">
+  <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="handleBeforeClose" width="60%" class="pop-upload-download">
     <!-- 附件上傳彈框 -->
     <el-form ref="newform">
       <el-form-item label="上传类型">
@@ -19,25 +19,27 @@
         <el-upload
           class="upload-demo"
           action=""
+          ref="upload"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
-          :before-remove="beforeRemove"
-          :on-change="handleChange"
+          :before-upload="handleUpload"
           multiple
           :auto-upload="false"
-          :file-list="fileList"
         >
           <el-button type="primary" size="small">选择</el-button>
         </el-upload>
       </el-form-item>
-      <el-button type="primary" size="small" @click="submitUpload">确定</el-button>
-      <el-button type="primary" size="small" @click="handleCancel">取消</el-button>
+      <div class="result-submit" v-html="logMsg"></div>
+      <div class="btn-group-submit">
+        <el-button type="primary" size="small" @click="submitUpload">确定</el-button>
+        <el-button type="primary" size="small" @click="handleCancel">取消</el-button>
+      </div>
     </el-form>
   </el-dialog>
 </template>
 
 <script>
-import { downloadFile, uploadFile } from "@/api/system/comm/comm";
+import { downloadFile, uploadExcle, selectLog} from "@/api/system/comm/comm";
 import { getToken } from "@/utils/auth";
 
 export default {
@@ -54,21 +56,21 @@ export default {
   },
   data() {
     return {
+      logMsg: '',
       dialogTitle: this.showTitle,
       dialogVisible: this.visible,
-      uploadForm: new FormData(),
       uploadHeaders: {
         "X-Token": getToken()
       },
       uploadData: {
         id: 22
       },
-      fileList: [],
       options: [{
         value: '选项1',
         label: 'excel'
       }],
-      value: ''
+      value: '',
+      formData: new FormData()
     };
   },
   methods: {
@@ -100,26 +102,51 @@ export default {
       })
     },
     submitUpload() {
-      let formData = new FormData()
-      formData.append('filelist', this.fileList)
-      uploadFile(formData).then(res => {
-        this.$message.success('上传成功！')
-        handleBeforeClose()
+      this.$refs.upload.submit();
+      this.formData.append('key','222')
+      uploadExcle(this.formData).then(res => {
+
       }).catch(error => {
         console.log(error);
-      });
+      })
+      this.handleCheckLog()
+    },
+    //日志查询方法
+    handleCheckLog() {
+      const selectData = new FormData
+      selectData.append('key', '222')
+      setInterval(() => {
+        selectLog(selectData).then(res => {
+          const resData = res.data
+          console.log(resData)
+          for(var i in resData){
+            if (resData[i].code === 'OWN_SUCCESS') {
+              this.logMsg += `<li>${ resData[i].msg }</li>`
+            } else if (resData[i].code === 'OWN_FAIL') {
+              this.logMsg += `<li>${ resData[i].msg }</li>`
+            } else if (resData[i].code === 'ALL_SUCCESS') {
+              handleBeforeClose()
+              clearInterval(this.handleCheckLog)
+            } else if (resData[i].code === 'ALL_FAIL') {
+              handleBeforeClose()
+              clearInterval(this.handleCheckLog)
+            }
+          }
+        }).catch(error => {
+          console.log(error);
+        })
+      }, 2000)
+    },
+    //文件上传方法
+    handleUpload(file) {
+      this.formData.append('file', file)
+      return false
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
     },
     handlePreview(file) {
       console.log(file)
-    },
-    handleChange(file) {
-      this.fileList.push(file.raw)
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.name }？`)
     },
     handleBeforeClose() {
       this.$confirm('确认关闭？')
@@ -136,5 +163,20 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
+.pop-upload-download {
+  .upload-demo {
+    width: 50%;
+  }
+  .result-submit {
+    width: 90%;
+    height: 200px;
+    margin: 0 auto 20px;
+    border: 1px solid #e6e6e6;
+    overflow-y: auto;
+  }
+  .btn-group-submit {
+    text-align: right;
+  }
+}
 </style>

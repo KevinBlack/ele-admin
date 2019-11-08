@@ -401,12 +401,12 @@ export default {
         });
     },
     handleAdd() {
-      this.$router.push({ path: "/sys/user-detail", query: {} });
+      this.$router.push({ path: "/system/user-detail", query: {} });
     },
     handleEdit(row) {
       let userId = row.userId;
       this.$router.push({
-        path: "/sys/user-detail",
+        path: "/system/user-detail",
         query: { userId: userId }
       });
     },

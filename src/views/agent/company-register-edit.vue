@@ -4,7 +4,7 @@
       <!-- 企业注册信息录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">注册信息</h5>
+          <h5 class="dtl-title-line">注册信息</h5>
         </el-col>
       </el-row>
 
@@ -16,72 +16,109 @@
         :rules="rules"
       >
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="企业名称" prop="businessName">
               <el-input v-model="hxxdCompanyRegisterParam.businessName" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="公司英文名称" prop="businessNameEn">
               <el-input v-model="hxxdCompanyRegisterParam.businessNameEn" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="工商营业执照号" prop="licenseNo">
               <el-input v-model="hxxdCompanyRegisterParam.licenseNo" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+
+          <el-col :span="8">
+            <el-form-item label="公司类型" prop="companyType" >
+              <el-select
+                    v-model="hxxdCompanyRegisterParam.companyType"
+                    filterable
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="item in ceshiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="经营模式" prop="manageModel">
+              <el-select
+                    v-model="hxxdCompanyRegisterParam.manageModel"
+                    filterable
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="item in ceshiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="销售模式" prop="salesMode">
+              <el-select
+                    v-model="hxxdCompanyRegisterParam.salesMode"
+                    filterable
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="item in ceshiOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="社会信用代码" prop="socialCode">
               <el-input v-model="hxxdCompanyRegisterParam.socialCode" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="公司类型" prop="companyType">
-              <el-input v-model="hxxdCompanyRegisterParam.companyType" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="经营模式" prop="manageModel">
-              <el-input v-model="hxxdCompanyRegisterParam.manageModel" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="销售模式" prop="salesMode">
-              <el-input v-model="hxxdCompanyRegisterParam.salesMode" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="联系人姓名" prop="contactName">
               <el-input v-model="hxxdCompanyRegisterParam.contactName" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="联系人工作电话" prop="contactNum">
               <el-input v-model="hxxdCompanyRegisterParam.contactNum" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="联系人手机" prop="contactPhone">
               <el-input v-model="hxxdCompanyRegisterParam.contactPhone" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="联系人邮箱" prop="contactMail">
               <el-input v-model="hxxdCompanyRegisterParam.contactMail" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="联系地址" prop="contactAddr">
               <el-input v-model="hxxdCompanyRegisterParam.contactAddr" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="邮政编码" prop="postalcode">
               <el-input v-model="hxxdCompanyRegisterParam.postalcode" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="通讯地址" prop="postalAddr">
               <el-input v-model="hxxdCompanyRegisterParam.postalAddr" />
             </el-form-item>
@@ -90,9 +127,10 @@
 
       </el-form>
       <!-- 按钮区 -->
-      <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+      <el-row>
+        <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="companyRegisterSave">保存</el-button>
+          <el-button type="primary" size="mini" @click="companyRegisterReset">重置</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -163,24 +201,23 @@ export default {
       // if (valid) {
       //数据校验成功
       companyRegisterSave(this.hxxdCompanyRegisterParam).then(response => {
-        debugger;
-        var msg = response.status == 200 ? "保存成功" : "保存失败";
+        var msg = response.status == 200 ? "保存成功" : "保存失败"
         debugger;
         if (response.status == 200) {
           //保存成功
           this.$message({
             type: "success",
             message: msg
-          });
+          })
         } else {
           //保存失败
           this.$message({
             type: "success",
             error: msg
-          });
+          })
           console.log(response.message);
         }
-      });
+      })
       // } else {
       //   //校验失败
       //   this.$message({
@@ -189,28 +226,26 @@ export default {
       //   });
       // }
       // });
+    },
+    companyRegisterReset() {
+      this.hxxdCompanyRegisterParam.businessName = ''
+      this.hxxdCompanyRegisterParam.businessNameEn = ''
+      this.hxxdCompanyRegisterParam.contactMail = ''
+      this.hxxdCompanyRegisterParam.contactAddr = ''
+      this.hxxdCompanyRegisterParam.postalcode = ''
+      this.hxxdCompanyRegisterParam.postalAddr = ''
+      this.hxxdCompanyRegisterParam.licenseNo = ''
+      this.hxxdCompanyRegisterParam.socialCode = ''
+      this.hxxdCompanyRegisterParam.companyType = ''
+      this.hxxdCompanyRegisterParam.manageModel = ''
+      this.hxxdCompanyRegisterParam.salesMode = ''
+      this.hxxdCompanyRegisterParam.contactName = ''
+      this.hxxdCompanyRegisterParam.contactNum = ''
+      this.hxxdCompanyRegisterParam.contactPhone = ''
     }
   }
 };
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+ @import '../../styles/hxxd.scss';
 </style>

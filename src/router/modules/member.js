@@ -8,7 +8,7 @@ const hxxdMemberRouter = {
   name: 'hxxdMemberManage',
   meta: {
     title: '会籍管理',
-    icon: 'tree'
+    icon: 'peoples'
   },
   children: [
     {

@@ -9,7 +9,6 @@
               v-model="createDate"
               type="datetimerange"
               value-format= "yyyy-MM-dd HH:mm:ss"
-              :picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -18,7 +17,6 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-
         <el-col :span="6">
           <el-form-item label="企业名称" size="mini" prop="businessName">
             <el-input v-model="formQuery.businessName" size="mini"></el-input>
@@ -32,7 +30,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -58,8 +56,6 @@
             @click.native.prevent="handleEdit('update')"
           >修 改</el-radio-button>
           <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
-        </el-radio-group>
-        <el-radio-group size="mini" style="margin-left: 20px;">
           <el-radio-button
             type="primary"
             class="btn_line"
@@ -90,31 +86,34 @@
       border
       v-loading="tableLoading"
       tooltip-effect="dark"
-      style="width: 100%;margin-bottom:20px;"
       highlight-current-row
+      :header-cell-style="getCellStyle"
       @selection-change="handleSelectionChange"
+      class="table-hxxd"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
-      <el-table-column prop="businessName" label="企业名称" width="250" align="center"></el-table-column>
-      <el-table-column prop="socialCode" label="社会信用代码" width="250" align="center"></el-table-column>
-      <el-table-column prop="licenseNo" label="工商营业执照" width="250" align="center"></el-table-column>
-      <el-table-column prop="securityEvent" label="安全事件" width="250" align="center"></el-table-column>
+      <el-table-column prop="businessName" label="企业名称" width="250" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="socialCode" label="社会信用代码" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="licenseNo" label="工商营业执照" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="securityEvent" label="安全事件" align="center" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="是否经营异常" align="left" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
 
     <!-- 分页 -->
-    <el-pagination
-      background
-      style="text-align: margin-top: 20px;"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page.sync="formQuery.pageNo"
-      :page-size.sync="formQuery.pageSize"
-      :page-sizes="[5, 30, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageTotal"
-    ></el-pagination>
+    <el-row class="area_bordes">
+      <el-col :span="24" style="text-align: right;">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[5, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+        />
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
@@ -167,6 +166,13 @@ export default {
     // }
   },
   methods: {
+    getCellStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
+      } else {
+        return ''
+      }
+    },
     handleAdd() {
       debugger;
       this.$router.push({
@@ -174,15 +180,12 @@ export default {
       });
     },
     handleEdit(type) {
-      debugger;
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: "请选择数据",
           type: "warning"
         });
       } else if (this.multipleSelection.length == 1) {
-        debugger;
-
         var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
@@ -273,45 +276,5 @@ export default {
 };
 </script>
 <style>
-* {
-  font-weight: normal;
-}
-.area_border,
-.area_bordes {
-  box-sizing: border-box;
-  border: 1px solid #e6e6e6;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 10px 0 0 0;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-.area_bordes {
-  padding: 10px;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 5px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
-.dtl-info-line {
-  height: 40px;
-  line-height: 40px;
-  margin: 10px auto;
-  border-radius: 3px;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  color: #000;
-  background-color: #dcecfd;
-}
-.el-table > th {
-  background-color: #eee !important;
-}
+ @import '../../styles/hxxd.scss';
 </style>

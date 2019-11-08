@@ -66,6 +66,7 @@ export default {
 <style lang="scss" scoped>
   @import '../../styles/register.scss';
   .contont-main {
+    height: 544px;
     overflow: hidden;
     padding-bottom: 10px;
     .news-breadcrumb {

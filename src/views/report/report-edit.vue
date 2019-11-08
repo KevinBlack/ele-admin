@@ -109,16 +109,8 @@
           type="primary"
           size="mini"
           icon="el-icon-plus"
-          :disabled="disabled"
           @click="addLine"
         >添加</el-button>
-        <el-button
-          style="margin-left: 10px;"
-          type="primary"
-          size="mini"
-          icon="el-icon-check"
-          @click="savemodify"
-        >保存</el-button>
         <el-button
           style="margin-left: 10px;"
           type="primary"
@@ -135,62 +127,27 @@
           <el-table-column type="selection" width="50" />
           <el-table-column prop="investorType" label="投资人类型">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.investorType" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.investorType }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="investorName" label="投资人名称">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.investorName" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.investorName }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="certificateNum" label="证照/证件号码">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.certificateNum" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.certificateNum }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="investmentAmount" label="投资金额（万元）">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.investmentAmount" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.investmentAmount }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="currencyType" label="货币类型">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.currencyType" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.currencyType }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="editing" label="操作">
-            <template slot-scope="scope">
-              <el-button
-                v-if="!scope.row.editing"
-                v-model="scope.$index"
-                type="danger"
-                icon="el-icon-edit"
-                size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button>
-              <el-button
-                v-else
-                v-model="scope.$index"
-                type="danger"
-                icon="el-icon-circle-close"
-                size="mini"
-                @click="handleCancle(scope.$index, scope.row)"
-              >取消</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -207,16 +164,8 @@
           type="primary"
           size="mini"
           icon="el-icon-plus"
-          :disabled="disabled1"
           @click="addLine1"
         >添加</el-button>
-        <el-button
-          style="margin-left: 10px;"
-          type="primary"
-          size="mini"
-          icon="el-icon-check"
-          @click="savemodify1"
-        >保存</el-button>
         <el-button
           style="margin-left: 10px;"
           type="primary"
@@ -233,62 +182,27 @@
           <el-table-column type="selection" width="50" />
           <el-table-column prop="recognitionNum" label="资质认可号">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.recognitionNum" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.recognitionNum }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="recognitionType" label="资质类别">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.recognitionType" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.recognitionType }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="startTime" label="有效期开始时间">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.startTime" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.startTime }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="endTime" label="有效期结束时间">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.endTime" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.endTime }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="state" label="状态">
             <template slot-scope="scope">
-              <template v-if="scope.row.editing">
                 <el-input v-model="scope.row.state" class="edit-input" />
-              </template>
-              <span v-else>{{ scope.row.state }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="editing" label="操作">
-            <template slot-scope="scope">
-              <el-button
-                v-if="!scope.row.editing"
-                v-model="scope.$index"
-                type="danger"
-                icon="el-icon-edit"
-                size="mini"
-                @click="handleEdit1(scope.$index, scope.row)"
-              >编辑</el-button>
-              <el-button
-                v-else
-                v-model="scope.$index"
-                type="danger"
-                icon="el-icon-circle-close"
-                size="mini"
-                @click="handleCancle1(scope.$index, scope.row)"
-              >取消</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -497,9 +411,9 @@
       </el-form>
       <!-- 按钮区 -->
       <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+        <el-col :span="24" style="text-align:right;margin-top:20px;">
           <el-button type="primary" size="mini" @click="reportInfoSave">保存</el-button>
-          <el-button type="primary" size="mini" @click="companyInfoSave">上报</el-button>
+          <el-button type="primary" size="mini" >上报</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -602,15 +516,9 @@ export default {
         ownerEquity: "",
         totalProfit: ""
       },
-      prevValue: {},
-      currentRow: [],
       selectArr: [],
-      disabled: false,
       reportInvestorList: [],
-      prevValue1: {},
-      currentRow1: [],
       selectArr1: [],
-      disabled1: false,
       reportRecognitionList: [],
       reportRecognition: {
         reportRecognition: "",
@@ -636,9 +544,7 @@ export default {
   methods: {
     //年报信息保存
     reportInfoSave() {
-      debugger;
       // this.$refs["ruleForm"].validate(valid => {
-      debugger;
       // if (valid) {
          this.reportRecognition.reportRecognition   = JSON.stringify(this.reportRecognitionList);
           this.reportRecognition.reportInvestor   = JSON.stringify(this.reportInvestorList);
@@ -674,14 +580,13 @@ export default {
     },
     handleSelectionChange(val) {
       console.log(val);
+      debugger;
       this.selectArr = val;
     },
     addLine() {
       // 添加行数
-      debugger;
-      this.disabled = true;
       const len = this.reportInvestorList.length - 1;
-      const sum = len >= 0 ? this.reportInvestorList[len].bookid : 0;
+      const sum = len >= 0 ? this.reportInvestorList[len].id : 0;
       const result = sum + 1;
       var newValue = {
         companyInfoId: "",
@@ -695,6 +600,7 @@ export default {
       this.reportInvestorList.push(newValue);
     },
     handleDelete(index) {
+      debugger;
       // 删除行数
       if (this.selectArr.length <= 0) {
         this.$notify({
@@ -719,71 +625,7 @@ export default {
         });
       }
     },
-    handleEdit(index, row) {
-      // 编辑
-      row.editing = true;
-      this.currentRow.push(row);
-      this.prevValue = JSON.parse(JSON.stringify(row));
-    },
-    handleCancle(index, row) {
-      // 取消
-      if (
-        row.recognitionNum !== "" &&
-        row.recognitionType !== "" &&
-        row.startTime !== "" &&
-        row.endTime !== "" &&
-        row.state !== ""
-      ) {
-        row.editing = false;
-        const prevContent = this.prevValue.bookname;
-        this.$set(row, "bookname", prevContent);
-        this.disabled = false;
-      } else {
-        this.reportInvestorList.pop();
-        this.disabled = false;
-      }
-    },
-    savemodify() {
-      // 保存
-      if (this.currentRow.length !== 0) {
-        this.currentRow.forEach(ele => {
-          ele.editing = false;
-        });
-        console.log(1);
-        this.currentRow = [];
-      } else {
-        const len = this.reportInvestorList.length - 1;
-        const row = this.reportInvestorList[len];
-        if (
-          row.recognitionNum !== "" &&
-          row.recognitionType !== "" &&
-          row.startTime !== "" &&
-          row.endTime !== "" &&
-          row.state !== ""
-        ) {
-          const lastChild = this.reportInvestorList[
-            this.reportInvestorList.length - 1
-          ];
-          console.log(2);
-          lastChild.editing = false;
-          this.disabled = false;
-          return this.reportInvestorList;
-        } else {
-          this.$notify({
-            title: "提示",
-            message: "请完善数据",
-            type: "warning",
-            duration: 2000
-          });
-          const lastChild = this.reportInvestorList[
-            this.reportInvestorList.length - 1
-          ];
-          console.log(3);
-          lastChild.editing = true;
-          return this.reportInvestorList;
-        }
-      }
-    }, //资质认可相关方法
+    //资质认可相关方法
     handleSelectionChange1(val) {
       console.log(val);
       this.selectArr1 = val;
@@ -791,7 +633,6 @@ export default {
     addLine1() {
       // 添加行数
       debugger;
-      this.disabled1 = true;
       const len = this.reportRecognitionList.length - 1;
       const sum = len >= 0 ? this.reportRecognitionList[len].recognitionNum : 0;
       const result = sum + 1;
@@ -806,7 +647,7 @@ export default {
       // 添加新的行数
       this.reportRecognitionList.push(newValue);
     },
-    handleDelete(index) {
+    handleDelete1(index) {
       // 删除行数
       if (this.selectArr1.length <= 0) {
         this.$notify({
@@ -816,7 +657,7 @@ export default {
           duration: 2000
         });
       } else {
-        const delArr = [];
+        const delArr1 = [];
         for (var i = 0; i < this.reportRecognitionList.length; i++) {
           if (this.selectArr1.indexOf(this.reportRecognitionList[i]) === -1) {
             delArr1.push(this.reportRecognitionList[i]);
@@ -831,71 +672,6 @@ export default {
         });
       }
     },
-    handleEdit1(index, row) {
-      // 编辑
-      row.editing = true;
-      this.currentRow1.push(row);
-      this.prevValue1 = JSON.parse(JSON.stringify(row));
-    },
-    handleCancle1(index, row) {
-      // 取消
-      if (
-        row.recognitionNum !== "" &&
-        row.recognitionType !== "" &&
-        row.startTime !== "" &&
-        row.endTime !== "" &&
-        row.state !== ""
-      ) {
-        row.editing = false;
-        // const prevContent1 = this.prevValue.bookname;
-        // this.$set(row, "bookname", prevContent);
-        this.disabled1 = false;
-      } else {
-        this.reportRecognitionList.pop();
-        this.disabled1 = false;
-      }
-    },
-    savemodify1() {
-      // 保存
-      if (this.currentRow1.length !== 0) {
-        this.currentRow1.forEach(ele => {
-          ele.editing = false;
-        });
-        console.log(1);
-        this.currentRow1 = [];
-      } else {
-        const len = this.reportRecognitionList.length - 1;
-        const row = this.reportRecognitionList[len];
-        if (
-          row.recognitionNum !== "" &&
-          row.recognitionType !== "" &&
-          row.startTime !== "" &&
-          row.endTime !== "" &&
-          row.state !== ""
-        ) {
-          const lastChild = this.reportRecognitionList[
-            this.reportRecognitionList.length - 1
-          ];
-          console.log(2);
-          lastChild.editing = false;
-          this.disabled1 = false;
-          return this.reportRecognitionList;
-        } else {
-          this.$notify({
-            title: "提示",
-            message: "请完善数据",
-            type: "warning",
-            duration: 2000
-          });
-          const lastChild = this.reportRecognitionList[
-            this.reportRecognitionList.length - 1
-          ];
-          console.log(3);
-          lastChild.editing = true;
-          return this.reportRecognitionList;
-        }
-      }
-    }
   }
 };
 </script>

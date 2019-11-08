@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 根据roleId 获取数据权限
 export function getDataScope(roleId) {
   return request({
-    url: '/sys/jqSysDataScope/get',
+    url: '/system/jqSysDataScope/get',
     method: 'post',
     data: { roleId }
   })
@@ -11,7 +11,7 @@ export function getDataScope(roleId) {
 
 export function saveDataScope(data) {
   return request({
-    url: '/sys/jqSysDataScope/save',
+    url: '/system/jqSysDataScope/save',
     method: 'post',
     data
   })
@@ -19,7 +19,7 @@ export function saveDataScope(data) {
 
 export function deleteDataScope(id) {
   return request({
-    url: `/sys/jqSysDataScope/delete`,
+    url: `/system/jqSysDataScope/delete`,
     method: 'post',
     data: { id }
   })

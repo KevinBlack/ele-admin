@@ -9,7 +9,7 @@ const jyycglRouter = {
   name: 'jyycgl',
   meta: {
     title: '经营异常管理',
-    icon: 'tree'
+    icon: 'forbidden'
   },
   children: [
     {

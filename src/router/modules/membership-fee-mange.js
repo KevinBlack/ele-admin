@@ -42,6 +42,40 @@ const membershipfeemangeRouter = {
       meta: {
         title: '会费查询'
       }
+    },
+    {
+      path: 'dues-count',
+      component: () => import('@/views/membership-fee-mange/dues-count'),
+      name: 'DuesCount',
+      meta: {
+        title: '会费统计'
+      }
+    },
+    {
+      path: 'feeCollectionRulesManage',
+      component: () => import('@/views/membership-fee-mange/feeCollectionRulesManage'),
+      name: 'feeCollectionRulesManage',
+      meta: {
+        title: '会费收取规则'
+      }
+    },
+    {
+      path: 'addFeeCollectionRules',
+      hidden: true,
+      component: () => import('@/views/membership-fee-mange/addFeeCollectionRules'),
+      name: 'addFeeCollectionRules',
+      meta: {
+        title: '会费收取规则添加'
+      }
+    },
+    {
+      path: 'updateFeeCollectionRules',
+      hidden: true,
+      component: () => import('@/views/membership-fee-mange/updateFeeCollectionRules'),
+      name: 'updateFeeCollectionRules',
+      meta: {
+        title: '会费收取规则修改'
+      }
     }
   ]
 }

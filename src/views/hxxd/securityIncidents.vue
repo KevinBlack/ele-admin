@@ -1,125 +1,97 @@
 <template>
-  <el-card style="margin: 0 10px;">
-    <div class="app-container">
-      <el-row>
-        <el-col>
-          <!-- 查询面板start -->
-          <el-card class="box-card" shadow="never">
-            <!-- label-width='65px' -->
-            <el-form ref="formQuery" :model="formQuery" :inline="true">
-              <el-row>
-                <el-col :span="14">
-                  <el-form-item label="签约时间从" size="mini" prop="timeValue">
-                    <el-date-picker
-                      type="datetimerange"
-                      v-model="formQuery.timeValue"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                    ></el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item label="处罚类别" size="mini" prop="punishmentType">
-                    <el-select v-model="formQuery.punishmentType" filterable placeholder="请选择" size="mini"  >
-                      <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" >
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4" style="text-align: right;">
-                  <el-form-item size="mini">
-                    <el-button type="primary" size="mini" @click="search">查询</el-button>
-                    <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-          </el-card>
-          <!-- 查询面板end -->
-          <!-- 表格区 -->
-          <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-            <!-- 按钮区 -->
-            <el-card
-              shadow="never"
-              style="padding:15px;border-radius:0px;"
-              :body-style="{ padding: '0px' }"
-            >
-              <template slot-scope="scope">
-                <el-button type="primary" size="mini" @click="handleAdd()">新增</el-button>
-                <el-button type="primary" size="mini" @click="handleRelease(scope.row)">门户发布</el-button>
-                <el-button type="primary" size="mini" @click="handleReport(scope.row)">上报</el-button>
-              </template>
-            </el-card>
-            <!-- 按钮区end -->
-            <!-- 表格区2 -->
-            <el-table
-              ref="companyTable"
-              v-loading="tableLoading"
-              :data="tableData"
-              style="width:100%"
-              :header-row-style="headRowStyle"
-              :row-style="rowStyle"
-              :header-cell-style="getCellStyle"
-              border
-              highlight-current-row
-              @selection-change="selectionChange"
-            >
-              <el-table-column type="selection" width="55" align="center" /><el-table-columnprop="businessCategory" label="业务类别" align="center" />
-              <el-table-column prop="praiseEvent" label="表扬事件" align="center" />
-              <el-table-column prop="salesAgent" label="销售代理人" align="center" />
-              <el-table-column
-                prop="validityAgreement"
-                label="协议有效期"
-                align="center"
-                :show-overflow-tooltip="true"
-              />
-              <el-table-column
-                prop="createTime"
-                label="签约时间"
-                align="left"
-                :show-overflow-tooltip="true"
-              />
-              <el-table-column
-                align="center"
-                prop="releaseStatus"
-                :formatter="releaseStatus"
-                label="发布状态"
-              />
-              <el-table-column
-                align="center"
-                prop="punishmentType"
-                :formatter="punishCategory"
-                label="处罚类别"
-              />
-            </el-table>
-            <!-- 表格区2end -->
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="formQuery.pageNo"
-              :page-size.sync="formQuery.pageSize"
-              :page-sizes="[15, 30, 50, 100]"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="pageTotal"
-            ></el-pagination>
-          </el-card>
-          <!-- 表格区end -->
+  <el-card class="detailsContainer">
+    <!-- 查询面板start -->
+    <!-- label-width='65px' -->
+    <el-form ref="formQuery" :model="formQuery" :inline="true">
+      <el-row :gutter="20" class="area_bordes">
+        <el-col :span="14">
+          <el-form-item label="签约时间从" size="mini" prop="timeValue">
+            <el-date-picker
+              type="datetimerange"
+              v-model="formQuery.timeValue"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
+            ></el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="处罚类别" size="mini" prop="punishmentType">
+            <el-select v-model="formQuery.punishmentType" filterable placeholder="请选择" size="mini"  >
+              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4" style="text-align: right;">
+          <el-form-item size="mini">
+            <el-button type="primary" size="mini" @click="search">查询</el-button>
+            <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+          </el-form-item>
         </el-col>
       </el-row>
-    </div>
+    </el-form>
+    <!-- 查询面板end -->
+    <!-- 按钮区 -->
+    <el-row class="area_bordes">
+      <el-col :span="24">
+        <el-radio-group size="mini">
+          <el-radio-button type="primary" class="btn_line" size="mini" @click.native.prevent="handleAdd()">新增</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" size="mini" @click.native.prevent="handleRelease(scope.row)">门户发布</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" size="mini" @click.native.prevent="handleReport(scope.row)">上报</el-radio-button>
+        </el-radio-group>
+      </el-col>
+    </el-row>
+    <!-- 按钮区end -->
+      <!-- 表格区2 -->
+      <el-table
+        ref="companyTable"
+        v-loading="tableLoading"
+        :data="tableData"
+        style="width:100%"
+        :header-row-style="headRowStyle"
+        :row-style="rowStyle"
+        :header-cell-style="getCellStyle"
+        border
+        highlight-current-row
+        @selection-change="selectionChange"
+        class="table-hxxd"
+      >
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-columnprop="businessCategory" label="业务类别" align="center" />
+        <el-table-column prop="salesAgent" label="销售代理人" align="center" />
+        <el-table-column prop="validityAgreement" label="协议有效期" align="center" :show-overflow-tooltip="true" />
+        <el-table-column prop="createTime" label="签约时间" align="center" :show-overflow-tooltip="true" />
+        <el-table-column prop="releaseStatus" label="发布状态" align="center" :formatter="releaseStatus" />
+        <el-table-column prop="punishmentType" label="处罚类别" align="center" :formatter="punishCategory" />
+      </el-table>
+      <!-- 表格区2end -->
+      <el-row class="area_bordes">
+        <el-col :span="24" style="text-align: right">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="formQuery.pageNo"
+            :page-size.sync="formQuery.pageSize"
+            :page-sizes="[15, 30, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageTotal"
+          />
+        </el-col>
+      </el-row>
+    <!-- 表格区end -->
   </el-card>
 </template>
 
 <script>
-import {selectSecurityIncident } from "@/api/hxxd/complaintInfo";
+import { selectSecurityIncident } from "@/api/hxxd/complaintInfo";
 import { parseTime } from "@/utils/index.js";
 export default {
   props: {
     pageCode: {
       type: String,
-      default: ""
+      default: ''
     }
   },
   // data 开始
@@ -128,18 +100,18 @@ export default {
       show: false,
       treeData: [],
       treeDefaultProps: {
-        children: "childs",
+        children: 'childs',
         label: function(data, node) {
-          return data.complainant;
+          return data.complainant
         }
       },
       pageTotal: 0,
       formQuery: {
-        punishmentType: "",
+        punishmentType: '',
         pageNo: 1,
         pageSize: 15,
-        startTime: "",
-        endTime: "",
+        startTime: '',
+        endTime: '',
         timeValue: []
       },
       tableLoading: false,
@@ -147,133 +119,101 @@ export default {
       tableMultiSelection: [],
       statusOptions: [
         {
-          value: "1",
-          label: "警告"
+          value: '1',
+          label: '警告'
         },
         {
-          value: "2",
-          label: "罚款"
+          value: '2',
+          label: '罚款'
         }
       ]
-    };
+    }
   },
   // data 结束
   created() {
-    const end = new Date();
-    const start = new Date();
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-    this.formQuery.timeValue = [parseTime(start), parseTime(end)];
-    this.formQuery.startTime = this.formQuery.timeValue[0];
-    this.formQuery.endTime = this.formQuery.timeValue[1];
-    this.getTableList();
+    const end = new Date()
+    const start = new Date()
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+    this.formQuery.timeValue = [parseTime(start), parseTime(end)]
+    this.formQuery.startTime = this.formQuery.timeValue[0]
+    this.formQuery.endTime = this.formQuery.timeValue[1]
+    this.getTableList()
   },
   methods: {
     handleAdd() {
+      console.log(1)
        this.$router.push({
-        path: "/hxxd/securityIncidentAdd",query: {}
-      });
+        name: 'SecurityIncidentAdd',
+        query: {}
+      })
     },
     selectionChange(val) {
-      this.tableMultiSelection = val;
+      this.tableMultiSelection = val
     },
     search() {
-      this.getTableList();
+      this.getTableList()
     },
     resetForm(formName) {
       this.$nextTick(() => {
-        this.$refs[formName].resetFields();
-      });
+        this.$refs[formName].resetFields()
+      })
     },
     getTableList() {
-      var startTime = "";
-      var endTime = "";
+      var startTime = ''
+      var endTime = ''
       if (this.formQuery.timeValue.length >= 0) {
-        this.formQuery.startTime = this.formQuery.timeValue[0];
-        this.formQuery.endTime = this.formQuery.timeValue[1];
+        this.formQuery.startTime = this.formQuery.timeValue[0]
+        this.formQuery.endTime = this.formQuery.timeValue[1]
       }
-      this.tableLoading = true;
+      this.tableLoading = true
       selectSecurityIncident(this.formQuery).then(response => {
-        this.tableData = response.data;
-        this.pageTotal = response.page.total;
-        this.tableLoading = false;
-      });
+        this.tableData = response.data
+        this.pageTotal = response.page.total
+        this.tableLoading = false
+      })
     },
     handleSizeChange() {
-      this.getTableList();
+      this.getTableList()
     },
     handleCurrentChange() {
-      this.getTableList();
+      this.getTableList()
     },
     rowStyle(row, rowIndex) {
-      return "height:15pxfont-size: 13pxcolor: #333font-weight: normal ";
+      return 'height:15pxfont-size: 13pxcolor: #333font-weight: normal '
     },
     headRowStyle(row, rowIndex) {
-      return "height:15px";
+      return 'height:15px'
     },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return "background: #F2F2F2font-size: 13pxcolor: #333font-weight: normal";
+        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
       } else {
-        return "";
+        return ''
       }
     },
     releaseStatus(row, column, cellValue, index) {
-      let status = row.releaseStatus;
-      if (status === "0") {
-        return "未发布";
-      } else if (status === "1") {
-        return "已发布";
+      let status = row.releaseStatus
+      if (status === '0') {
+        return '未发布'
+      } else if (status === '1') {
+        return '已发布'
       } else {
-        return row.status;
+        return row.status
       }
     },
     punishCategory(row, column, cellValue, index) {
-      const punishmentType = row.punishmentType;
-      if (punishmentType === "1") {
-        return "警告";
-      } else if (punishmentType === "2") {
-        return "罚款";
+      const punishmentType = row.punishmentType
+      if (punishmentType === '1') {
+        return '警告'
+      } else if (punishmentType === '2') {
+        return '罚款'
       } else {
-        return row.punishmentType;
+        return row.punishmentType
       }
     }
   }
-};
+}
 </script>
 <style>
-.el-aside {
-  /* background-color: #d3dce6 */
-  color: #333;
-  margin-top: 12px;
-  width: 250px;
-  min-height: 600px;
-  margin-bottom: 0px;
-  padding-right: 1px;
-}
-
-.el-main {
-  padding-left: 1px;
-  background-color: #e9eef3;
-  color: #333;
-  /* text-align: center */
-  /* line-height: 0px */
-  min-height: 600px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
-}
-.el-table--medium th,
-.el-table--medium td {
-  padding: 0px 0;
-}
+@import "../../styles/hxxd.scss";
 </style>

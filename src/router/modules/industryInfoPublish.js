@@ -9,7 +9,7 @@ const industryInfoPublishRouter = {
   name: 'InfoPublish',
   meta: {
     title: '行业信息管理',
-    icon: 'tree'
+    icon: 'international'
   },
   children: [
     {
@@ -22,8 +22,26 @@ const industryInfoPublishRouter = {
       path: 'updateIndustryInfo',
       hidden:true,
       component: () => import('@/views/infoPublish/updateIndustryInfo'),
-      name: 'updateIndustryInfo',
+      name: 'UpdateIndustryInfo',
       meta: { title: '行业信息修改' }
+    },
+    {
+      path: 'industryInfoEdit',
+      hidden: true,
+      component: () => import('@/views/infoPublish/industryInfoEdit'),
+      name: 'IndustryInfoEdit',
+      meta: {
+        title: '新增行业信息'
+      }
+    },
+    {
+      path: 'industryInfoDetail',
+      hidden: true,
+      component: () => import('@/views/infoPublish/industryInfoDetail'),
+      name: 'IndustryInfoDetail',
+      meta: {
+        title: '查看行业信息'
+      }
     }
   ]
 }

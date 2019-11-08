@@ -27,7 +27,7 @@ module.exports = {
   // 项目打包时请修改此处
   // publicPath: '/',
   publicPath: '/hkysxh/',
-  outputDir: 'dist',
+  outputDir: 'hkysxh',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
@@ -38,27 +38,19 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      '/sys': {
-        target: `http://127.0.0.1:${port}/mock`,
-        // target: `http://10.1.21.65:8003/system`,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/sys': ''
-        }
-      },
-      '/hxxd': {
-        target: `http://127.0.0.1:8003/hxxd`,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/hxxd': ''
-        }
-      }
-    },
+    proxy: {
+      // change xxx-api/login => mock/login
+      // detail: https://cli.vuejs.org/config/#devserver-proxy
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://10.1.100.153:8030/zuul`,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    }
     // },
-    after: require('./mock/mock-server.js')
+    // after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -115,7 +107,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()

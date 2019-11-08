@@ -52,7 +52,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            
+
             <el-col :span="16">
                   <el-form-item label="交易日期" size="mini" prop="timeValue">
                     <el-date-picker
@@ -138,32 +138,34 @@
   </el-card>
 </template>
 <script>
-import { selectFinancialManageByParam,importFile,downloadTemplate,financialDataConfirm,deleteFinancialData} from "@/api/hxxd/financialManage";
-import { parseTime } from "@/utils/index.js";
+import { selectFinancialManageByParam, importFile, downloadTemplate, financialDataConfirm, deleteFinancialData } from '@/api/hxxd/financialManage'
+import { parseTime } from '@/utils/index.js'
+
 export default {
+  name: 'FinancialManage',
   data() {
     return {
       show: false,
       treeData: [],
       treeDefaultProps: {
-        children: "childs",
+        children: 'childs',
         label: function(data, node) {
-          return data.complainant;
+          return data.complainant
         }
       },
-       formQuery: {
-        tradePipelineNum: "",
-        tradeMoney: "",
-        abstractContent: "",
-        oppositeAccount: "",
-        oppositeAccountName: "",
-        openingBank: "",
-        paymentAccount: "",
-        status: "",
+      formQuery: {
+        tradePipelineNum: '',
+        tradeMoney: '',
+        abstractContent: '',
+        oppositeAccount: '',
+        oppositeAccountName: '',
+        openingBank: '',
+        paymentAccount: '',
+        status: '',
         pageNo: 1,
         pageSize: 15,
-        tradeStartTime: "",
-        tradeEndTime: "",
+        tradeStartTime: '',
+        tradeEndTime: '',
         timeValue: []
       },
       pageNo: 1,
@@ -192,30 +194,30 @@ export default {
           label: '0115014210001671'
         }
       ]
-    };
+    }
   },
   created() {
-    const end = new Date();
-    const start = new Date();
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-    this.formQuery.timeValue = [parseTime(start), parseTime(end)];
-    this.formQuery.tradeStartTime = this.formQuery.timeValue[0];
-    this.formQuery.tradeEndTime = this.formQuery.timeValue[1];
-    this.getTableList();
+    const end = new Date()
+    const start = new Date()
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+    this.formQuery.timeValue = [parseTime(start), parseTime(end)]
+    this.formQuery.tradeStartTime = this.formQuery.timeValue[0]
+    this.formQuery.tradeEndTime = this.formQuery.timeValue[1]
+    this.getTableList()
   },
   methods: {
-      getTableList() {
-      this.tableLoading = true;
-       if (this.formQuery.timeValue.length >= 0) {
-        this.formQuery.tradeStartTime = this.formQuery.timeValue[0];
-        this.formQuery.tradeEndTime = this.formQuery.timeValue[1];
+    getTableList() {
+      this.tableLoading = true
+      if (this.formQuery.timeValue.length >= 0) {
+        this.formQuery.tradeStartTime = this.formQuery.timeValue[0]
+        this.formQuery.tradeEndTime = this.formQuery.timeValue[1]
       }
       selectFinancialManageByParam(this.formQuery).then(response => {
-        this.tableData = response.data;
-        this.pageTotal = response.page.total;
-        console.log(this.pageTotal);
-        this.tableLoading = false;
-      });
+        this.tableData = response.data
+        this.pageTotal = response.page.total
+        console.log(this.pageTotal)
+        this.tableLoading = false
+      })
     },
     statusFmt(row, column, cellValue, index) {
       const status = row.status
@@ -229,7 +231,7 @@ export default {
     },
     search() {
       this.getTableList()
-    },
+    }
   }
 }
 </script>

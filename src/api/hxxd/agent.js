@@ -254,3 +254,19 @@ export function getCallInfoList(data) {
     data
   })
 }
+
+export function componyQueryList(data) {
+  return request({
+    url: '/system/jqSysDict/anonw/getDictComponyByName',
+    method: 'post',
+    data
+  })
+}
+
+export function getDictAirCompony(data) {
+  return request({
+    url: '/system/jqSysDict/anonw/getDictAirCompony',
+    method: 'post',
+    data
+  })
+}

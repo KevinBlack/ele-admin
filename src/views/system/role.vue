@@ -303,20 +303,20 @@ export default {
         });
     },
     handleAdd() {
-      this.$router.push({ path: "/sys/role-detail", query: {} });
+      this.$router.push({ path: "/system/role-detail", query: {} });
     },
     handleEdit(row) {
       var roleId = row.roleId;
       if (roleId) {
         this.$router.push({
-          path: "/sys/role-detail",
+          path: "/system/role-detail",
           query: { roleId: roleId }
         });
       }
     },
     editDataScope(row) {
       this.$router.push({
-        path: "/sys/role-datascope",
+        path: "/system/role-datascope",
         query: { roleId: row.roleId }
       });
     },

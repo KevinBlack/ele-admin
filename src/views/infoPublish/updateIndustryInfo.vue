@@ -1,71 +1,85 @@
 <template>
   <div>
     <el-card class="box-card" style="margin: 0 10px;">
-         <!-- part1 -->
-        <el-row :gutter="10">
+      <!-- part1 -->
+      <el-row :gutter="10">
+        <el-col :span="24">
+          <h5 class="dtl-title-line">行业信息修改</h5>
+        </el-col>
+      </el-row>
+      <el-form ref="detailForm" :model="detailForm" :rules="rules1" label-width="150px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="所属分组" prop="industryType">
+              <el-select v-model="detailForm.industryType" style="width: 100%;" placeholder="请选择">
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="内容标题" prop="industryTitle">
+              <el-input v-model="detailForm.industryTitle" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="内容描述" prop="industryContent">
+              <el-input v-model="detailForm.industryContent" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="修改时间" prop="createTime">
+              <el-input v-model="detailForm.modifyTime" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="添加附件" prop="industryContent">
+              <el-input v-model="detailForm.industryContent" />
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
-              <h5 class="dtl-title-line">基本信息</h5>
+            <el-form-item label="内容添加" prop="industryBody">
+              <div ref="editor"></div>
+            </el-form-item>
           </el-col>
         </el-row>
-          <el-form ref="detailForm" :model="detailForm" label-width="150px">
-           <el-row>
-            <el-col :span="12">
-              <el-form-item label="发布内容" size="mini" prop="industryContent">
-                <el-input v-model="detailForm.industryContent" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12"></el-col>
-           </el-row>
-            <el-row>
-            <el-col :span="12">
-              <el-form-item label="行业类型" size="mini" prop="industryType">
-                <el-select
-                  v-model="detailForm.industryType"
-                  filterable
-                  placeholder="请选择"
-                  size="mini"
-                >
-                  <el-option
-                    v-for="item in statusOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    style="width:100%"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12"></el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <div style="text-align: center;">
-                  <el-button type="primary"  icon="el-icon-check" @click="saveMenu">保存</el-button>
-                  <el-button icon="el-icon-close" @click="resetForm('detailForm')">重置</el-button>
-                </div>
-              </el-col>
-            </el-row>
-          </el-form>
+      </el-form>
+      <el-row>
+        <el-col :span="24" class="btn_bottom">
+          <div style="text-align: center;">
+            <el-button type="primary" size="mini" @click="saveMenu">保存</el-button>
+            <el-button type="warning" size="mini" @click="resetForm('detailForm')">重置</el-button>
+          </div>
+        </el-col>
+      </el-row>
     </el-card>
   </div>
 </template>
 
 <script>
-import { selectIndustry,updateIndustryInfo } from "@/api/hxxd/industryInfoPublish";
+import { selectIndustry, updateIndustryInfo } from '@/api/hxxd/industryInfoPublish'
+import E from 'wangeditor'
 
 export default {
+  name: 'UpdateIndustryInfo',
   data() {
     return {
-      title: "更新行业信息发布",
+      title: '更新行业信息发布',
+      editorContent: '',
       detailForm: {
-        id: "",
-        industryContent: "",
-        industryType: "",
-        publishStatus: ""
+        id: '',
+        industryContent: '',
+        industryType: '',
+        publishStatus: '',
+        industryBody: '',
+        modifyTime: ''
       },
       cascaderOpts: [],
-      statusOptions: [
-        {
+      statusOptions: [{
           value: 1,
           label: "消代分会"
         },
@@ -73,52 +87,71 @@ export default {
           value: 2,
           label: "航食分会"
         }
-      ]
-    };
+      ],
+      rules1: {
+        industryTitle: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        createTime: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ]
+      }
+    }
   },
   created() {
-    let id = this.$route.query.id;
-    this.title = "修改行业信息发布";
-    this.getMenuInfo(id);
+    let id = this.$route.query.id
+    this.title = "修改行业信息发布"
+    this.getMenuInfo(id)
+  },
+  mounted() {
+    var editor = new E(this.$refs.editor)
+    editor.customConfig.onchange = (html) => {
+      this.editorContent = html
+    }
+    editor.create()
   },
   methods: {
     getMenuInfo(id) {
-      this.detailForm.id=id
+      this.detailForm.id = id
       selectIndustry(this.detailForm).then(response => {
-        this.detailForm.industryContent = response.data[0].industryContent;
-        this.detailForm.industryType = response.data[0].industryType;
-      });
+        this.detailForm.industryContent = response.data[0].industryContent
+        this.detailForm.industryType = response.data[0].industryType
+      })
     },
     saveMenu() {
       const {
         id,
         industryContent,
         industryType
-      } = this.detailForm;
+      } = this.detailForm
       updateIndustryInfo(this.detailForm).then(response => {
-        this.$router.push({
-        path: "/infoPublish/selectIndustryInfo",
-        query: {}
-      });
-      });
+        // this.$router.push({
+        //   path: '/infoPublish/selectIndustryInfo',
+        //   query: {}
+        // })
+        var msg = response.status === 200 ? '保存成功' : '保存失败'
+        if (response.status === 200) {
+          this.$message({
+            type: 'success',
+            message: msg
+          })
+        } else {
+          this.$message({
+            type: 'success',
+            error: msg
+          })
+        }
+      })
     },
     resetForm(formName) {
       this.$nextTick(() => {
-        this.$refs[formName].resetFields();
-      });
+        this.$refs[formName].resetFields()
+      })
     }
   }
-};
+}
 </script>
 <style>
-.title-cls {
-  color: #409eff;
-  border-bottom: 1px solid #409eff;
-  padding-bottom: 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409EFF;
-  padding-left: 5px;
-}
+  @import '../../styles/hxxd.scss';
+
 </style>

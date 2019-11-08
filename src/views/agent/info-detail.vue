@@ -6,7 +6,7 @@
           <!-- 企业信息 -->
           <el-row :gutter="10">
             <el-col :span="24">
-              <h5 class="dtl-title-line bg-font-color">企业信息</h5>
+              <h5 class="dtl-title-line">企业信息</h5>
             </el-col>
           </el-row>
 
@@ -14,11 +14,11 @@
             ref="ruleForm"
             :model="hxXdCompanyInfoParam"
             :disabled="disabled"
-            label-width="135px"
+            label-width="150px"
             size="mini"
-            :rules="rules1"
+            :rules='rules1'
           >
-            <el-row :gutter="20">
+            <el-row :gutter="20" class='line_bottom'>
               <el-col :span="12">
                 <el-form-item label="企业名称" prop="businessName">
                   <el-input v-model="hxXdCompanyInfoParam.businessName" />
@@ -108,10 +108,10 @@
             <!-- 法定代表人信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">法定代表人信息</h5>
+                <h5 class="dtl-title-line">法定代表人信息</h5>
               </el-col>
             </el-row>
-            <el-row :gutter="20">
+            <el-row :gutter="20"  class='line_bottom'>
               <el-col :span="6">
                 <el-form-item label="姓名" prop="name">
                   <el-input v-model="hxXdCompanyInfoParam.name" />
@@ -153,7 +153,7 @@
             <!-- 投资人信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">投资人信息</h5>
+                <h5 class="dtl-title-line">投资人信息</h5>
               </el-col>
             </el-row>
             <el-button
@@ -161,16 +161,8 @@
               type="primary"
               size="mini"
               icon="el-icon-plus"
-              :disabled="disabled"
               @click="addLine"
             >添加</el-button>
-            <el-button
-              style="margin-left: 10px;"
-              type="primary"
-              size="mini"
-              icon="el-icon-check"
-              @click="savemodify"
-            >保存</el-button>
             <el-button
               style="margin-left: 10px;"
               type="primary"
@@ -181,76 +173,39 @@
             <el-table
               ref="multipleTable"
               :data="investorList"
+              border
               style="width: 100%; margin-top: 20px;"
               @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="50" />
               <el-table-column prop="investorType" label="投资人类型">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.investorType" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.investorType }}</span>
+                  <el-input v-model="scope.row.investorType" class="edit-input" />
                 </template>
               </el-table-column>
               <el-table-column prop="investorName" label="投资人名称">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.investorName" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.investorName }}</span>
+                  <el-input v-model="scope.row.investorName" class="edit-input" />
                 </template>
               </el-table-column>
               <el-table-column prop="certificateNum" label="证照/证件号码">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.certificateNum" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.certificateNum }}</span>
+                  <el-input v-model="scope.row.certificateNum" class="edit-input" />
                 </template>
               </el-table-column>
               <el-table-column prop="investmentAmount" label="投资金额（万元）">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.investmentAmount" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.investmentAmount }}</span>
+                  <el-input v-model="scope.row.investmentAmount" class="edit-input" />
                 </template>
               </el-table-column>
               <el-table-column prop="currencyType" label="货币类型">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.currencyType" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.currencyType }}</span>
+                  <el-input v-model="scope.row.currencyType" class="edit-input" />
                 </template>
               </el-table-column>
               <el-table-column prop="currencyType" label="投资比例">
                 <template slot-scope="scope">
-                  <template v-if="scope.row.editing">
-                    <el-input v-model="scope.row.investmentsRatio" class="edit-input" />
-                  </template>
-                  <span v-else>{{ scope.row.investmentsRatio }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="editing" label="操作">
-                <template slot-scope="scope">
-                  <el-button
-                    v-if="!scope.row.editing"
-                    v-model="scope.$index"
-                    type="danger"
-                    icon="el-icon-edit"
-                    size="mini"
-                    @click="handleEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                    v-else
-                    v-model="scope.$index"
-                    type="danger"
-                    icon="el-icon-circle-close"
-                    size="mini"
-                    @click="handleCancle(scope.$index, scope.row)"
-                  >取消</el-button>
+                  <el-input v-model="scope.row.investmentsRatio" class="edit-input" />
                 </template>
               </el-table-column>
             </el-table>
@@ -258,7 +213,7 @@
             <!-- 其他信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">其它信息</h5>
+                <h5 class="dtl-title-line">其它信息</h5>
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -279,13 +234,6 @@
               </el-col>
             </el-row>
           </el-form>
-          <!-- 按钮区 -->
-          <el-row :gutter="10">
-            <el-col :span="22" style="text-align:right;margin-top:20px;">
-              <el-button type="primary" size="mini" @click="companyInfoSave">保存</el-button>
-              <el-button type="primary" size="mini" @click="companyInfoSave">提交</el-button>
-            </el-col>
-          </el-row>
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="常用信息" name="info2">
@@ -293,13 +241,12 @@
           <!-- 联系信息 -->
           <el-row :gutter="10">
             <el-col :span="24">
-              <h5 class="dtl-title-line bg-font-color">联系信息</h5>
+              <h5 class="dtl-title-line">联系信息</h5>
             </el-col>
           </el-row>
           <el-form
             ref="ruleForm2"
             :model="HxXdCompanyCommonInfoParam"
-            :rules="rules2"
             :disabled="disabled"
             label-width="130px"
             size="mini"
@@ -325,7 +272,7 @@
             <!-- 银行信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">银行信息</h5>
+                <h5 class="dtl-title-line">银行信息</h5>
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -353,7 +300,7 @@
             <!-- 负责人信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">业务负责人信息</h5>
+                <h5 class="dtl-title-line">业务负责人信息</h5>
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -404,7 +351,7 @@
             <!-- 从业人员信息 -->
             <el-row :gutter="10">
               <el-col :span="24">
-                <h5 class="dtl-title-line bg-font-color">从业人员信息</h5>
+                <h5 class="dtl-title-line">从业人员信息</h5>
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -445,24 +392,34 @@
               </el-col>
             </el-row>
           </el-form>
-          <!-- 按钮区 -->
-          <el-row :gutter="10">
-            <el-col :span="22" style="text-align:right;margin-top:20px;">
-              <el-button type="primary" size="mini" @click="companyInfoCommonSave()">保存</el-button>
-              <el-button type="primary" size="mini" @click="companyInfoCommonSave()">提交</el-button>
-            </el-col>
-          </el-row>
         </el-row>
       </el-tab-pane>
     </el-tabs>
+    <el-row>
+      <!-- <el-col :span='12'>
+        <a href='javascrip:;' style='color: #409EFF'>
+          <i class='el-icon-back' style='color: #409EFF;margin-right: 5px;c' />返 回
+        </a>
+      </el-col> -->
+      <el-col :span='24' v-if="isButton" class="btn_bottom">
+        <el-button type='primary' size='mini' @click='companyInfoSave()'>保存</el-button>
+        <el-button type='primary' size='mini' @click='companyInfoCansle()'>取消</el-button>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
 <script>
-import { getCompanyInfoById, getCommonById ,companyUpdate ,commonUpdate} from "@/api/hxxd/agent";
+import {
+  getCompanyInfoById,
+  getCommonById,
+  companyUpdate,
+  commonUpdate
+} from "@/api/hxxd/agent";
 export default {
   data() {
     return {
+      isButton: true,
       disabled: true,
       sexOptions: [
         {
@@ -472,6 +429,16 @@ export default {
         {
           value: "1",
           label: "女"
+        }
+      ],
+      ceshiOptions: [
+        {
+          value: "0",
+          label: "测试一"
+        },
+        {
+          value: "1",
+          label: "测试二"
         }
       ],
       tabView: "info1",
@@ -499,7 +466,8 @@ export default {
         neutralBillNum: "",
         investmentAmount: "",
         currencyType: "",
-        investmentsRatio: ""
+        investmentsRatio: "",
+        hxXdInvestorInfoParamList: []
       },
       investorList: [
         {
@@ -513,10 +481,6 @@ export default {
           investmentsRatio: ""
         }
       ],
-      hxxdCompanyInfo: {
-        companyInfo: "",
-        investorList: ""
-      },
       HxXdCompanyCommonInfoParam: {
         id: "",
         companyInfoId: "",
@@ -540,6 +504,32 @@ export default {
         contractsNumber: "",
         dispatchWorker: "",
         femaleEmployeesNum: ""
+      },
+      selectArr: [],
+      rules1: {
+        businessName: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        businessNameEn: [
+          { required: true, message: '不能为空' },
+          {
+            pattern: /^[a-zA-Z\/ ]{2,20}$/,
+            message: '请输入英文'
+          }
+        ],
+        socialCode: [
+          { required: true, message: '不能为空', trigger: 'change' },
+          { type: 'number', message: '必须为数字值' }
+        ],
+        bureauCommerce: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        idNum: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { type: 'number', message: '必须为数字值' }
+        ],
+        orgCode: [{ type: 'number', message: '必须为数字值' }]
       }
     };
   },
@@ -552,6 +542,7 @@ export default {
     if (type == "update") {
       this.disabled = false;
     } else if (type == "show") {
+      this.isButton = false
       this.disabled = true;
     }
     if (id) {
@@ -566,35 +557,36 @@ export default {
         query: { flag: "1" }
       });
     },
-     //企业信息保存
+    //企业信息保存
     companyInfoSave() {
       // this.$refs["ruleForm"].validate(valid => {
       //   debugger;
       //   if (valid) {
-          //数据校验成功
-          //this.companyInfo.hxXdCompanyInfoParam = this.hxXdCompanyInfoParam;
-          // this.companyInfo.investorList = this.investorList;
-          this.hxxdCompanyInfo.companyInfo   = JSON.stringify(this.hxXdCompanyInfoParam);
-          this.hxxdCompanyInfo.investorList   = JSON.stringify(this.investorList);
-          companyUpdate(this.hxxdCompanyInfo).then(response => {
-            debugger;
-            var msg = response.status == 200 ? "保存成功" : "保存失败";
-            if (response.status == 200) {
-              //保存成功
-              this.$message({
-                type: "success",
-                message: msg
-              });
-              this.HxXdCompanyCommonInfoParam.companyInfoId = response.data;
-            } else {
-              //保存失败
-              this.$message({
-                type: "success",
-                error: msg
-              });
-              console.log(response.message);
-            }
+      //数据校验成功
+      for (const value of this.investorList) {
+        console.log(typeof(value))
+      }
+
+      this.hxXdCompanyInfoParam.hxXdInvestorInfoParamList = this.investorList
+      companyUpdate(this.hxXdCompanyInfoParam).then(response => {
+        var msg = response.status == 200 ? "保存成功" : "保存失败"
+        if (response.status == 200) {
+          //保存成功
+          this.$message({
+            type: "success",
+            message: msg
           });
+          this.HxXdCompanyCommonInfoParam.companyInfoId = response.data
+          this.companyInfoCommonSave()
+        } else {
+          //保存失败
+          this.$message({
+            type: "success",
+            error: msg
+          })
+          console.log(response.message)
+        }
+      })
       //   } else {
       //     //校验失败
       //     this.$message({
@@ -606,33 +598,22 @@ export default {
     },
     //常用信息保存
     companyInfoCommonSave() {
-      this.$refs["ruleForm2"].validate(valid => {
-        if (valid) {
-          //数据校验成功
-          commonUpdate(this.HxXdCompanyCommonInfoParam).then(response => {
-            debugger;
-            var msg = response.status == 200 ? "保存成功" : "保存失败";
-            if (response.status == 200) {
-              //保存成功
-              this.$message({
-                type: "success",
-                message: msg
-              });
-            } else {
-              //保存失败
-              this.$message({
-                type: "success",
-                error: msg
-              });
-              console.log(response.message);
-            }
+      //数据校验成功
+      commonUpdate(this.HxXdCompanyCommonInfoParam).then(response => {
+        var msg = response.status == 200 ? "保存成功" : "保存失败";
+        if (response.status == 200) {
+          //保存成功
+          this.$message({
+            type: "success",
+            message: msg
           });
         } else {
-          //校验失败
+          //保存失败
           this.$message({
-            message: "请正确录入页面数据",
-            type: "warning"
+            type: "success",
+            error: msg
           });
+          console.log(response.message);
         }
       });
     },
@@ -641,38 +622,71 @@ export default {
       this.hxXdCompanyInfoParam.id = id;
       getCompanyInfoById(this.hxXdCompanyInfoParam).then(response => {
         this.hxXdCompanyInfoParam = response.data;
+        debugger;
+        this.investorList = this.hxXdCompanyInfoParam.hxXdInvestorInfoVOList;
+        if(this.investorList==undefined){
+          this.investorList=[];
+        }
       });
     },
     //常用信息查询
     getCommonById(id) {
-      
       this.HxXdCompanyCommonInfoParam.companyInfoId = id;
       getCommonById(this.HxXdCompanyCommonInfoParam).then(response => {
         this.HxXdCompanyCommonInfoParam = response.data;
         this.HxXdCompanyCommonInfoParam.companyInfoId = id;
       });
+    },
+    handleSelectionChange(val) {
+      console.log(val);
+      this.selectArr = val;
+    },
+    addLine() {
+      // 添加行数
+      const len = this.investorList.length - 1;
+      const sum = len >= 0 ? this.investorList[len].id : 0;
+      const result = sum + 1;
+      var newValue = {
+        companyInfoId: "",
+        investorType: "",
+        investorName: "",
+        certificateNum: "",
+        investmentAmount: "",
+        currencyType: "",
+        investmentsRatio: "",
+        editing: true
+      };
+      // 添加新的行数
+      this.investorList.push(newValue);
+    },
+    handleDelete(index) {
+      // 删除行数
+      if (this.selectArr.length <= 0) {
+        this.$notify({
+          title: "提示",
+          message: "请选择要删除的项",
+          type: "warning",
+          duration: 2000
+        });
+      } else {
+        const delArr = [];
+        for (var i = 0; i < this.investorList.length; i++) {
+          if (this.selectArr.indexOf(this.investorList[i]) === -1) {
+            delArr.push(this.investorList[i]);
+          }
+        }
+        this.investorList = delArr;
+        this.$notify({
+          title: "成功",
+          message: "删除成功",
+          type: "success",
+          duration: 2000
+        });
+      }
     }
   }
 };
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+ @import '../../styles/hxxd.scss';
 </style>

@@ -31,11 +31,10 @@ import JsEncrypt from 'jsencrypt'
  * Currently MockJs will be used in the production environment,
  * please remove it before going online! ! !
  */
-import { mockXHR } from '../mock'
-if (process.env.NODE_ENV === 'production') {
-  mockXHR()
-}
-
+// import { mockXHR } from '../mock'
+// if (process.env.NODE_ENV === 'production') {
+//   mockXHR()
+// }
 /**
  * 配置全局的加密方法
  * @param obj 需要加密的字符串

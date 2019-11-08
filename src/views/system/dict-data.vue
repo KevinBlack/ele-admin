@@ -217,11 +217,11 @@
 		},
 		handleAdd() {
 		  var dictId=this.formQuery.dictId;
-		  this.$router.push({ path: "/sys/dict-data-detail", query: { dictId:dictId } });
+		  this.$router.push({ path: "/system/dict-data-detail", query: { dictId:dictId } });
 		},
 		handleEdit(row) {
 		  this.$router.push({
-			path: "/sys/dict-data-detail",
+			path: "/system/dict-data-detail",
 			query: { id: row.id }
 		  });
 		},		

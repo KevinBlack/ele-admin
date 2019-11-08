@@ -4,7 +4,7 @@
       <!-- 留言消息录入 -->
       <el-row :gutter="10">
         <el-col :span="24">
-          <h5 class="dtl-title-line bg-font-color">留言消息录入</h5>
+          <h5 class="dtl-title-line">{{ title }}</h5>
         </el-col>
       </el-row>
 
@@ -35,8 +35,8 @@
         </el-row>
       </el-form>
       <!-- 按钮区 -->
-      <el-row :gutter="10">
-        <el-col :span="22" style="text-align:right;margin-top:20px;">
+      <el-row :gutter="10" v-if="isButton">
+        <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="save">保存</el-button>
           <el-button type="primary" size="mini" >发送</el-button>
         </el-col>
@@ -51,6 +51,8 @@ export default {
   data() {
     return {
       disabled: true,
+      title: '',
+      isButton: true,
       hxXdSysLeaveWordParam: {
         header: "",
         feedback: "",
@@ -74,16 +76,18 @@ export default {
     //初始化页面时
     // 参数传递 router.push({ path: 'register', query: { plan: 'private' }})
     // 参数接受 let id = this.$route.query.jId;
-    let id = this.$route.query.id;
-    let type = this.$route.query.type;
+    let id = this.$route.query.id
+    let type = this.$route.query.type
     if (type == "update") {
-      this.disabled = false;
+      this.title = '留言消息详情修改'
+      this.disabled = false
     } else if (type == "show") {
-      this.disabled = true;
+      this.title = '留言消息详情查看'
+      this.disabled = true
+      this.isButton = false
     }
-    debugger;
     if (id) {
-      this.getSysLeaveWordById(id);
+      this.getSysLeaveWordById(id)
     }
   },
   methods: {
@@ -93,23 +97,22 @@ export default {
       // if (valid) {
       //数据校验成功
       sysLeaveWordUpdate(this.hxXdSysLeaveWordParam).then(response => {
-        debugger;
-        var msg = response.status == 200 ? "保存成功" : "保存失败";
+        var msg = response.status == 200 ? "保存成功" : "保存失败"
         if (response.status == 200) {
           //保存成功
           this.$message({
             type: "success",
             message: msg
-          });
+          })
         } else {
           //保存失败
           this.$message({
             type: "success",
             error: msg
-          });
-          console.log(response.message);
+          })
+          console.log(response.message)
         }
-      });
+      })
       // } else {
       //   //校验失败
       //   this.$message({
@@ -121,32 +124,14 @@ export default {
     },
     //系统消息查询
     getSysLeaveWordById(id) {
-      this.hxXdSysLeaveWordParam.id = id;
+      this.hxXdSysLeaveWordParam.id = id
       getSysLeaveWordById(this.hxXdSysLeaveWordParam).then(response => {
-        this.hxXdSysLeaveWordParam = response.data;
-      });
+        this.hxXdSysLeaveWordParam = response.data
+      })
     }
   }
-};
+}
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+@import '../../styles/hxxd.scss';
 </style>

@@ -3,24 +3,18 @@
 import Layout from '@/layout'
 
 const financialManageRouter = {
-  path: '/hxxd',
+  path: '/financialManage',
   component: Layout,
   redirect: '',
-  name: 'Hxxd',
+  name: 'FinancialManage',
   meta: {
     title: '财务管理',
-    icon: 'tree'
+    icon: 'moneymanage'
   },
   children: [
     {
-      path: 'selectFinancialManage',
-      component: () => import('@/views/hxxd/financialManage'),
-      name: 'financialManage',
-      meta: { title: '财务管理信息' }
-    },
-    {
       path: 'importFinancialManage',
-      component: () => import('@/views/hxxd/importFinancialManage'),
+      component: () => import('@/views/financialManage/importFinancialManage'),
       name: 'importFinancialManage',
       meta: { title: '财务收款信息导入' }
     }

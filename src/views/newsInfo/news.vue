@@ -72,6 +72,7 @@ export default {
     }
     .new-content {
       height: 520px;
+      overflow: hidden;
       h3, p {
         text-align: center;
         margin: 0;
@@ -79,7 +80,7 @@ export default {
       }
       h3 {
         border-bottom: 1px solid #bfbfc0;
-        font-size: 30px;
+        font-size: 20px;
         line-height: 50px;
         margin-bottom: 10px;
       }
@@ -88,9 +89,9 @@ export default {
         margin-bottom: 20px;
       }
       .new-con-c {
-        padding: 0 20px;
+        padding: 0 30px;
         text-align: center;
-        height: 500px;
+        height: 520px;
         overflow-y: auto;
         p {
           text-align: justify;

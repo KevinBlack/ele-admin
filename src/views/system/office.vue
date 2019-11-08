@@ -361,18 +361,18 @@ export default {
       var parentIds = row.parentIds + row.officeId;
       // 添加下级
       this.$router.push({
-        path: "/sys/office-detail",
+        path: "/system/office-detail",
         query: { parentIds: parentIds }
       });
     },
     handleAdd() {
-      this.$router.push({ path: "/sys/office-detail", query: {} });
+      this.$router.push({ path: "/system/office-detail", query: {} });
     },
     handleEdit(row) {
       let officeId = row.officeId;
       if (officeId) {
         this.$router.push({
-          path: "/sys/office-detail",
+          path: "/system/office-detail",
           query: { officeId: officeId }
         });
       }

@@ -116,11 +116,11 @@ export default {
       }
     },
     handleAdd() {
-      this.$router.push({ path: "/sys/menu-detail", query: {} });
+      this.$router.push({ path: "/system/menu-detail", query: {} });
     },
     handleEdit(row) {
       this.$router.push({
-        path: "/sys/menu-detail",
+        path: "/system/menu-detail",
         query: { menuId: row.menuId }
       });
     },
@@ -156,7 +156,7 @@ export default {
       var parentId = row.parentIds + row.menuId;
       parentId = parentId.substring(3);
       this.$router.push({
-        path: "/sys/menu-detail",
+        path: "/system/menu-detail",
         query: { parentId: parentId }
       });
     },

@@ -9,7 +9,7 @@ export function getRoles() {
 
 export function getRoleList(data) {
   return request({
-    url: '/sys/jqSysRole/list',
+    url: '/system/jqSysRole/list',
     method: 'post',
     data
   })
@@ -17,14 +17,14 @@ export function getRoleList(data) {
 
 export function getMenuTree() {
   return request({
-    url: '/sys/jqSysRole/getMenuTree',
+    url: '/system/jqSysRole/getMenuTree',
     method: 'post'
   })
 }
 
 export function getRole(roleId) {
   return request({
-    url: '/sys/jqSysRole/get',
+    url: '/system/jqSysRole/get',
     method: 'post',
     data: { roleId }
   })
@@ -32,7 +32,7 @@ export function getRole(roleId) {
 
 export function saveRole(data) {
   return request({
-    url: '/sys/jqSysRole/save',
+    url: '/system/jqSysRole/save',
     method: 'post',
     data
   })
@@ -40,7 +40,7 @@ export function saveRole(data) {
 
 export function deleteRole(roleIds) {
   return request({
-    url: `/sys/jqSysRole/delete`,
+    url: `/system/jqSysRole/delete`,
     method: 'post',
     data: { roleIds }
   })
@@ -48,7 +48,7 @@ export function deleteRole(roleIds) {
 
 export function startRole(roleIds) {
   return request({
-    url: `/sys/jqSysRole/start`,
+    url: `/system/jqSysRole/start`,
     method: 'post',
     data: { roleIds }
   })
@@ -56,7 +56,7 @@ export function startRole(roleIds) {
 
 export function stopRole(roleIds) {
   return request({
-    url: `/sys/jqSysRole/stop`,
+    url: `/system/jqSysRole/stop`,
     method: 'post',
     data: { roleIds }
   })
@@ -64,7 +64,7 @@ export function stopRole(roleIds) {
 
 export function getSortNo() {
   return request({
-    url: `/sys/jqSysRole/getSortNo`,
+    url: `/system/jqSysRole/getSortNo`,
     method: 'post'
   })
 }

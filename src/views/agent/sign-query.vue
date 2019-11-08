@@ -9,7 +9,6 @@
               v-model="createDate"
               type="datetimerange"
               value-format= "yyyy-MM-dd HH:mm:ss"
-              :picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -36,7 +35,7 @@
     </el-form>
     <!-- part2 -->
     <el-row :gutter="20" class="area_border">
-      <el-col :span="24">
+      <el-col :span="5" style="margin-bottom: 15px;">
         <el-upload
           class="upload-demo"
           ref="upload"
@@ -56,9 +55,10 @@
             type="success"
             @click="submitUpload"
           >上传到服务器</el-button>
-          <div slot="tip" class="el-upload__tip">请上传excel</div>
         </el-upload>
+
       </el-col>
+      <el-col :span="19"><el-button size="small" type="primary">删除</el-button></el-col>
     </el-row>
     <!-- part3 -->
     <el-row :gutter="10">
@@ -75,31 +75,34 @@
       border
       v-loading="tableLoading"
       tooltip-effect="dark"
-      style="width: 100%;"
       highlight-current-row
+      :header-cell-style="getCellStyle"
       @selection-change="handleSelectionChange"
+      class="table-hxxd"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
-      <el-table-column prop="businessType" label="业务类别" width="250" align="center"></el-table-column>
-      <el-table-column prop="socialCode" label="统一社会信用代码" width="250" align="center"></el-table-column>
-      <el-table-column prop="businessName" label="企业名称" width="250" align="center"></el-table-column>
-      <el-table-column prop="agreementDuration" label="协议有效期" width="250" align="center"></el-table-column>
-      <el-table-column prop="signAirLine" label="签约航空公司" align="left" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="businessType" label="业务类别" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="socialCode" label="统一社会信用代码" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="businessName" label="企业名称" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="agreementDuration" label="协议有效期" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="signAirLine" label="签约航空公司" align="center" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
 
     <!-- 分页 -->
-    <el-pagination
-      background
-      style="text-align: margin-top: 20px;"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page.sync="formQuery.pageNo"
-      :page-size.sync="formQuery.pageSize"
-      :page-sizes="[5, 30, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageTotal"
-    ></el-pagination>
+    <el-row class="area_bordes">
+      <el-col :span="24" style="text-align: right;">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[5, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+        />
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
@@ -143,6 +146,13 @@ export default {
     // }
   },
   methods: {
+    getCellStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
+      } else {
+        return ''
+      }
+    },
     handleEdit() {
       debugger;
       if (this.multipleSelection.length == 0) {
@@ -225,45 +235,5 @@ export default {
 };
 </script>
 <style>
-.area_border,
-.area_bordes {
-  box-sizing: border-box;
-  border: 1px solid #e6e6e6;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 10px 0 0 0;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-.area_bordes {
-  padding: 10px;
-}
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 5px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
-.dtl-info-line {
-  height: 40px;
-  line-height: 40px;
-  margin: 10px auto;
-  border-radius: 3px;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding-left: 10px;
-  color: #000;
-  background-color: #dcecfd;
-}
-.el-table > th {
-  background-color: #eee !important;
-}
+ @import '../../styles/hxxd.scss';
 </style>
