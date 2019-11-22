@@ -21,7 +21,7 @@
             <el-row :gutter="20" class='line_bottom'>
               <el-col :span="12">
                 <el-form-item label="企业名称" prop="businessName">
-                  <el-input v-model="hxXdCompanyInfoParam.businessName" />
+                  <el-input v-model="hxXdCompanyInfoParam.businessName" :readonly="true" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -519,7 +519,7 @@ export default {
         ],
         socialCode: [
           { required: true, message: '不能为空', trigger: 'change' },
-          { type: 'number', message: '必须为数字值' }
+          { pattern: /^[0-9\/ ]{18,18}$/, message: '格式不正确' }
         ],
         bureauCommerce: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -527,9 +527,12 @@ export default {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         idNum: [
           { required: true, message: '不能为空', trigger: 'blur' },
-          { type: 'number', message: '必须为数字值' }
+          { pattern: /^[0-9\/ ]{18,18}$/, message: '格式不正确' }
         ],
-        orgCode: [{ type: 'number', message: '必须为数字值' }]
+        orgCode: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { pattern: /^[0-9\/ ]{9,9}$/, message: '格式不正确' }
+        ]
       }
     };
   },
@@ -688,5 +691,5 @@ export default {
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

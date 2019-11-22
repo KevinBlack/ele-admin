@@ -5,19 +5,36 @@
       <el-row :gutter="20" class="area_bordes">
         <el-col :span="24">
           <el-form-item label="信息类别" size="mini" prop="header">
-            <el-button size="mini" :type="xdfh" ref="xdfh" @click="handleStatud(1)">消代分会</el-button>
-            <el-button size="mini" :type="hsfh" ref="hsfh" @click="handleStatud(2)">航食分会</el-button>
-            <el-button size="mini" :type="qtfh" ref="qtfh" @click="handleStatud(3)">其他分会</el-button>
+            <el-button size="mini" :type="xdfh" ref="xdfh" @click="handleStatud(1)">站内新闻</el-button>
+            <el-button size="mini" :type="hsfh" ref="hsfh" @click="handleStatud(2)">公示信息</el-button>
+            <el-button size="mini" :type="qtfh" ref="qtfh" @click="handleStatud(3)">最新动态</el-button>
+            <el-button size="mini" :type="qbfh" ref="qbfh" @click="handleStatud('')">全部信息</el-button>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="6">
           <el-form-item label="内容标题" size="mini" prop="header">
             <el-input v-model="formQuery.industryTitle" size="mini"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="8">
           <el-form-item label="内容描述" size="mini" prop="companyBel">
             <el-input v-model="formQuery.industryContent" size="mini"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="发布状态" size="mini" prop="publishStatus">
+            <el-select
+                v-model="formQuery.publishStatus"
+                filterable
+                placeholder="请选择"
+                style="width:80%">
+              <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="4">
@@ -61,15 +78,18 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column prop="industryType" width="100" label="信息类别" align="center"></el-table-column>
       <el-table-column prop="industryTitle" label="内容标题" align="center" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="industryContent" label="内容描述" align="center" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="modifyTime" label="发布时间" align="center"></el-table-column>
-      <el-table-column prop="industryType" label="发布状态" width="100" align="center"></el-table-column>
+      <el-table-column prop="publishTime" width="200" label="发布时间" align="center"></el-table-column>
+      <el-table-column prop="publishStatus" label="发布状态" width="100" align="center"></el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-row class="area_bordes">
       <el-col :span="24" style="text-align: right">
         <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
           :current-page.sync="formQuery.pageNo"
           :page-size.sync="formQuery.pageSize"
           :page-sizes="[5, 30, 50, 100]"
@@ -95,14 +115,22 @@ export default {
   name: 'SysMessageQuery',
   data() {
     return {
-      param:{
-        idList: []
-      },
+      statusOptions: [
+        {
+          value: 1,
+          label: "已发布"
+        },
+        {
+          value: 0,
+          label: "未发布"
+        }
+      ],
       sum: 0,
       added: 0,
       xdfh: '',
       hsfh: '',
       qtfh: '',
+      qbfh: 'primary',
       multipleSelection: [],
       pageTotal: 0,
       tableLoading: false,
@@ -112,8 +140,12 @@ export default {
         industryType: '',
         industryTitle: '',
         industryContent: '',
-        modifyTime: ''
-      }
+        publishTime: '',
+        publishStatus: 1,
+        pageNo: 1,
+        pageSize: 5
+      },
+      idList: ''
     }
   },
   created() {
@@ -127,20 +159,34 @@ export default {
         return ''
       }
     },
+    handleSizeChange(val) {
+      this.getTableList();
+    },
+    handleCurrentChange(val) {
+      this.getTableList();
+    },
     handleStatud(val) {
       this.formQuery.industryType = val
       if (val === 1) {
         this.xdfh = 'primary'
         this.hsfh = ''
         this.qtfh = ''
+        this.qbfh = ''
       } else if (val === 2) {
         this.xdfh = ''
         this.hsfh = 'primary'
         this.qtfh = ''
+        this.qbfh = ''
       } else if (val === 3) {
         this.xdfh = ''
         this.hsfh = ''
         this.qtfh = 'primary'
+        this.qbfh = ''
+      } else if (val === '') {
+        this.xdfh = ''
+        this.hsfh = ''
+        this.qtfh = ''
+        this.qbfh = 'primary'
       }
     },
     handleAdd(){
@@ -149,19 +195,24 @@ export default {
       })
     },
     deleteBatch() {
-      var idList = []
+      var idList = new Array();
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: '请选择数据',
           type: 'warning'
         })
       } else {
-        this.multipleSelection.forEach(i => {
-          idList.push(i.id)
-        })
+        let selectRows = this.multipleSelection;
+        Object.keys(selectRows).forEach(function(key) {
+          if (selectRows[key].id) {
+            idList.push(selectRows[key].id);
+          }
+          });
         // 批量删除
-        this.param.idList=idList
-        deleteIndustryByIds(this.param).then(response => {
+        if (idList && idList.length > 0) {
+            var idsList = idList.join();
+            this.idList=idsList
+        deleteIndustryByIds(this.idList).then(response => {
           if (response.status == 200) {
             // 删除成功
             this.$message({
@@ -172,6 +223,7 @@ export default {
             this.getTableList()
           }
         })
+        }
       }
     },
     handleEdit(type) {
@@ -271,19 +323,22 @@ export default {
     },
     getTableList() {
       this.tableLoading = true
+
       selectIndustry(this.formQuery).then(response => {
         for (const k in response.data) {
-          if (response.data[k].industryType === 1) {
-            response.data[k].industryType = '已发布'
+          if (response.data[k].publishStatus === 1) {
+            response.data[k].publishStatus = '已发布'
           } else {
-            response.data[k].industryType = '未发布'
+            response.data[k].publishStatus = '未发布'
+          }
+          if (response.data[k].industryType === 1) {
+            response.data[k].industryType = '站内新闻'
+          } else if (response.data[k].industryType === 2) {
+            response.data[k].industryType = '公示信息'
+          } else if (response.data[k].industryType === 3) {
+            response.data[k].industryType = '最新动态'
           }
         }
-        // if (response.data.industryType === 1) {
-        //   this.sendType = '已发布'
-        // } else {
-        //   this.sendType = '未发布'
-        // }
         this.tableData = response.data
         this.pageTotal = response.page.total
         this.tableLoading = false
@@ -296,31 +351,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      if (val.length > 1) {
-        this.$message({
-          message: '只能选择单条',
-          type: 'warning'
-        })
-      }
-      if (val.length !== 0) {
-        this.added = val.length
-        this.sum = this.added
-      } else if (val.length === 0) {
-        this.sum -= this.added
-      }
-    },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.multipleTable.clearSelection()
-      }
     }
   }
 }
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

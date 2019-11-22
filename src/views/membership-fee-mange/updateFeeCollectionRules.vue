@@ -23,7 +23,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="会员折扣" prop="memberZk">
+            <el-form-item label="会员折扣(折)" prop="memberZk">
               <el-input v-model="formQuery.memberZk" />
             </el-form-item>
           </el-col>
@@ -40,7 +40,7 @@
               </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="会员费用标椎" prop="memberFeeBz">
+            <el-form-item label="会员费用标椎(元)" prop="memberFeeBz">
               <el-input v-model="formQuery.memberFeeBz" />
             </el-form-item>
           </el-col>
@@ -50,7 +50,7 @@
       <el-row :gutter="10">
         <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="update">保存</el-button>
-          <el-button type="warning" size="mini" @click="resetForm('formQuery')">重置</el-button>
+          <el-button type="primary" size="mini" @click="resetForm('formQuery')">重置</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -155,5 +155,5 @@ export default {
 };
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

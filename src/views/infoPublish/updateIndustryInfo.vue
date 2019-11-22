@@ -26,24 +26,19 @@
               <el-input v-model="detailForm.industryTitle" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="内容描述" prop="industryContent">
-              <el-input v-model="detailForm.industryContent" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="修改时间" prop="createTime">
-              <el-input v-model="detailForm.modifyTime" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="添加附件" prop="industryContent">
               <el-input v-model="detailForm.industryContent" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="内容添加" prop="industryBody">
-              <div ref="editor"></div>
+              <rich-components :catchData="handlecatchData" :checkId="checkId"></rich-components>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="附件">
+              <el-button :key="index" v-for="(item, index) in detailForm.fileList" type="text" @click="fileClick(item.fileCatalog,item.belongId,item.fileName)">{{ item.fileName }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -62,21 +57,26 @@
 
 <script>
 import { selectIndustry, updateIndustryInfo } from '@/api/hxxd/industryInfoPublish'
-import E from 'wangeditor'
+import RichComponents from './rich-components'
 
 export default {
   name: 'UpdateIndustryInfo',
+  components: { RichComponents },
   data() {
     return {
       title: '更新行业信息发布',
       editorContent: '',
+      content: '',
+      checkId: '',
       detailForm: {
         id: '',
         industryContent: '',
         industryType: '',
         publishStatus: '',
         industryBody: '',
-        modifyTime: ''
+        modifyTime: '',
+        industryTitle: '',
+        fileList: []
       },
       cascaderOpts: [],
       statusOptions: [{
@@ -100,15 +100,9 @@ export default {
   },
   created() {
     let id = this.$route.query.id
+    this.checkId = this.$route.query.id
     this.title = "修改行业信息发布"
     this.getMenuInfo(id)
-  },
-  mounted() {
-    var editor = new E(this.$refs.editor)
-    editor.customConfig.onchange = (html) => {
-      this.editorContent = html
-    }
-    editor.create()
   },
   methods: {
     getMenuInfo(id) {
@@ -116,7 +110,13 @@ export default {
       selectIndustry(this.detailForm).then(response => {
         this.detailForm.industryContent = response.data[0].industryContent
         this.detailForm.industryType = response.data[0].industryType
+        this.detailForm.industryTitle = response.data[0].industryTitle
+        this.detailForm.fileList = response.data[0].fileList
+        this.content = response.data[0].contentBody
       })
+    },
+    handlecatchData:function (params) {
+      this.editorContent = params
     },
     saveMenu() {
       const {
@@ -151,7 +151,6 @@ export default {
   }
 }
 </script>
-<style>
-  @import '../../styles/hxxd.scss';
-
+<style lang="scss">
+  @import '~@/styles/hxxd.scss';
 </style>

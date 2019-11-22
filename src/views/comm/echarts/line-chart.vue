@@ -71,13 +71,24 @@ export default {
     // lineTypes :有几条线，线的名字 （数组）
     // lineDatas ：每条线对应的刻度
     setOptions({ xItems, lineTypes,lineDatas } = {}) {
-      
+       if(!lineTypes){
+        return
+      }
+      if(!xItems){
+        return
+      }
+      if(!lineDatas){
+        return
+      }
+
       var colorArr=new Array();
       colorArr.push("#2ec7c9")
       colorArr.push("#b6a2de")
       colorArr.push("#5ab1ef")
       colorArr.push("#ffb980")
       colorArr.push("#d87a80")
+      colorArr.push("#8d98b3")
+      colorArr.push("#e5cf0d")
 
       var lineSerieArr=new Array();
       Object.keys(lineTypes).forEach(function(index) {
@@ -116,14 +127,15 @@ export default {
           data: xItems,
           boundaryGap: false,
           axisTick: {
+            length:15,      
             show: false
           }
         },
         grid: {
-          left: 10,
-          right: 10,
+          left:50,
+          right: 20,
           bottom: 20,
-          top: 30,
+          top: 60,
           containLabel: true
         },
         tooltip: {

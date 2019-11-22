@@ -29,7 +29,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="通知内容" prop="content">
-              <el-input v-model="hxXdSysNoticeParam.content" />
+              <el-input type="textarea" maxlength="30" :autosize="{ minRows: 6, maxRows: 8}" show-word-limit v-model="hxXdSysNoticeParam.content" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -131,5 +131,5 @@ export default {
 }
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

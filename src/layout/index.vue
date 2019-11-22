@@ -1,12 +1,15 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <el-header class="header-throw">
-      <img src="../assets/img/logo_w.png" style="margin-top: 11px;"  height="38" />
+      <div class="left-menu">
+      <img src="../assets/img/logo_w.png" style="margin-top: 11px;" width="80" />
+      <h2>销售代理人综合信息平台<br /><span>SALES AGENT COMPREHENSIVE INFORMATION PLATFORM</span></h2>
+      </div>
       <div class="right-menu">
-        <span class="ritMnuTitle">王二小，欢迎你！</span>
+        <span class="ritMnuTitle">{{ name }}，欢迎你！</span>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
-            <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+            <i class="iconfont user_center">&#xe604;</i>
             <i class="el-icon-caret-bottom" />
           </div>
           <el-dropdown-menu slot="dropdown">
@@ -59,7 +62,8 @@ export default {
       fixedHeader: state => state.settings.fixedHeader
     }),
     ...mapGetters([
-      'avatar'
+      'avatar',
+      'name'
     ]),
     classObj() {
       return {
@@ -75,8 +79,13 @@ export default {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      if (this.name === 'Super Admin') {
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      } else {
+        this.$router.push(`/newlogin`)
+      }
+
     }
   }
 }
@@ -85,6 +94,7 @@ export default {
 <style lang="scss" scoped>
   @import "~@/styles/mixin.scss";
   @import "~@/styles/variables.scss";
+  @import '~@/styles/register.scss';
 
   .app-wrapper {
     @include clearfix;
@@ -97,64 +107,97 @@ export default {
       position: fixed;
       top: 0;
     }
-
-    .right-menu {
-    float: right;
-    height: 100%;
-    padding-top: 4px;
-
-    .ritMnuTitle {
-      display: inline-block;
-      height: 100%;
-      vertical-align: text-bottom;
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
+    .header-throw{
+      .left-menu {
+        color: #fff;
+        float: left;
+        height: 60px !important;
+        overflow: hidden;
         position: relative;
+        img {
+          display: inline-block;
+          position: absolute;
+          top: -10px;
+        }
+        h2 {
+          display: inline-block;
+          width: 500px;
+          font-size: 26px;
+          letter-spacing: 6.7px;
+          position: inherit;
+          left: 80px;
+          top: 10px;
+          line-height: 20px;
+          span {
+            font-size: 12px;
+            letter-spacing: 0;
+            transform:scale(.2);
+          }
+        }
+      }
 
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+      .right-menu {
+        float: right;
+        height: 100%;
+        padding-top: 4px;
+
+        .ritMnuTitle {
+          display: inline-block;
+          height: 100%;
+          vertical-align: text-bottom;
         }
 
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+        &:focus {
+          outline: none;
+        }
+
+        .right-menu-item {
+          display: inline-block;
+          padding: 0 8px;
+          height: 100%;
+          font-size: 18px;
+          color: #5a5e66;
+          vertical-align: text-bottom;
+
+          &.hover-effect {
+            cursor: pointer;
+            transition: background .3s;
+
+            &:hover {
+              background: rgba(0, 0, 0, .025)
+            }
+          }
+        }
+
+        .avatar-container {
+          margin-right: 30px;
+
+          .avatar-wrapper {
+            position: relative;
+
+            .user_center {
+              font-size: 36px;
+              color: #fff;
+            }
+
+            .user-avatar {
+              cursor: pointer;
+              width: 40px;
+              height: 40px;
+              border-radius: 10px;
+            }
+
+            .el-icon-caret-bottom {
+              cursor: pointer;
+              position: absolute;
+              right: -20px;
+              top: 25px;
+              font-size: 12px;
+            }
+          }
         }
       }
     }
-  }
   }
 
   .drawer-bg {

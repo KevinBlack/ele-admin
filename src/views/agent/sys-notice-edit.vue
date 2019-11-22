@@ -26,9 +26,9 @@
               <el-input v-model="hxXdSysNoticeParam.header" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="通知内容" prop="content">
-              <el-input v-model="hxXdSysNoticeParam.content" />
+              <el-input type="textarea" maxlength="30" :autosize="{ minRows: 6, maxRows: 8}" show-word-limit v-model="hxXdSysNoticeParam.content" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -102,23 +102,5 @@ export default {
 };
 </script>
 <style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
-
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+@import '~@/styles/hxxd.scss';
 </style>

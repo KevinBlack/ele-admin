@@ -2,7 +2,7 @@
 
 <template>
   <el-card class="detailsContainer">
-    <el-row style="border-bottom: 1px solid #e6e6e6;margin-bottom: 20px;padding-bottom:10px;">
+    <!-- <el-row style="border-bottom: 1px solid #e6e6e6;margin-bottom: 20px;padding-bottom:10px;">
       <el-col :span="12">
         <a href="javascrip:;" style="color: #409EFF"><i class="el-icon-back" style="color: #409EFF;margin-right: 5px;c" />返 回</a> | <a href="javascript:;" @click="handleShow">{{ showTitle }}</a>
       </el-col>
@@ -10,18 +10,18 @@
           <el-button type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存</el-button>
           <el-button type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
       </el-col>
-    </el-row>
+    </el-row> -->
     <!-- part1 -->
     <el-row :gutter="10">
       <el-col :span="24">
         <h5 class="dtl-title-line">基本信息</h5>
       </el-col>
     </el-row>
-    <el-form 
-      ref="detailForm" 
+    <el-form
+      ref="detailForm"
       :model="detailForm"
-      label-width="110px" 
-      size="mini" 
+      label-width="110px"
+      size="mini"
       :rules="rules">
       <el-row :gutter="20">
         <el-col :span="12">
@@ -35,7 +35,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      
+
       <el-row :gutter="20">
         <el-col :span="24">
           <el-form-item label="内容" prop="content">
@@ -50,7 +50,12 @@
         </el-col>
       </el-row>
     </el-form>
-        
+    <el-row class="btn_bottom">
+      <el-col :span="12" style="text-align:right;">
+        <el-button type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存</el-button>
+        <el-button type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
+      </el-col>
+    </el-row>
     <el-dialog :title="showTitle" :visible.sync="isShow" width="70%">
       <pop-tab />
     </el-dialog>
@@ -99,7 +104,7 @@ export default {
         ],
       },
     }
-    
+
   },
   created() {
     let id=this.$route.query.id;
@@ -191,16 +196,5 @@ export default {
 </script>
 
 <style scoped>
-*{
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409EFF;
-  padding-left: 5px;
-}
-
+@import '~@/styles/hxxd.scss';
 </style>

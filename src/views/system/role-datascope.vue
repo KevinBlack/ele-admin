@@ -1,105 +1,117 @@
 <template>
-  <div class="app-container">
-    <el-card class="box-card">
-      <div class="title-cls">数据权限</div>
-      <el-card class="box-card" style="padding:15px;border-radius:0px;">
-        <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules">
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="主键" size="mini" prop="id" style="display:none;">
-                <el-input v-model="detailForm.id" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="角色ID" size="mini" prop="roleId" style="display:none;">
-                <el-input v-model="detailForm.roleId" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="角色编号" size="mini" prop="roleCode">
-                <el-input v-model="detailForm.roleCode" size="mini" :disabled="true"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="角色名称" size="mini" prop="roleName">
-                <el-input v-model="detailForm.roleName" size="mini" :disabled="true"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="数据范围" size="mini" prop="dataScope">
-                <el-radio-group v-model="detailForm.dataScope" size="mini" @change="dataScopeChange">
-                  <el-radio :label="0">自己数据</el-radio>
-                  <el-radio :label="1">全部数据</el-radio>
-                  <el-radio :label="2">本公司数据</el-radio>
-                  <el-radio :label="3">本部门数据</el-radio>
-                  <el-radio :label="4">自定义数据</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="已选公司" size="mini" prop="companyNames">
-                <el-input
-                  v-model="detailForm.companyNames"
-                  size="mini"
-                  :readonly="true"
-                  @focus="chooseCompany"
-                  :disabled="disable"
-                >
-                  <template slot="append">
-                    <el-button slot="append" icon="el-icon-search" @click="chooseCompany" :disabled="disable"></el-button>
-                  </template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="已选机构" size="mini" prop="officeIds">
-                <el-cascader
-                  :props="props"
-                  :show-all-levels="false"
-                  :options="cascaderOpts"
-                  v-model="detailForm.officeIds"
-                  clearable
-                  filterable
-                  size="mini"
-                  style="width:100%;"
-                  change-on-select
-                  :disabled="disable"
-                ></el-cascader>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="已选用户" size="mini" prop="userNames">
-                <el-input
-                  v-model="detailForm.userNames"
-                  size="mini"
-                  :readonly="true"
-                  @focus="chooseUser"
-                  :disabled="disable"
-                >
-                  <template slot="append">
-                    <el-button slot="append" icon="el-icon-search" @click="chooseUser" :disabled="disable"></el-button>
-                  </template>
-                </el-input>
-              </el-form-item>
-            </el-col>
+  <div>
+    <el-card class="detailsContainer">
+      <el-row style="border-bottom: 1px solid #e6e6e6;margin-bottom: 20px;padding-bottom:10px;">
+        <el-col :span="12">
+          <a href="javascript:;">数据权限</a>
+        </el-col>
+        <el-col :span="12" style="text-align:right;">
+          <el-button type="primary" size="mini" @click="saveDataScope">保存</el-button>
+        </el-col>
+      </el-row>
+      <el-form ref="detailForm" :model="detailForm" label-width="110px" :rules="rules">
+        <el-row :gutter="10">
+          <el-col :span="24">
+            <h5 class="dtl-title-line">基础信息</h5>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="主键" size="mini" prop="id" style="display:none;">
+              <el-input v-model="detailForm.id" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色ID" size="mini" prop="roleId" style="display:none;">
+              <el-input v-model="detailForm.roleId" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色编号" size="mini" prop="roleCode">
+              <el-input v-model="detailForm.roleCode" size="mini" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色名称" size="mini" prop="roleName">
+              <el-input v-model="detailForm.roleName" size="mini" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="数据范围" size="mini" prop="dataScope">
+              <el-radio-group v-model="detailForm.dataScope" size="mini" @change="dataScopeChange">
+                <el-radio :label="0">自己数据</el-radio>
+                <el-radio :label="1">全部数据</el-radio>
+                <el-radio :label="2">本公司数据</el-radio>
+                <el-radio :label="3">本部门数据</el-radio>
+                <el-radio :label="4">自定义数据</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="已选公司" size="mini" prop="companyNames">
+              <el-input
+                v-model="detailForm.companyNames"
+                size="mini"
+                :readonly="true"
+                @focus="chooseCompany"
+                :disabled="disable"
+              >
+                <template slot="append">
+                  <el-button
+                    slot="append"
+                    icon="el-icon-search"
+                    @click="chooseCompany"
+                    :disabled="disable"
+                  ></el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="已选机构" size="mini" prop="officeIds">
+              <el-cascader
+                :props="props"
+                :show-all-levels="false"
+                :options="cascaderOpts"
+                v-model="detailForm.officeIds"
+                clearable
+                filterable
+                size="mini"
+                style="width:100%;"
+                change-on-select
+                :disabled="disable"
+              ></el-cascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="已选用户" size="mini" prop="userNames">
+              <el-input
+                v-model="detailForm.userNames"
+                size="mini"
+                :readonly="true"
+                @focus="chooseUser"
+                :disabled="disable"
+              >
+                <template slot="append">
+                  <el-button
+                    slot="append"
+                    icon="el-icon-search"
+                    @click="chooseUser"
+                    :disabled="disable"
+                  ></el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
 
-            <el-col :span="24">
-              <el-form-item label="备注" size="mini" prop="remarks">
-                <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </el-card>
+          <el-col :span="24">
+            <el-form-item label="备注" size="mini" prop="remarks">
+              <el-input type="textarea" v-model="detailForm.remarks" size="mini" :rows="4"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
     </el-card>
-    <el-row>
-      <el-col :span="24">
-        <div class="rol-dtl-btn">
-          <el-button type="primary" icon="el-icon-check" @click="saveDataScope">保存</el-button>
-          <el-button type="primary" icon="el-icon-close" @click="deleteDataScope">删除</el-button>
-        </div>
-      </el-col>
-    </el-row>
 
     <!--所属公司弹框  -->
     <el-dialog :visible.sync="companyDialog.visible" width="700px" title="公司选择">
@@ -254,6 +266,7 @@ import { getOfficeTree } from "@/api/system/office";
 import { getUserList } from "@/api/system/user";
 
 export default {
+  name:'RoleDatascope',
   data() {
     return {
       title: "",
@@ -271,7 +284,7 @@ export default {
         userNames: "",
         remarks: ""
       },
-      disable:true,
+      disable: true,
       props: {
         multiple: true,
         checkStrictly: true,
@@ -389,7 +402,7 @@ export default {
     },
     // 获取数据权限
     getDataScope(roleId) {
-      if(!roleId){
+      if (!roleId) {
         return;
       }
       getDataScope(roleId).then(response => {
@@ -426,7 +439,7 @@ export default {
           }
         }
 
-      this.detailForm = {
+        this.detailForm = {
           id,
           roleId,
           roleCode,
@@ -434,14 +447,14 @@ export default {
           dataScope,
           companyIds,
           companyNames,
-          officeIds:tempArr,
+          officeIds: tempArr,
           officeFullPaths,
           userIds,
           userNames,
           remarks
         };
         //dataScope==4 自定义
-        this.disable=!(dataScope==4)
+        this.disable = !(dataScope == 4);
       });
     },
     // 保存数据
@@ -462,7 +475,7 @@ export default {
       if (officeIds && officeIds.length >= 1) {
         Object.keys(officeIds).forEach(function(key) {
           var officeFullPathArr = officeIds[key];
-          officeIdArr.push(".0." + officeFullPathArr.join(".")+".");
+          officeIdArr.push(".0." + officeFullPathArr.join(".") + ".");
         });
       }
 
@@ -486,17 +499,17 @@ export default {
       });
     },
     //当数据范围发生变化时
-    dataScopeChange(){
-      if(this.detailForm.dataScope==4){
-          this.disable=false;
-      }else{
-        this.disable=true;
-        this.detailForm.companyIds=""
-        this.detailForm.companyNames=""
-        this.detailForm.officeIds=""
-        this.detailForm.officeFullPaths=""
-        this.detailForm.userIds=""
-        this.detailForm.userNames=""
+    dataScopeChange() {
+      if (this.detailForm.dataScope == 4) {
+        this.disable = false;
+      } else {
+        this.disable = true;
+        this.detailForm.companyIds = "";
+        this.detailForm.companyNames = "";
+        this.detailForm.officeIds = "";
+        this.detailForm.officeFullPaths = "";
+        this.detailForm.userIds = "";
+        this.detailForm.userNames = "";
       }
     },
     deleteDataScope() {

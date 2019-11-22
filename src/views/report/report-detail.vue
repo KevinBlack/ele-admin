@@ -104,12 +104,106 @@
             <h5 class="dtl-title-line bg-font-color">投资人信息</h5>
           </el-col>
         </el-row>
+        <el-button
+          style="margin-left: 10px;"
+          type="primary"
+          size="mini"
+          icon="el-icon-plus"
+          @click="addLine"
+        >添加</el-button>
+        <el-button
+          style="margin-left: 10px;"
+          type="primary"
+          size="mini"
+          icon="el-icon-edit"
+          @click="handleDelete"
+        >删除</el-button>
+        <el-table
+          ref="multipleTable"
+          :data="reportInvestorList"
+          style="width: 100%; margin-top: 20px;"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="50" />
+          <el-table-column prop="investorType" label="投资人类型">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.investorType" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="investorName" label="投资人名称">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.investorName" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="certificateNum" label="证照/证件号码">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.certificateNum" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="investmentAmount" label="投资金额（万元）">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.investmentAmount" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="currencyType" label="货币类型">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.currencyType" class="edit-input" />
+            </template>
+          </el-table-column>
+        </el-table>
         <!-- 资质认可信息 -->
         <el-row class='line_bottom'>
           <el-col :span="24">
             <h5 class="dtl-title-line bg-font-color">资质认可信息</h5>
           </el-col>
         </el-row>
+        <el-button
+          style="margin-left: 10px;"
+          type="primary"
+          size="mini"
+          icon="el-icon-plus"
+          @click="addLine1"
+        >添加</el-button>
+        <el-button
+          style="margin-left: 10px;"
+          type="primary"
+          size="mini"
+          icon="el-icon-edit"
+          @click="handleDelete1"
+        >删除</el-button>
+        <el-table
+          ref="multipleTable"
+          :data="reportRecognitionList"
+          style="width: 100%; margin-top: 20px;"
+          @selection-change="handleSelectionChange1"
+        >
+          <el-table-column type="selection" width="50" />
+          <el-table-column prop="recognitionNum" label="资质认可号">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.recognitionNum" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="recognitionType" label="资质类别">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.recognitionType" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="startTime" label="有效期开始时间">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.startTime" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="endTime" label="有效期结束时间">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.endTime" class="edit-input" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="state" label="状态">
+            <template slot-scope="scope">
+                <el-input v-model="scope.row.state" class="edit-input" />
+            </template>
+          </el-table-column>
+        </el-table>
         <!-- 从业人员信息 -->
         <el-row :gutter="10">
           <el-col :span="24">
@@ -388,6 +482,15 @@ export default {
         totalIndebt: "",
         ownerEquity: "",
         totalProfit: ""
+      },
+      selectArr: [],
+      reportInvestorList: [],
+      selectArr1: [],
+      reportRecognitionList: [],
+      reportRecognition: {
+        reportRecognition: "",
+        reportInvestor: "",
+        annualReportParam: ""
       }
     };
   },
@@ -416,10 +519,104 @@ export default {
       debugger;
         this.hxXdAnnualReportParam = response.data;
       });
+    },
+    handleSelectionChange(val) {
+      console.log(val);
+      debugger;
+      this.selectArr = val;
+    },
+    addLine() {
+      // 添加行数
+      const len = this.reportInvestorList.length - 1;
+      const sum = len >= 0 ? this.reportInvestorList[len].id : 0;
+      const result = sum + 1;
+      var newValue = {
+        companyInfoId: "",
+        investorType: "",
+        investorName: "",
+        certificateNum: "",
+        investmentAmount: "",
+        editing: true
+      };
+      // 添加新的行数
+      this.reportInvestorList.push(newValue);
+    },
+    handleDelete(index) {
+      debugger;
+      // 删除行数
+      if (this.selectArr.length <= 0) {
+        this.$notify({
+          title: "提示",
+          message: "请选择要删除的项",
+          type: "warning",
+          duration: 2000
+        });
+      } else {
+        const delArr = [];
+        for (var i = 0; i < this.reportInvestorList.length; i++) {
+          if (this.selectArr.indexOf(this.reportInvestorList[i]) === -1) {
+            delArr.push(this.reportInvestorList[i]);
+          }
+        }
+        this.reportInvestorList = delArr;
+        this.$notify({
+          title: "成功",
+          message: "删除成功",
+          type: "success",
+          duration: 2000
+        });
+      }
+    },
+    //资质认可相关方法
+    handleSelectionChange1(val) {
+      console.log(val);
+      this.selectArr1 = val;
+    },
+    addLine1() {
+      // 添加行数
+      debugger;
+      const len = this.reportRecognitionList.length - 1;
+      const sum = len >= 0 ? this.reportRecognitionList[len].recognitionNum : 0;
+      const result = sum + 1;
+      var newValue = {
+        recognitionNum: "",
+        recognitionType: "",
+        startTime: "",
+        endTime: "",
+        state: "",
+        editing: true
+      };
+      // 添加新的行数
+      this.reportRecognitionList.push(newValue);
+    },
+    handleDelete1(index) {
+      // 删除行数
+      if (this.selectArr1.length <= 0) {
+        this.$notify({
+          title: "提示",
+          message: "请选择要删除的项",
+          type: "warning",
+          duration: 2000
+        });
+      } else {
+        const delArr1 = [];
+        for (var i = 0; i < this.reportRecognitionList.length; i++) {
+          if (this.selectArr1.indexOf(this.reportRecognitionList[i]) === -1) {
+            delArr1.push(this.reportRecognitionList[i]);
+          }
+        }
+        this.reportRecognitionList = delArr1;
+        this.$notify({
+          title: "成功",
+          message: "删除成功",
+          type: "success",
+          duration: 2000
+        });
+      }
     }
   }
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

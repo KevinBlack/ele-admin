@@ -1,124 +1,115 @@
 <template>
   <div class="app-wrapper">
-    <header class="header-throwsf">
-      <div class="header-position">
-        <img class="logo" src="../../assets/img/logo.png">
-        <div class="head_group">
-          <img src='../../assets/img/menology_n.png'>
-          <div class="head_group_day">
-            <span>2019年9月26日</span>
-            <span class="head_group_week">星期四&nbsp;&nbsp;&nbsp;&nbsp;14:44</span>
-          </div>
-        </div>
-      </div>
-    </header>
-    <div class="contont-main">
-      <div class="news-breadcrumb">
-        <el-breadcrumb separator="/">
-          <el-breadcrumb-item :to="{ path: '/newlogin' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>新闻列表</el-breadcrumb-item>
-        </el-breadcrumb>
-      </div>
-      <div class="new-content">
-        <el-card>
-          <ul>
-            <li><b>&nbsp;</b><router-link to="/news">中国航协秘书长刘树国带队赴意大利米兰参加国际餐饮食品展览会</router-link><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">全球航空客运需求增长放缓</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业西飞模具锻铸厂钳工任晓洲：微薄之力献航空</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">全球最高级别！山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业金城：党建引领 助推经营</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业洪都岗位梁小春：潜心钻研的数控机加能手</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">全球航空客运需求增长放缓</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业西飞模具锻铸厂钳工任晓洲：微薄之力献航空</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><router-link to="/news">国人免签国家新增27个</router-link><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">全球最高级别！山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业金城：党建引领 助推经营</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业洪都岗位梁小春：潜心钻研的数控机加能手</a><span>2019-02-07</span></li>
-          </ul>
-        </el-card>
-      </div>
+    <header-reload />
+    <div class="contont-main" v-bind:style="{minHeight: Height+'px'}">
+      <el-card class="detailsContainer">
+        <ul class="news_list">
+          <li v-for="(item) in queryList"><b>&nbsp;</b><router-link :to="{name: 'News', params: {id: item.id}}">{{ item.industryTitle }}</router-link><span>{{ item.publishTime }}</span></li>
+        </ul>
+        <!-- 分页 -->
+        <el-row class="area_bordes">
+          <el-col :span="24" style="text-align: right">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="formQuery.pageNo"
+              :page-size.sync="formQuery.pageSize"
+              :page-sizes="[8, 18, 28, 38]"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="pageTotal"
+            />
+          </el-col>
+        </el-row>
+      </el-card>
     </div>
-    <footer class="footer-throwsf">
-      <a href="javascrip:;">联系我们</a> | <a href="javascrip:;">声明</a>&nbsp;&nbsp;&nbsp;&nbsp;中国航空运输协会版权所有 | 京ICP备12001608号 | 京公网安备11010502034600号
-    </footer>
+    <footer-reload />
   </div>
 </template>
 
 <script>
+import HeaderReload from '@/components/HeaderReload'
+import FooterReload from '@/components/FooterReload'
+import { selectIndustry } from '@/api/hxxd/industryInfoPublish';
+
 export default {
   name: 'NewsList',
+  components: { FooterReload, HeaderReload },
   data() {
-      return {
+    return {
+      Height: 0,
+      pageTotal: 0,
+      queryList: [],
+      formQuery: {
+        industryType: '',
+        publishStatus: 1,
+        industryTitle: '',
+        industryContent: '',
+        modifyTime: '',
+        pageNo: 1,
+        pageSize: 8
       }
-    },
-    methods: {
-
     }
+  },
+  created() {
+    this.getTableList()
+  },
+  watch: {
+    '$route' (to, from) {
+      this.getTableList()
+    }
+  },
+  mounted() {
+    this.Height = document.documentElement.clientHeight - 194;
+　　//监听浏览器窗口变化　
+    window.onresize = ()=> {this.Height = document.documentElement.clientHeight -194}
+  },
+  methods: {
+    handleSizeChange(val) {
+      this.getTableList();
+    },
+    handleCurrentChange(val) {
+      this.getTableList();
+    },
+    getTableList() {
+      this.tableLoading = true
+      this.formQuery.industryType = this.$route.query.id
+      console.log(this.$route.query.id)
+      selectIndustry(this.formQuery).then(response => {
+        this.queryList = response.data
+        this.pageTotal = response.page.total
+      })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import '../../styles/register.scss';
-  .contont-main {
-    height: 544px;
-    overflow: hidden;
-    padding-bottom: 10px;
-    .news-breadcrumb {
-      height: 25px;
-      line-height: 25px;
-      font-size: 12px;
-      .news_title {
-        width: 84px;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
+  @import '~@/styles/register.scss';
+  @import '~@/styles/hxxd.scss';
+
+  .news_list {
+    width: 96%;
+    height: 470px;
+    margin: auto;
+    padding: 0 0 20px 0;
+    text-align: left;
+    line-height: 50px;
+    overflow-y: auto;
+    li {
+      border-bottom: 1px dashed #e6e6e6;
+      position: relative;
+      span {
+        display: inline-block;
+        width: 100px;
+        height: 38px;
+        text-align: right;
+        overflow: hidden;
+        position: absolute;
+        right: 0px;
       }
     }
-    .new-content {
-      height: 520px;
-      overflow-y: auto;
-      ul {
-        padding: 0 20px;
-        background-color: #fff;
-        padding-bottom: 10px;
-      }
-      ul li {
-        line-height: 38px;
-        border-bottom: 1px dashed #e5e5e5;
-        position: relative;
-        a {
-          display: inline-block;
-          list-style: none;
-          width: 65%;
-          height: inherit;
-          vertical-align: middle;
-          overflow:hidden;
-          text-overflow:ellipsis;
-          white-space:nowrap;
-        }
-        b {
-          display: inline-block;
-          vertical-align: middle;
-          margin-right: 10px;
-          width: 5px;
-          height: 5px !important;
-          background-color: #000;
-        }
-        span {
-          position: absolute;
-          right: 5px;;
-        }
-      }
-      ul li:last-child {
-        border: none;
-      }
+    li:nth-last-child(1) {
+      border-bottom: none;
     }
   }
-
 </style>

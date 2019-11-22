@@ -1,98 +1,93 @@
 	<template>
   <div>
-    <el-card class="box-card" style="margin: 0 10px;">
-      <!-- 查询面板 -->
-      <el-card class="box-card" shadow="never">
-        <!-- label-width="65px" -->
-        <el-form ref="formQuery" :model="formQuery" label-width="100px">
-          <el-row>
-            <el-col :md="12" :lg="12" :xl="8">
-              <el-form-item label="异常时间" size="mini" prop="userName">
-                <el-date-picker
-                  v-model="formQuery.createTime"
-                  type="datetimerange"
-                  :picker-options="pickerOptions"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  align="right"
-                  style="width:100%"
-                  format="yyyy-MM-dd HH:mm:ss"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :lg="6" :xl="4">
-              <el-form-item label="分属系统" size="mini" prop="loginCode">
-                <el-input v-model="formQuery.systemSource" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :lg="6" :xl="4">
-              <el-form-item label="异常方法" size="mini" prop="userName">
-                <el-input v-model="formQuery.exceptionMethod" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :lg="6" :xl="4">
-              <el-form-item label="异常内容" size="mini" prop="userName">
-                <el-input v-model="formQuery.exceptionContent" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="6" :lg="6" :xl="4">
-              <el-form-item size="mini">
-                <el-button type="primary" size="mini" @click="search">查询</el-button>
-                <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </el-card>
-      <!-- 表格区 -->
-      <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-        <!-- 按钮区 -->
-        <el-card
-          shadow="never"
-          style="padding:15px;border-radius:0px;"
-          :body-style="{ padding: '0px' }"
-        >
-          <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete()">批量删除</el-button>
-        </el-card>
-        <!-- 表格区 -->
-        <el-table
-          :data="tableData"
-          style="width:100%"
-          :header-row-style="headRowStyle"
-          :row-style="rowStyle"
-          :header-cell-style="getCellStyle"
-          v-loading="tableLoading"
-          border
-          highlight-current-row
-          @selection-change="selectionChange"
-        >
-          <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column prop="createTime" label="异常时间" width="200" align="center"></el-table-column>
-          <el-table-column prop="systemSource" label="分属系统" width="150" align="center"></el-table-column>
-          <el-table-column
-            prop="exceptionMethod"
-            label="异常方法"
-            align="left"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column fixed="right" label="操作" width="150" align="center">
-            <template slot-scope="scope">
-              <el-button @click="handleView(scope.row)" type="text" size="small">异常明细</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="formQuery.pageNo"
-          :page-size.sync="formQuery.pageSize"
-          :page-sizes="[15, 30, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pageTotal"
-        ></el-pagination>
-      </el-card>
+    <el-card class="detailsContainer">
+      <el-form ref="formQuery" :model="formQuery" label-width="100px">
+        <el-row>
+          <el-col :md="12" :lg="12" :xl="8">
+            <el-form-item label="异常时间" size="mini" prop="userName">
+              <el-date-picker
+                v-model="formQuery.createTime"
+                type="datetimerange"
+                :picker-options="pickerOptions"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                align="right"
+                style="width:100%"
+                format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              ></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :lg="6" :xl="4">
+            <el-form-item label="分属系统" size="mini" prop="loginCode">
+              <el-input v-model="formQuery.systemSource" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :lg="6" :xl="4">
+            <el-form-item label="异常方法" size="mini" prop="userName">
+              <el-input v-model="formQuery.exceptionMethod" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :lg="6" :xl="4">
+            <el-form-item label="异常内容" size="mini" prop="userName">
+              <el-input v-model="formQuery.exceptionContent" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :lg="6" :xl="4">
+            <el-form-item size="mini">
+              <el-button type="primary" size="mini" @click="search">查询</el-button>
+              <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <!-- 按钮区域 -->
+      <el-row class="area_bordes">
+        <el-col :span="24">
+          <el-button-group size="mini">
+            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete">批量删除</el-button>
+          </el-button-group>
+        </el-col>
+      </el-row>
+
+      <el-table
+        :data="tableData"
+        v-loading="tableLoading"
+        border
+        tooltip-effect="dark"
+        style="width: 100%;margin-bottom:20px;"
+        @selection-change="selectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="异常时间" width="200" align="center"></el-table-column>
+        <el-table-column prop="systemSource" label="分属系统" width="150" align="center"></el-table-column>
+        <el-table-column
+          prop="exceptionMethod"
+          label="异常方法"
+          align="left"
+          :show-overflow-tooltip="true"
+        ></el-table-column>
+        <el-table-column fixed="right" label="操作" width="150" align="center">
+          <template slot-scope="scope">
+            <el-button @click="handleView(scope.row)" type="text" size="small">异常明细</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-row class="area_bordes">
+        <el-col :span="24" style="text-align: right;">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="formQuery.pageNo"
+            :page-size.sync="formQuery.pageSize"
+            :page-sizes="[15, 30, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageTotal"
+          ></el-pagination>
+        </el-col>
+      </el-row>
     </el-card>
     <!-- 详情页弹框 -->
     <el-dialog title="异常明细" :visible.sync="dialogVisible" width="50%">
@@ -110,6 +105,7 @@ import { getExceptionList, deleteException } from "@/api/system/exception";
 import { parseTime } from "@/utils/index.js";
 
 export default {
+  name:'Exception',
   data() {
     return {
       dialogVisible: false,
@@ -157,7 +153,7 @@ export default {
           {
             text: "最近三个月",
             onClick(picker) {
-              console.log(picker)
+              console.log(picker);
               const end = new Date();
               const start = new Date();
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
@@ -290,8 +286,45 @@ export default {
 };
 </script>
 	<style>
-/* el-select 比正常的框长 */
-.el-form-item .el-select {
-  width: 100%;
+* {
+  font-weight: normal;
+}
+.detailsContainer {
+  margin: 0 10px;
+}
+.dtl-title-line {
+  display: inline-block;
+  border-left: 5px solid #409eff;
+  padding-left: 5px;
+}
+.el-table__fixed-right::before {
+  background-color: none;
+}
+.dtl-info-line {
+  height: 40px;
+  line-height: 40px;
+  margin: 10px auto;
+  border-radius: 3px;
+  font-size: 12px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  color: #000;
+  background-color: #dcecfd;
+}
+.el-table > th {
+  background-color: #eee !important;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

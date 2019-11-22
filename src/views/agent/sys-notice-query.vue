@@ -62,17 +62,23 @@
             @click.native.prevent="handleEdit('show')"
           >查 看</el-radio-button>
         </el-radio-group>
+        <el-radio-group size="mini">
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">导 出</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">发送邮件</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">发布内部消息</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">发布门户</el-radio-button>
+        </el-radio-group>
       </el-col>
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -158,7 +164,7 @@ export default {
     handleAdd() {
       debugger;
       this.$router.push({
-        path: "/agent/sys-notice-edit"
+        path: "/message-manage/notice-announcement-edit"
       });
     },
     deleteBatch() {
@@ -200,7 +206,7 @@ export default {
         var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            path: "/agent/sys-notice-detail",
+            path: "/message-manage/notice-announcement-detail",
             query: { id: id, type: type }
           });
         }
@@ -260,5 +266,5 @@ export default {
 };
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

@@ -254,6 +254,7 @@ export default {
     z-index: 3000;
     position: absolute;
     list-style-type: none;
+    top: 40px !important;
     padding: 5px 0;
     border-radius: 4px;
     font-size: 12px;

@@ -34,8 +34,16 @@
       </el-row>
     </el-form>
     <!-- part2 -->
-    <el-row :gutter="20" class="area_border">
-      <el-col :span="5" style="margin-bottom: 15px;">
+    <el-row class="area_border">
+      <el-col style="margin-left: 10px;width: 27%;">
+        <el-radio-group size="mini">
+          <el-radio-button size="small" type="primary" class="btn_line" @click.native.prevent="downloadFile">模板下载</el-radio-button>
+          <el-radio-button size="small" type="primary" class="btn_line">门户发布</el-radio-button>
+          <el-radio-button size="small" type="primary" class="btn_line">门户撤回</el-radio-button>
+          <el-radio-button size="small" type="primary" class="btn_line" @click.native.prevent="deleteBatch" >删除</el-radio-button>
+        </el-radio-group>
+      </el-col>
+      <el-col style="width: 50%;margin-bottom: 15px;">
         <el-upload
           class="upload-demo"
           ref="upload"
@@ -48,27 +56,27 @@
           :data="uploadData"
           :multiple="true"
         >
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <el-button
-            style="margin-left: 10px;"
-            size="small"
-            type="success"
-            @click="submitUpload"
-          >上传到服务器</el-button>
-        </el-upload>
 
+            <el-button slot="trigger" size="mini" type="primary" style="border-radius: 5px 0 0 5px;">选取文件</el-button>
+            <el-button
+              style="margin-left: -4px;border-radius:0 5px 5px 0;"
+              size="mini"
+              type="primary"
+              @click="submitUpload"
+            >上传到服务器</el-button>
+
+        </el-upload>
       </el-col>
-      <el-col :span="19"><el-button size="small" type="primary">删除</el-button></el-col>
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -107,12 +115,16 @@
 </template>
 
 <script>
-import { getSignInfoList } from "@/api/hxxd/agent";
+import { downloadFile } from "@/api/system/comm/comm";
+import { getSignInfoList ,signInfoDeleteBatch} from "@/api/hxxd/agent";
 import { parseTime } from "@/utils/index.js";
 import { getToken } from "@/utils/auth";
 export default {
   data() {
     return {
+       param:{
+        idList: []
+      },
       sum: 0,
       added: 0,
       multipleSelection: [],
@@ -146,11 +158,65 @@ export default {
     // }
   },
   methods: {
+    downloadFile() {
+      downloadFile({ id: 1 }).then(response => {
+        console.log(response.headers)
+        var contentDisposition = response.headers["content-disposition"]; //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
+        var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*")
+        var result = patt.exec(contentDisposition)
+        console.log(contentDisposition)
+        var fileName=decodeURIComponent(result[1]).trim()
+        // var fileName="20190906~航协系统项目开发蓝图.xlsx"
+        console.log(fileName);
+        const blob = new Blob([response.data])
+        if ("download" in document.createElement("a")) {
+          // 非IE下载
+          const elink = document.createElement("a")
+          elink.download = fileName
+          elink.style.display = "none"
+          elink.href = URL.createObjectURL(blob)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href) // 释放URL 对象
+          document.body.removeChild(elink)
+        } else {
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName)
+        }
+      })
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
       } else {
         return ''
+      }
+    },
+     deleteBatch() {
+      debugger;
+      var idList = [];
+      if (this.multipleSelection.length == 0) {
+        this.$message({
+          message: "请选择数据",
+          type: "warning"
+        });
+      } else {
+        this.multipleSelection.forEach(i => {
+          idList.push(i.id);
+        });
+        //批量删除
+        this.param.idList=idList;
+        signInfoDeleteBatch(this.param).then(response => {
+          if (response.status == 200) {
+            //删除成功
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+            //更新列表
+             this.getTableList();
+          }
+        });
       }
     },
     handleEdit() {
@@ -235,5 +301,8 @@ export default {
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
+ .aa {
+   border-radius: 5px 5px 0 0;
+ }
 </style>

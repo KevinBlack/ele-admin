@@ -46,7 +46,6 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    // const res = response.data
     const res = response
     // 过滤文件流格式
     if (
@@ -57,15 +56,16 @@ service.interceptors.response.use(
       return Promise.resolve(res)
     }
     // if the custom code is not 200, it is judged as an error.
-    if (res.status !== 200) {
+    var status = res.data.status
+    if (status !== 200) {
       Message({
-        message: res.message || '错误',
+        message: res.data.message || '错误',
         type: 'error',
         duration: 10 * 1000
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.status === 50008 || res.status === 50012 || res.status === 50014) {
+      if (status === 50008 || status === 50012 || status === 50014) {
         // to re-login
         MessageBox.confirm('您已被注销，您可以关闭本页或再次登录', '确认注销', {
           confirmButtonText: '重新登录',
@@ -77,7 +77,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || '错误'))
+      return Promise.reject(new Error(res.data.message || '错误'))
     } else {
       return res.data
     }

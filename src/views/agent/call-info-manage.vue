@@ -9,7 +9,7 @@
               v-model="createDate"
               type="datetimerange"
               value-format= "yyyy-MM-dd HH:mm:ss"
-              :picker-options="pickerOptions"
+              picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -158,25 +158,21 @@ export default {
       }
     },
     handleAdd() {
-      debugger;
       this.$router.push({
-        path: "/agent/call-info-edit"
+        path: "/urge-pay-manage/urge-pay-setting"
       });
     },
     handleEdit(type) {
-      debugger;
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: "请选择数据",
           type: "warning"
         });
       } else if (this.multipleSelection.length == 1) {
-
-
         var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            path: "/agent/call-info-detail",
+            path: "/urge-pay-manage/urge-pay-detail",
             query: { id: id, type: type }
           });
         }
@@ -263,5 +259,5 @@ export default {
 };
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

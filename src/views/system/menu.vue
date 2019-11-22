@@ -1,70 +1,49 @@
 <template>
   <div>
-    <el-card class="box-card" style="margin: 0 10px;">
-      <div class="filter-container">
-        <!-- <el-card class="box-card" shadow="never">
-        <el-form ref="formQuery" :model="formQuery" label-width="80px" :inline="true">
-          <el-row>
-            <el-col :md="8" :lg="8" :xl="6">
-              <el-form-item label="菜单名称" size="mini" prop="menuName">
-                <el-input v-model="formQuery.menuName" size="mini" style="width: 200px;"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :md="8" :lg="8" :xl="6">
-              <el-form-item size="mini">
-                <el-button type="primary" size="mini" @click="search">查询</el-button>
-                <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-        </el-card>-->
+    <el-card class="detailsContainer">
+      <el-row class="area_bordes">
+        <el-col :span="24">
+          <el-button-group size="mini">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+            <el-button type="primary" icon="el-icon-delete" size="mini" @click="handleDelete">删除</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="addSubMnu">添加下级</el-button>
+          </el-button-group>
+          <el-button-group size="mini" style="margin-left: 20px;">
+            <el-button
+              type="primary"
+              class="btn_line"
+              icon="el-icon-zoom-in"
+              size="mini"
+              @click="handleView"
+            >查看</el-button>
+          </el-button-group>
+        </el-col>
+      </el-row>
 
-        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-          <el-card
-            shadow="never"
-            style="padding:15px;border-radius:0px;"
-            :body-style="{ padding: '0px' }"
-          >
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
-          </el-card>
-          <el-table
-            ref="menuTable"
-            :data="tableData"
-            style="width:100%"
-            :header-row-style="headRowStyle"
-            :row-style="rowStyle"
-            :header-cell-style="getCellStyle"
-            v-loading="tableLoading"
-            border
-            highlight-current-row
-            row-key="menuId"
-            lazy
-            :tree-props="{children: 'children', hasChildren: 'hasChild'}"
-            :load="load"
-          >
-            <!-- <el-table-column type="selection" width="55" align="center"></el-table-column> -->
-            <el-table-column prop="menuName" label="菜单名称" width="300" align="left"></el-table-column>
-            <el-table-column prop="menuCode" label="菜单编号" width="200" align="center"></el-table-column>
-            <el-table-column prop="menuHref" label="链接" width="320" align="left"></el-table-column>
-            <el-table-column prop="treeSort" label="排序号" width="200" align="left"></el-table-column>
-            <el-table-column
-              prop="menuType"
-              label="类型"
-              width="200"
-              align="center"
-              :formatter="menuTypeFmt"
-            ></el-table-column>
-            <el-table-column fixed="right" label="操作" width="200" align="center">
-              <template slot-scope="scope">
-                <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-                <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
-                <el-button @click="addSubMnu(scope.row)" type="text" size="small">添加下级</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </div>
+      <el-table
+        ref="menuTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        border
+        row-key="menuId"
+        lazy
+        :tree-props="{children: 'children', hasChildren: 'hasChild'}"
+        :load="load"
+        @selection-change="selectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="menuName" label="菜单名称" width="400" align="left"></el-table-column>
+        <el-table-column prop="menuCode" label="菜单编号" width="200" align="center"></el-table-column>
+        <el-table-column prop="menuHref" label="链接"  align="left"></el-table-column>
+        <el-table-column prop="treeSort" label="排序号" width="200" align="left"></el-table-column>
+        <el-table-column
+          prop="menuType"
+          label="类型"
+          width="200"
+          align="center"
+          :formatter="menuTypeFmt"
+        ></el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>
@@ -73,6 +52,7 @@
 import { getMenuList, getMenu, deleteMenu } from "@/api/system/menu";
 
 export default {
+  name:'Menu',
   data() {
     return {
       formQuery: {
@@ -102,30 +82,59 @@ export default {
         this.tableLoading = false;
       });
     },
-    rowStyle(row, rowIndex) {
-      return "height:15px;font-size: 13px;color: #333;font-weight: normal; ";
-    },
-    headRowStyle(row, rowIndex) {
-      return "height:15px;";
-    },
-    getCellStyle({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 0) {
-        return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal;";
-      } else {
-        return "";
-      }
+    selectionChange(val) {
+      this.tableMultiSelection = val;
     },
     handleAdd() {
       this.$router.push({ path: "/system/menu-detail", query: {} });
     },
-    handleEdit(row) {
+    handleView(row) {
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中要查看的数据!"
+        });
+        return;
+      }
+      const selectRows = this.tableMultiSelection;
+      if (selectRows.length === 0 || selectRows.length > 1) {
+        var msg =
+          selectRows.length == 0
+            ? "请选中要查看的数据"
+            : "只能选择一条数据进行查看";
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      const menuId = selectRows[0].menuId;
       this.$router.push({
         path: "/system/menu-detail",
-        query: { menuId: row.menuId }
+        query: { menuId: menuId }
       });
     },
-    handleDelete(row) {
-      let menuId = row.menuId;
+    handleDelete() {
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中要删除的数据!"
+        });
+        return;
+      }
+      const selectRows = this.tableMultiSelection;
+      if (selectRows.length === 0 || selectRows.length > 1) {
+        var msg =
+          selectRows.length == 0
+            ? "请选中要删除的数据"
+            : "只能选择一条数据进行删除";
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      const menuId = selectRows[0].menuId;
       this.$confirm("本操作将删除当前节点下所有子节点，是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -133,10 +142,14 @@ export default {
       })
         .then(() => {
           deleteMenu(menuId).then(response => {
-            this.$message({
-              type: "success",
-              message: "删除成功!"
-            });
+            if (response.status == 200) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              //重新加载数据
+              this.getTableList()
+            }
           });
         })
         .catch(() => {
@@ -144,7 +157,26 @@ export default {
         });
     },
     addSubMnu(row) {
-      let menuType = row.menuType;
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中要删除的数据!"
+        });
+        return;
+      }
+      const selectRows = this.tableMultiSelection;
+      if (selectRows.length === 0 || selectRows.length > 1) {
+        var msg =
+          selectRows.length == 0
+            ? "请选中要删除的数据"
+            : "只能选择一条数据进行删除";
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      const menuType = selectRows[0].menuType;
       //当是按钮时，不能添加下级菜单
       if (menuType == "2") {
         this.$message({
@@ -153,7 +185,7 @@ export default {
         });
         return;
       }
-      var parentId = row.parentIds + row.menuId;
+      var parentId = selectRows[0].parentIds + selectRows[0].menuId;
       parentId = parentId.substring(3);
       this.$router.push({
         path: "/system/menu-detail",
@@ -172,8 +204,45 @@ export default {
 };
 </script>
 <style>
-.el-table--medium th,
-.el-table--medium td {
-  padding: 0px 0;
+* {
+  font-weight: normal;
+}
+.detailsContainer {
+  margin: 0 10px;
+}
+.dtl-title-line {
+  display: inline-block;
+  border-left: 5px solid #409eff;
+  padding-left: 5px;
+}
+.el-table__fixed-right::before {
+  background-color: none;
+}
+.dtl-info-line {
+  height: 40px;
+  line-height: 40px;
+  margin: 10px auto;
+  border-radius: 3px;
+  font-size: 12px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  color: #000;
+  background-color: #dcecfd;
+}
+.el-table > th {
+  background-color: #eee !important;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

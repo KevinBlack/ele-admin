@@ -22,9 +22,9 @@
             <el-input v-model="formQuery.businessName" size="mini"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="7">
           <el-form-item label="是否经营异常" size="mini" prop="status">
-            <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
+            <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini" style="width: 100%;">
               <el-option
                 v-for="item in statusOptions"
                 :key="item.value"
@@ -72,14 +72,14 @@
       </el-dialog>-->
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -176,7 +176,7 @@ export default {
     handleAdd() {
       debugger;
       this.$router.push({
-        path: "/agent/info"
+        path: "/sales-agent-manage/sales-agent-info-edit"
       });
     },
     handleEdit(type) {
@@ -189,7 +189,7 @@ export default {
         var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            path: "/agent/info-detail",
+            path: "/sales-agent-manage/sales-agent-info-detail",
             query: { id: id, type: type }
           });
         }
@@ -276,5 +276,5 @@ export default {
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

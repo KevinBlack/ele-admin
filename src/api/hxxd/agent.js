@@ -1,8 +1,27 @@
 import request from '@/utils/request'
 
-export function companySave(data) {
+export function companySave(formData) {
   return request({
     url: '/hxxd/hxXdCompanyInfo/save',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+export function initCompanyRegister(data) {
+  return request({
+    url: '/hxxd/hxxd-company-register/initCompanyRegister',
+    method: 'post',
+    data
+  })
+}
+
+export function initCompanyInfo(data) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/initCompanyInfo',
     method: 'post',
     data
   })
@@ -64,6 +83,14 @@ export function reportSave(data) {
   })
 }
 
+export function annualReportDeleteBatch(data) {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/deleteBatch',
+    method: 'post',
+    data
+  })
+}
+
 export function getReportInfoList(data) {
   return request({
     url: '/hxxd/hxXdAnnualReport/list',
@@ -88,6 +115,13 @@ export function getSignInfoList(data) {
   })
 }
 
+export function signInfoDeleteBatch(data) {
+  return request({
+    url: '/hxxd/hxXdSignContract/deleteBatch',
+    method: 'post',
+    data
+  })
+}
 export function companyRegisterSave(data) {
   return request({
     url: '/hxxd/hxxd-company-register/anonw/save',
@@ -268,5 +302,33 @@ export function getDictAirCompony(data) {
     url: '/system/jqSysDict/anonw/getDictAirCompony',
     method: 'post',
     data
+  })
+}
+
+export function selectComponyByParam(data) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/anonw/selectComponyByParam',
+    method: 'post',
+    data
+  })
+}
+
+// 首页-企业查询
+export function selectComponyRelevent(socialCreditCode) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/anonw/selectComponyRelevent',
+    method: 'post',
+    data: { socialCreditCode }
+  })
+}
+
+// 首页-企业查询-年报
+export function query(id) {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/query',
+    method: 'post',
+    params: {
+      id
+    }
   })
 }

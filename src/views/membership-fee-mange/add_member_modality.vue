@@ -167,5 +167,5 @@ export default {
 </script>
 
 <style scoped>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

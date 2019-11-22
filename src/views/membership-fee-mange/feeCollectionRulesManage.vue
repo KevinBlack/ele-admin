@@ -47,10 +47,10 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="memberType" width="100" :formatter="memberTypeStatus" label="会员类别" align="center" />
+      <el-table-column prop="memberType" width="200" :formatter="memberTypeStatus" label="会员类别" align="center" />
       <el-table-column prop="memberDj" :formatter="memberDjStatus" label="会员等级" align="center" />
-      <el-table-column prop="memberZk" label="会员折扣" align="center" />
-      <el-table-column prop="memberFeeBz" label="会员费用标椎" align="center" />
+      <el-table-column prop="memberZk" label="会员折扣（折）" align="center" />
+      <el-table-column prop="memberFeeBz" label="会员费用标椎（元）" align="center" />
       <!-- <el-table-column prop="memberTypeCode" label="会员类型编码" align="center" /> -->
     </el-table>
     <!-- 表格区2end -->
@@ -148,7 +148,7 @@ export default {
     },
     handleCreate() {
       this.$router.push({
-        path: '/membership-fee-mange/addFeeCollectionRules',
+        path: '/membership-fee-manage/addFeeCollectionRules',
         query: {}
       })
 
@@ -178,7 +178,7 @@ export default {
       var row = selectRows[0]
       var id = row.id
       this.$router.push({
-        path: '/membership-fee-mange/updateFeeCollectionRules',
+        path: '/membership-fee-manage/updateFeeCollectionRules',
         query: {
           id: id
         }
@@ -273,5 +273,5 @@ export default {
 }
 </script>
 <style scoped>
-  @import '../../styles/hxxd.scss';
+  @import '~@/styles/hxxd.scss';
 </style>

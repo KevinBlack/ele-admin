@@ -55,6 +55,8 @@
 
 <script>
 import { getDictAirCompony } from '@/api/hxxd/agent'
+import { getDictDataList } from "@/api/system/comm/comm"
+
 export default {
   name: 'DictAirQuery',
   props: {
@@ -93,10 +95,12 @@ export default {
     },
     getTableList() {
       this.tableLoading = true
-      getDictAirCompony(this.formQuery).then(response => {
-        this.tableData = response.data
+      // getDictAirCompony(this.formQuery).then(response => {
+      //   this.tableData = response.data
+      // })
+      getDictDataList('97001004',this.formQuery.name,null,true).then(response => {
+          this.tableData = response.data
       })
-
     },
      search() {
       this.getTableList()
@@ -171,5 +175,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

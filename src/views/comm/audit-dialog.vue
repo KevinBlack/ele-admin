@@ -117,6 +117,8 @@ export default {
             return false;
           }
         });
+      } else {
+        goNext = true;
       }
       if (goNext) {
         var data = JSON.parse(JSON.stringify(this.auditForm));

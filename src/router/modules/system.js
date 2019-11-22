@@ -16,7 +16,7 @@ const systemRouter = {
     {
       path: 'company',
       component: () => import('@/views/system/company'),
-      name: 'CompanyManage',
+      name: 'Company',
       // meta: { title: '公司管理', menuCodes: '100010' },
       meta: { title: '公司管理' },
       props: { pageCode: '10001020' }
@@ -32,7 +32,7 @@ const systemRouter = {
     {
       path: 'office',
       component: () => import('@/views/system/office'),
-      name: 'OfficeManage',
+      name: 'Office',
       // meta: { title: '机构管理', menuCodes: '100020' }
       meta: { title: '机构管理' }
     },
@@ -47,7 +47,7 @@ const systemRouter = {
     {
       path: 'user',
       component: () => import('@/views/system/user'),
-      name: 'UserManage',
+      name: 'User',
       // meta: { title: '用户管理', menuCodes: '100030' }
       meta: { title: '用户管理' }
     },
@@ -62,7 +62,7 @@ const systemRouter = {
     {
       path: 'role',
       component: () => import('@/views/system/role'),
-      name: 'RoleManage',
+      name: 'Role',
       // meta: { title: '角色管理', menuCodes: '100040' }
       meta: { title: '角色管理' }
     },
@@ -70,7 +70,7 @@ const systemRouter = {
       path: 'role-detail',
       hidden: true,
       component: () => import('@/views/system/role-detail'),
-      name: 'roleDetail',
+      name: 'RoleDetail',
       // meta: { title: '角色详情', menuCodes: '100040' }
       meta: { title: '角色详情' }
     },
@@ -78,14 +78,14 @@ const systemRouter = {
       path: 'role-datascope',
       hidden: true,
       component: () => import('@/views/system/role-datascope'),
-      name: 'roleDataScope',
+      name: 'RoleDataScope',
       // meta: { title: '数据权限', menuCodes: '100040' }
       meta: { title: '数据权限' }
     },
     {
       path: 'menu',
       component: () => import('@/views/system/menu'),
-      name: 'MenuManage',
+      name: 'Menu',
       // meta: { title: '菜单管理', menuCodes: '100050' }
       meta: { title: '菜单管理' }
     },
@@ -100,7 +100,7 @@ const systemRouter = {
     {
       path: 'dict',
       component: () => import('@/views/system/dict'),
-      name: 'dictManage',
+      name: 'DictManage',
       // meta: { title: '字典管理', menuCodes: '100050' }
       meta: { title: '字典管理' }
     },

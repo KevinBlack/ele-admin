@@ -13,6 +13,39 @@ const msgManage = {
   },
   children: [
     {
+      path: 'note',
+      component: () => import('@/views/msgManage/noteSend'),
+      name: 'NoteSend',
+      meta: {
+        title: '手机短信发送'
+      }
+    },
+    {
+      path: 'noteAdd',
+      hidden: true,
+      component: () => import('@/views/msgManage/noteDetails'),
+      name: 'noteAdd',
+      meta: {
+        title: '短信新增'
+      }
+    }, {
+      path: 'noteUpd',
+      hidden: true,
+      component: () => import('@/views/msgManage/noteDetails'),
+      name: 'noteUpd',
+      meta: {
+        title: '短信修改'
+      }
+    }, {
+      path: 'noteSee',
+      hidden: true,
+      component: () => import('@/views/msgManage/noteDetails'),
+      name: 'noteSee',
+      meta: {
+        title: '短信查看详情'
+      }
+    },
+    {
       path: 'email',
       component: () => import('@/views/msgManage/emailList'),
       name: 'email',

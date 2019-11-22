@@ -133,5 +133,5 @@ export default {
 }
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

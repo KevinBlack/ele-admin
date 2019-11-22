@@ -46,7 +46,7 @@
               </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="会员费用标椎" prop="memberFeeBz">
+            <el-form-item label="会员费用标准(元)" prop="memberFeeBz">
               <el-input v-model="formQuery.memberFeeBz" />
             </el-form-item>
           </el-col>
@@ -147,5 +147,5 @@ export default {
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

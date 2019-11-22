@@ -11,6 +11,18 @@ export function getMemberPayInfoList(id, status) {
     data: { id, status }
   })
 }
+/** 会员缴费管理 请求控制器**/
+/**
+ * 根据HxxdadminHfInfoId获取会员缴费记录信息列表信息
+ * @param {*} data
+ */
+export function getMemberPaysByAdminId(id, status) {
+  return request({
+    url: '/hxxd/memberPay/getMemberPaysByAdminId',
+    method: 'post',
+    data: { id, status }
+  })
+}
 export function getAdminHfInfo(data) {
   return request({
     url: '/hxxd/hxxdadminHfInfo/getAdminHfInfo',

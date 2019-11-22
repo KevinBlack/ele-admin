@@ -13,12 +13,13 @@
               unlink-panels
               format="yyyy-MM-dd HH:mm:ss"
               value-format="yyyy-MM-dd HH:mm:ss"
+              style="width: 250px;"
             ></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="主题" size="mini" prop="subject">
-            <el-input v-model="formQuery.subject" size="mini"></el-input>
+            <el-input v-model="formQuery.subject" size="mini" style="width: 80%;"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -27,7 +28,7 @@
                 v-model="formQuery.status"
                 filterable
                 placeholder="请选择"
-                style="width:100%">
+                style="width:80%">
               <el-option
                   v-for="item in statusOptions"
                   :key="item.value"
@@ -37,7 +38,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="4" style="text-align: left;padding-left: 1.3em;">
+        <el-col :span="4">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
           <el-button type="primary" icon="el-icon-refresh-right" @click="resetForm('formQuery')" size="mini">重置</el-button>
         </el-col>
@@ -90,12 +91,12 @@
       </el-col>
     </el-row>
   </el-card>
-  
+
 </template>
 
 <script>
 import { getSysEmailList,delData,sendData } from "@/api/msgManage/email.js";
-export default { 
+export default {
   data() {
     return {
       pageTotal: 0,
@@ -121,10 +122,6 @@ export default {
         },
         {
           value: 1,
-          label: "发送中"
-        },
-        {
-          value: 2,
           label: "已发送"
         }
       ]
@@ -238,7 +235,7 @@ export default {
         this.formQuery.beginTime = this.formQuery.timeValue[0];
         this.formQuery.endTime = this.formQuery.timeValue[1];
       }
-      
+
       getSysEmailList(this.formQuery).then(response => {
         this.tableData = response.data;
         for(var i=0;i<response.data.length;i++){
@@ -246,8 +243,6 @@ export default {
           if(data.status==0){
             this.tableData[i].statusName="未发送";
           }else if(data.status==1){
-            this.tableData[i].statusName="发送中";
-          }else if(data.status==2){
             this.tableData[i].statusName="已发送";
           }
         }
@@ -275,25 +270,5 @@ export default {
 </script>
 
 <style scoped>
-*{
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.area_border, .area_bordes {
-  box-sizing: border-box;
-  border: 1px solid #e6e6e6;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding: 10px 0 0 0;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-.area_bordes {
-  padding: 10px;
-}
-.btn_line {
-  margin-right: 2px;
-}
+@import '~@/styles/hxxd.scss';
 </style>

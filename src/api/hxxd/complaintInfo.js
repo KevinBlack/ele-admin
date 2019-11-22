@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function selectComplainInfoById(id) {
+  return request({
+    url: '/hxxd/hxxd-complaint-info/selectComplainInfoAndProcessing',
+    method: 'post',
+    params: {id}
+  })
+}
 export function selectComplainInfoAndProcessing(data) {
   return request({
     url: '/hxxd/hxxd-complaint-info/selectComplainInfoAndProcessing',
@@ -7,11 +14,14 @@ export function selectComplainInfoAndProcessing(data) {
     data
   })
 }
-export function saveComplainProcessing(data) {
+export function saveComplainProcessing(formData) {
   return request({
     url: '/hxxd/hxxd-complaint-info/saveComplainProcessing',
     method: 'post',
-    data
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
 export function saveComplainInfo(data) {
@@ -28,6 +38,20 @@ export function selectSecurityIncident(data) {
     data
   })
 }
+export function publishSecurityIncident(ids) {
+  return request({
+    url: '/hxxd/hxxd-security-incidents/publishSecurityIncident',
+    method: 'post',
+    params :{ids}
+  })
+}
+export function cancalPublishSecurityIncident(ids) {
+  return request({
+    url: '/hxxd/hxxd-security-incidents/cancalPublishSecurityIncident',
+    method: 'post',
+    params :{ids}
+  })
+}
 export function saveSecurityIncident(data) {
   return request({
     url: '/hxxd/hxxd-security-incidents/saveSecurityIncident',
@@ -35,11 +59,38 @@ export function saveSecurityIncident(data) {
     data
   })
 }
+export function updateSecurityIncident(data) {
+  return request({
+    url: '/hxxd/hxxd-security-incidents/updateSecurityIncident',
+    method: 'post',
+    data
+  })
+}
+export function deleteSecurityIncident(ids) {
+  return request({
+    url: '/hxxd/hxxd-security-incidents/deleteSecurityIncident',
+    method: 'post',
+    data: {
+      ids
+    }
+  })
+}
+export function selectSecurityIncidentById(id) {
+  return request({
+    url: '/hxxd/hxxd-security-incidents/selectSecurityIncidentById',
+    method: 'post',
+    data: {
+      id
+    }
+  })
+}
 export function selectComplainInfoAndProcessingById(id) {
   return request({
     url: '/hxxd/hxxd-complaint-info/selectComplainInfoAndProcessingById',
     method: 'post',
-    data: { id }
+    data: {
+      id
+    }
   })
 }
 export function sendCode(mobileNum) {
@@ -49,5 +100,12 @@ export function sendCode(mobileNum) {
     data: {
       mobileNum
     }
+  })
+}
+export function examine(data) {
+  return request({
+    url: '/hxxd/hxxd-complaint-info/examine',
+    method: 'post',
+    data
   })
 }

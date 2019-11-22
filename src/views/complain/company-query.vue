@@ -1,17 +1,16 @@
 <template>
-  <div class="detailsContainer">
+  <div>
     <!-- part1 -->
-    <el-form ref="formQuery" :model="formQuery" :inline="true">
+    <el-form ref="formQuery" :inline="true">
       <el-row>
         <el-col :span="18">
           <el-form-item label="投诉单位名称" size="mini" prop="value">
-            <el-input v-model="formQuery.name" size="mini" />
+            <el-input v-model="value" size="mini" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item size="mini">
             <el-button type="primary" size="mini" @click="search">查询</el-button>
-            <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -24,8 +23,6 @@
       tooltip-effect="dark"
       style="width: 100%;"
       @selection-change="handleSelectionChange"
-      :header-row-style="headRowStyle"
-      :row-style="rowStyle"
       :header-cell-style="getCellStyle"
       class="table-hxxd"
     >
@@ -55,6 +52,7 @@
 
 <script>
 import { componyQueryList } from '@/api/hxxd/agent'
+import { getDictDataList } from "@/api/system/comm/comm";
 
 export default {
   name: 'ComplainQuery',
@@ -70,15 +68,13 @@ export default {
       show:false,
       pageNo: 1,
       pageSize: 5,
-      formQuery: {
-        name:'',
-        pageNo: 1,
-        pageSize: 5
-      },
+      value: '',
+      key: '',
       pageTotal: 0,
       fdshow: false,
       selectArr: [],
-      tableData: []
+      tableData: [],
+
     }
   },
   created(){
@@ -93,7 +89,7 @@ export default {
     },
     getTableList() {
       this.tableLoading = true
-      componyQueryList(this.formQuery).then(response => {
+      getDictDataList('97001003',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
         this.tableData = response.data
       })
     },
@@ -108,13 +104,7 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-     headRowStyle(row, rowIndex) {
-      return 'height:15px'
-    },
-     rowStyle(row, rowIndex) {
-      return 'height:15pxfont-size:13pxcolor:#333font-weight:normal '
-    },
-     getCellStyle({ row, column, rowIndex, columnIndex }) {
+    getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background:#F2F2F2font-size:13pxcolor:#333font-weight:normal'
       } else {
@@ -129,31 +119,6 @@ export default {
         })
         return
       }
-      // const selectRows = this.selectArr
-      // if (selectRows.length === 0) {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '请选中要操作的数据!'
-      //   })
-      //   return
-      // }
-      // if (selectRows.length > 1) {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '只能选中一条操作数据!'
-      //   })
-      //   return
-      // }
-      // var idArr = []
-      // Object.keys(selectRows).forEach(function(key) {
-      //   if (selectRows[key].name) {
-      //     idArr.push(selectRows[key].name)
-      //   }
-      // })
-      // if (idArr && idArr.length > 0) {
-      //   var Ids = idArr.join()
-      //   this.getTableList()
-      // }
       this.$emit('closeDalogPay', this.selectArr[0], this.fdshow)
       this.selectArr = []
       this.$refs.multipleTable.clearSelection() // 清空所有选择
@@ -170,5 +135,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

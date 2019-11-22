@@ -3,22 +3,24 @@
     <!-- part1 -->
     <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
       <el-row :gutter="20" class="area_border">
-        <el-col :span="10">
-          <el-form-item label="创建时间" size="mini" prop="createDate">
-            <el-date-picker
-              v-model="createDate"
-              type="datetimerange"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              :picker-options="pickerOptions"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              align="right"
-              style="width:100%"
-            ></el-date-picker>
+        <el-col :span="6">
+          <el-form-item label="年份查询" size="mini" prop="createDate">
+            <el-input size="mini" />
           </el-form-item>
         </el-col>
-        <el-col :span="12" style="text-align: center;"  >
+        <el-col :span="12">
+          <el-form-item label="上报状态" size="mini" prop="createDate">
+            <el-select v-model="value" size="mini" style="width: 60%" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6" style="text-align: center;"  >
           <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
           <el-button
             type="primary"
@@ -33,19 +35,19 @@
       <el-col :span="24">
         <el-radio-group size="mini">
           <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleEdit">查看信息</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleEdit">删除信息</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删除信息</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -84,11 +86,14 @@
 </template>
 
 <script>
-import { getReportInfoList } from "@/api/hxxd/agent";
+import { getReportInfoList,annualReportDeleteBatch } from "@/api/hxxd/agent";
 import { parseTime } from "@/utils/index.js";
 export default {
   data() {
     return {
+      param:{
+        idList: []
+      },
       sum: 0,
       added: 0,
       multipleSelection: [],
@@ -102,7 +107,15 @@ export default {
         pageNo: 1,
         pageSize: 5,
         orderBy: ""
-      }
+      },
+      options: [{
+          value: '选项1',
+          label: '已上报'
+        }, {
+          value: '选项2',
+          label: '未上报'
+        }],
+        value: '选项1'
     };
   },
   created() {
@@ -116,6 +129,33 @@ export default {
     // }
   },
   methods: {
+    deleteBatch() {
+      debugger;
+      var idList = [];
+      if (this.multipleSelection.length == 0) {
+        this.$message({
+          message: "请选择数据",
+          type: "warning"
+        });
+      } else {
+        this.multipleSelection.forEach(i => {
+          idList.push(i.id);
+        });
+        //批量删除
+        this.param.idList=idList;
+        annualReportDeleteBatch(this.param).then(response => {
+          if (response.status == 200) {
+            //删除成功
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+            //更新列表
+             this.getTableList();
+          }
+        });
+      }
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
@@ -133,7 +173,7 @@ export default {
         let id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            name: 'ReportDetail',
+            path: '/annual-report/annual-report-detail',
             query: { id: id }
           });
         }
@@ -193,5 +233,5 @@ export default {
 };
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

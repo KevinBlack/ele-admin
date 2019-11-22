@@ -1,16 +1,36 @@
 * {
   font-family: 'Microsoft Yahe';
-  font-size: 16px;
   margin: 0;
 }
 
+@font-face {
+  font-family: 'iconfont';
+  /* project id 712009 */
+  src: url('//at.alicdn.com/t/font_712009_qhls6a3hd8.eot');
+  src: url('//at.alicdn.com/t/font_712009_qhls6a3hd8.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_712009_qhls6a3hd8.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_712009_qhls6a3hd8.woff') format('woff'),
+    url('//at.alicdn.com/t/font_712009_qhls6a3hd8.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_712009_qhls6a3hd8.svg#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 html {
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100%;
+  grid-template-rows: 1fr auto;
   position: relative;
   margin: 0;
   padding: 0;
@@ -48,39 +68,44 @@ li {
     .head_group {
       display: inline-block;
       position: absolute;
-      width: 160px;
+      width: 500px;
       height: 36px;
-      top: 56px;
-      right: 0;
-
-      img {
-        width: 36px;
+      bottom: 20px;
+      right: 10px;
+      .nav_cont,
+      .nav_border {
+        width: 100%;
+        text-align: right;
         height: 36px;
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-      .head_group_day {
-        display: inline-block;
-        width: 124px;
-        height: 36px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        span {
-          position: absolute;
-          width: 124px;
-          height: 16px;
-          line-height: 16px;
-          top: 0;
-          color: #000;
-          text-align: right;
-        }
-        .head_group_week {
-          top: 16px;
-        }
-      }
 
+        li {
+          float: right;
+          box-sizing: border-box;
+          margin-left: 30px;
+          font-size: 40px;
+          font-weight: bolder;
+          line-height: 40px;
+          font-size: 16px;
+          color: rgb(18, 114, 209);
+          a {
+            transition: all 0.3s;
+            i {
+              margin-right: 5px;
+              font-weight: lighter;
+            }
+          }
+          a:hover {
+            color: #fff;
+          }
+        }
+      }
+      .nav_border {
+        border-right: 1px solid rgb(18, 114, 209);
+        transform:rotate(25deg);
+        -o-transform:rotate(25deg);
+        -moz-transform:rotate(25deg);
+        -webkit-transform:rotate(25deg);
+      }
     }
   }
 
@@ -88,21 +113,65 @@ li {
 
 .contont-main {
   width: 1200px;
-  height: 520px;
+  min-height: 490px;
   margin: 0 auto;
+  font-size: 14px;
   position: relative;
+  .detailsContainer {
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    margin-bottom: 80px;
+    font-size: 14px;
+
+    .table_firmInfo {
+      width: 100%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      border: 1px solid #e6e6e6;
+      font-size: 14px;
+    }
+
+    .table_firmInfo tr {
+      border-bottom: 1px solid #e6e6e6;
+    }
+
+    .table_firmInfo tr:nth-last-child(1) {
+      border-bottom: none;
+    }
+
+    .table_firmInfo tr th,
+    .table_firmInfo tr td {
+      height: 40px;
+      line-height: 40px;
+      border-right: 1px solid #e6e6e6;
+    }
+
+    .table_firmInfo tr th {
+      background-color: #f8fbff;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .table_firmInfo tr td {
+      color: #aaaaaa;
+      text-align: left;
+      text-indent: 1em;
+    }
+  }
 }
 
 .footer-throwsf {
   width: 100%;
-  position: fixed;
+  // position: fixed;
   height: 60px !important;
   line-height: 60px;
-  bottom: 0;
   font-size: 14px;
   text-align: center;
   color: #fff;
   background: #23579d;
+  // left:0px;
+  // bottom:0;
 
   a {
     font-size: 14px;

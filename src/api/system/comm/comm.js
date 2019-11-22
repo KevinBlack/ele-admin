@@ -39,6 +39,44 @@ export function getSubAreaById(areaId) {
   })
 }
 
+/**
+ * 一次获取多个字典
+ * @param {*} dictTypes 字典key
+ */
+export function getDictDataLists(dictTypes) {
+  return request({
+    url: '/system/jqSysDict/anonw/getDictDataLists',
+    method: 'post',
+    data: { dictTypes }
+  })
+}
+
+/**
+ * 只获取一个字典。并根据key或者value进行过滤
+ * @param {*} dictType 字典key
+ */
+export function getDictDataList(dictType, value, key, pageAble, pageNo, pageSize) {
+  return request({
+    url: '/system/jqSysDict/anonw/getDictDataList',
+    method: 'post',
+    data: { dictType, key, value, pageAble, pageNo, pageSize }
+  })
+}
+
+/**
+ * 查询流程日志
+ * @param {*} system  所属系统
+ * @param {*} dateId  数据id
+ * @param {*} dateCode 数据编号
+ */
+export function listProcessLog(system, tableName, dateId, dateCode) {
+  return request({
+    url: '/system/jqSysProcessLog/list',
+    method: 'post',
+    data: { system, tableName, dateId, dateCode }
+  })
+}
+
 // 附件下載
 export function downloadFile(data) {
   return request({
@@ -93,4 +131,3 @@ export function selectLog(formData) {
     }
   })
 }
-

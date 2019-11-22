@@ -31,7 +31,7 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55"  align="center" />
-      <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
+      <el-table-column prop="id" label="ID" width="" align="center" v-if='show'/>
       <el-table-column prop="tradeTime" label="交易时间" width="" align="center" />
       <el-table-column prop="tradePipelineNum" label="交易流水号" width="" align="center" />
       <el-table-column prop="tradeMoney" label="贷方发生额" width="" align="center" />
@@ -39,6 +39,7 @@
       <el-table-column prop="oppositeAccount" label="对方账号" width="" align="center" />
       <el-table-column prop="oppositeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="openingBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="balance" label="余额" align="center" :show-overflow-tooltip="true" />
     </el-table>
     <el-row class="btn_bottom">
         <el-col :span="24">
@@ -100,7 +101,6 @@ export default {
     }
   },
   methods: {
-
      getTableList() {
       this.tableLoading = true
       getFinancialInfoList(this.formQuery,this.memberIds).then(response => {
@@ -158,10 +158,6 @@ export default {
           if (idArr && idArr.length > 0) {
             var Ids = idArr.join()
             saveCheck(Ids,this.memberIds).then(response => {
-              this.$message({
-                type: 'success',
-                message: '操作成功!'
-              })
               this.getTableList()
             })
           }
@@ -192,5 +188,5 @@ export default {
 </script>
 
 <style scoped>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

@@ -1,18 +1,7 @@
 <template>
   <div class="app-wrapper">
-    <header class="header-throwsf">
-      <div class="header-position">
-        <img class="logo" src="../../assets/img/logo.png">
-        <div class="head_group">
-          <img src='../../assets/img/menology_n.png'>
-          <div class="head_group_day">
-            <span>2019年9月26日</span>
-            <span class="head_group_week">星期四&nbsp;&nbsp;&nbsp;&nbsp;14:44</span>
-          </div>
-        </div>
-      </div>
-    </header>
-    <div class="contont-main">
+    <header-reload />
+    <div ref="contontMain" class="contont-main" v-bind:style="{minHeight: Height+'px'}">
       <div class="nl_l">
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
           <ul>
@@ -78,7 +67,8 @@
               </div>
             </li>
             <li><el-button :loading="loading" type="primary" class="btn_login" @click.native.prevent="handleLogin">立即登录</el-button></li>
-            <li><router-link to="/register">账户注册</router-link> | <router-link :to="{ path: '/forgetPwd' }">忘记密码</router-link> | <router-link :to="{ path: '/resetPwd' }">修改密码</router-link></li>
+            <li><router-link to="/register">账户注册</router-link> | <router-link :to="{ path: '/forgetPwd' }">忘记密码</router-link></li>
+            <!--  | <router-link :to="{ path: '/resetPwd' }">修改密码</router-link> -->
           </ul>
           <router-link :to="{ path: '/online-complaints' }" class="nl_l_btn"><img src="../../assets/img/online.png">在线投诉处理</router-link>
           <router-link :to="{ path: '/firmInfo-search' }" class="nl_l_btn"><img src="../../assets/img/menology_h.png">企业信息查询</router-link>
@@ -86,48 +76,40 @@
       </div>
       <div class="nl_r">
         <div class="nl_r_list">
-          <h5>公示信息<router-link to="/newslist" class="btn_more">更多</router-link></h5>
+          <!-- <h5><i class="iconfont">&#xe6aa;</i> 站内新闻<router-link :key="$route.fullPath" :to="{name: 'NewsList', query: {id: 1}}" class="btn_more">更多</router-link></h5> -->
+          <h5><i class="iconfont">&#xe6aa;</i> 站内新闻<el-button type="text" @click="handleMoreNews" class="btn_more">更多</el-button></h5>
           <ul>
-            <li><b>&nbsp;</b><router-link to="/news">国人免签国家新增27个</router-link><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">全球最高级别！山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业金城：党建引领 助推经营</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业洪都岗位梁小春：潜心钻研的数控机加能手</a><span>2019-02-07</span></li>
+            <li v-for="(item, index) in newsList" v-if="index<6"><b>&nbsp;</b><router-link :to="{name: 'News', params: {id: item.id}}">{{ item.industryTitle }}</router-link><span>{{ item.publishTime }}</span></li>
           </ul>
         </div>
         <div class="nl_r_list nl_r_list_b">
-          <h5>公示信息<a href="javascript:;" class="btn_more">更多</a></h5>
+          <h5><i class="iconfont">&#xe714;</i> 公示信息<router-link :key="$route.fullPath" :to="{name: 'NewsList', query: {id: 2}}" class="btn_more">更多</router-link></h5>
           <ul>
-            <li><b>&nbsp;</b><a href="javascript:;">全球航空客运需求增长放缓</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">航空工业西飞模具锻铸厂钳工任晓洲：微薄之力献航空</a><span>2019-02-07</span></li>
+            <li v-for="(item, index) in pubList" v-if="index<5"><b>&nbsp;</b><router-link :to="{name: 'News', params: {id: item.id}}">{{ item.industryTitle }}</router-link><span>{{ item.publishTime }}</span></li>
           </ul>
         </div>
         <div class="nl_r_list nl_r_list_b" style="margin-left: 6px;">
-          <h5>公示信息<a href="javascript:;" class="btn_more">更多</a></h5>
+          <h5><i class="iconfont">&#xe634;</i> 最新动态<router-link :key="$route.fullPath" :to="{name: 'NewsList', query: {id: 3}}" class="btn_more">更多</router-link></h5>
           <ul>
-            <li><b>&nbsp;</b><a href="javascript:;">全球航空客运需求增长放缓</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">山航获得国际航协NDC Level 4认证！</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">中国航协召开新闻媒体交流座谈会</a><span>2019-02-07</span></li>
-            <li><b>&nbsp;</b><a href="javascript:;">党建引领 助推经营</a><span>2019-02-07</span></li>
+            <li v-for="(item, index) in hotList" v-if="index<5"><b>&nbsp;</b><router-link :to="{name: 'News', params: {id: item.id}}">{{ item.industryTitle }}</router-link><span>{{ item.publishTime }}</span></li>
           </ul>
         </div>
       </div>
     </div>
-    <footer class="footer-throwsf">
-      <a href="javascrip:;">联系我们</a> | <a href="javascrip:;">声明</a>&nbsp;&nbsp;&nbsp;&nbsp;中国航空运输协会版权所有 | 京ICP备12001608号 | 京公网安备11010502034600号
-    </footer>
+    <footer-reload />
   </div>
 </template>
 
 <script>
 import SIdentify from './components/identify'
+import HeaderReload from '@/components/HeaderReload'
+import FooterReload from '@/components/FooterReload'
 import { getValidateCode } from '@/api/system/comm/comm'
+import { selectIndustry } from '@/api/hxxd/industryInfoPublish';
 
 export default {
   name: 'newLogin',
-  components: { SIdentify },
+  components: { SIdentify, FooterReload, HeaderReload },
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 8) {
@@ -137,6 +119,7 @@ export default {
       }
     }
     return {
+      Height: 0,
       identifyCode: '',
       contentWidth: 150,
       contentHeight: 40,
@@ -155,7 +138,17 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      newsList: [],
+      pubList: [],
+      hotList: [],
+      formQuery: {
+        industryType: '',
+        industryTitle: '',
+        industryContent: '',
+        modifyTime: '',
+        publishStatus: 1
+      }
     }
   },
   watch: {
@@ -171,6 +164,10 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$refs.contontMain.offsetHeight)
+    this.Height = document.documentElement.clientHeight - 194;
+　　//监听浏览器窗口变化　
+    window.onresize = ()=> {this.Height = document.documentElement.clientHeight -194}
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
@@ -178,11 +175,26 @@ export default {
     }
     this.loginForm.identifyCode = ''
     this.makeCode()
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
+    this.getTableList()
   },
   methods: {
+    getTableList() {
+      this.tableLoading = true
+      selectIndustry(this.formQuery).then(response => {
+        for (const k in response.data) {
+          if (response.data[k].industryType === 1) {
+            this.newsList.push(response.data[k])
+          } else if (response.data[k].industryType === 2) {
+            this.pubList.push(response.data[k])
+          } else if (response.data[k].industryType === 3) {
+            this.hotList.push(response.data[k])
+          }
+        }
+      })
+    },
+    handleMoreNews() {
+      this.$router.push({name:'NewsList', query:{id: 1}})
+    },
     refreshCode() {
       this.loginForm.identifyCode = ''
       this.makeCode()
@@ -256,10 +268,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../../styles/register.scss';
-  $bg:#2d3a4b;
-  $dark_gray:#889aa4;
-  $light_gray:#eee;
+  @import '~@/styles/register.scss';
 
   .contont-main {
     .nl_l, .nl_r {
@@ -298,7 +307,7 @@ export default {
             right: 10px;
             top: 3px;
             font-size: 16px;
-            color: $dark_gray;
+            color: #889aa4;
             cursor: pointer;
             user-select: none;
           }
@@ -329,9 +338,9 @@ export default {
         display: block;
         background-color: #008dff;
         margin-bottom: 10px;
-        height: 50px;
+        height: 80px;
         width: 100%;
-        line-height: 50px;
+        line-height: 77px;
         color: #fff;
         font-size: 20px;
         text-align: center;
@@ -347,6 +356,9 @@ export default {
     .nl_r {
       right: 0px;
       width: 820px;
+      .nl_r_list {
+        height: 290px;
+      }
       .nl_r_list, .nl_r_list_b {
         overflow: hidden;
         border: 1px solid #e5e5e5;
@@ -359,6 +371,9 @@ export default {
           line-height: 46px;
           font-size: 16px;
           position: relative;
+          i {
+            font-weight: lighter;
+          }
           a {
             display: inline-block;
             position: absolute;
@@ -370,6 +385,7 @@ export default {
           padding: 0 20px;
           background-color: #fff;
           padding-bottom: 10px;
+          min-height: 220px;
         }
         ul li {
           line-height: 38px;
@@ -394,8 +410,13 @@ export default {
             background-color: #000;
           }
           span {
+            display: inline-block;
+            width: 100px;
+            height: 38px;
+            text-align: right;
+            overflow: hidden;
             position: absolute;
-            right: 5px;;
+            right: 0px;
           }
         }
         ul li:last-child {
@@ -404,6 +425,7 @@ export default {
       }
       .nl_r_list_b {
         width: 407px;
+        height: 250px;
         float: left;
         box-sizing: border-box;
       }

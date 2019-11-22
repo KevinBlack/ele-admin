@@ -3,6 +3,26 @@
  */
 
 /**
+ * 从字典中获取key对应的value值
+ * @param {*} dictList 字典数据
+ * @param {*} dictKey 字典的key
+ */
+export function getDictName(dictList, dictKey) {
+  if (!dictList || dictList.length <= 0) {
+    return dictKey
+  }
+  var value = dictKey
+  for (let index = 0; index < dictList.length; index++) {
+    var dictData = dictList[index]
+    if (dictData.key === dictKey) {
+      value = dictData.value
+      break
+    }
+  }
+  return value
+}
+
+/**
  * 从数组中获取id集合
  * @param {*} arr
  */

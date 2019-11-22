@@ -11,29 +11,17 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="销售代理人" size="mini" prop="salesAgent">
-                <el-input v-model="detailForm.salesAgent" filterable placeholder="请选择" style="width:100%">
-                  <el-button slot="append" icon="el-icon-search" @click="showSelect" />
+                <el-input v-model="detailForm.salesAgent" :readonly="true" filterable placeholder="请选择" style="width:100%">
+                  <el-button slot="append" icon="el-icon-search" @click="showSelect('1')" />
                 </el-input>
               </el-form-item>
-              <el-dialog title="选择销代人" :visible.sync="isShowSelect">
-                <security-query
-                  :fdmsg="memberForm"
-                  @closeDalogPay="closeSelect"
-                />
-              </el-dialog>
             </el-col>
             <el-col :span="12">
               <el-form-item label="航空公司" size="mini" prop="airlineCompany">
-                <el-input v-model="detailForm.airlineCompany" filterable placeholder="请选择" style="width:100%">
-                  <el-button slot="append" icon="el-icon-search" @click="seeSelect" />
+                <el-input v-model="detailForm.airlineCompany" :readonly="true" filterable placeholder="请选择" style="width:100%">
+                  <el-button slot="append" icon="el-icon-search" @click="showSelect('2')" />
                 </el-input>
               </el-form-item>
-              <el-dialog title="选择航空公司" :visible.sync="isSeeSelect">
-                <dictair-query
-                  :fdmag="menberForm"
-                  @closeDalog="closeSelected"
-                />
-              </el-dialog>
             </el-col>
             <el-col :span="12">
               <el-form-item label="业务类别" size="mini" prop="businessCategory">
@@ -74,9 +62,9 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="24">
               <el-form-item label="处罚原因" size="mini" prop="punishmentReasons">
-                <el-input v-model="detailForm.punishmentReasons" size="mini"></el-input>
+                 <el-input type="textarea"  v-model="detailForm.punishmentReasons"  :rows="4"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -87,6 +75,13 @@
             </el-col>
           </el-row>
         </el-form>
+        <el-dialog :title="dialogTitle" :visible.sync="isShowSelect">
+          <security-query
+            :fdmsg="memberForm"
+            :ttmsg="inptTitLe"
+            @closeDalogPay="closeSelect"
+          />
+        </el-dialog>
     </el-card>
   </div>
 </template>
@@ -97,16 +92,17 @@ import { componyQueryList } from '@/api/hxxd/agent'
 import { parseTime } from "@/utils/index.js"
 import { parse } from "path"
 import SecurityQuery from "./security-query"
-import DictAirQuery from "./dictair-query"
 
 export default {
   name: 'SecurityIncidentAdd',
-  components: { SecurityQuery, DictAirQuery },
+  components: { SecurityQuery },
   data() {
     return {
       detailForm: {
         salesAgent: '',
+        salesAgentId: '',
         airlineCompany: '',
+        airlineCompanyId: '',
         businessCategory: '',
         unifiedCreditCode: '',
         validityAgreement: '',
@@ -125,10 +121,13 @@ export default {
         children: 'childs'
       },
       rules: {
-        salesAgent: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        airlineCompany: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        salesAgent: [{ required: true}],
+        airlineCompany: [{ required: true}],
         businessCategory: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        unifiedCreditCode: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        unifiedCreditCode: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 1, max: 18, message: '请输入18位社会统一信用代码', trigger: 'blur'}
+        ],
         validityAgreement: [{ required: true, message: '不能为空', trigger: 'blur' }],
         signAirlinesTwoWordCord: [{ required: true, message: '不能为空', trigger: 'blur' }],
         punishmentType: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -137,43 +136,46 @@ export default {
       dialogTitle: '',
       cascaderOpts: [],
       memberForm: '',
-      menberForm: '',
+      inptTitLe: '',
       isShowSelect: false,
-      isSeeSelect: false,
       businessOptions: [
         {
-          value: '业务类别1',
+          value: '1',
           label: '业务类别1'
         },
         {
-          value: '业务类别2',
+          value: '2',
           label: '业务类别2'
         }
       ],
       punishOptions: [
         {
-          value: '罚款',
+          value: '1',
           label: '罚款'
         },
         {
-          value: '警告',
+          value: '2',
           label: '警告'
         }
       ]
     }
   },
-  created() {
-  },
   methods: {
-    showSelect() {
-      this.dialogTitle = '选择销售代理人'
+    showSelect(val) {
+      if (val === '1') {
+        this.memberForm = ''
+        this.dialogTitle = '选择销售代理人'
+        this.memberForm = val
+        this.inptTitLe = '投诉单位名称'
+      } else if (val === '2') {
+        this.memberForm = ''
+        this.dialogTitle = '选择航空公司'
+        this.memberForm = val
+        this.inptTitLe = '航空公司名称'
+      }
       this.isShowSelect = true
     },
-    seeSelect() {
-      this.dialogTitle = '选择航空公司'
-      this.isSeeSelect = true
-    },
-    closeSelect(chiledArr, fdshow) {
+    closeSelect(chiledArr, fdmag, fdshow) {
       if (chiledArr.length <= 0) {
         this.$notify({
           title: '提示',
@@ -181,25 +183,16 @@ export default {
           type: 'warning',
           duration: 2000
         })
-      } else {
+      } else if(fdmag === '1') {
+        console.log(chiledArr)
         this.detailForm.salesAgent = chiledArr.value
-        // this.detailForm.complaintType = chiledArr.key
-      }
-      this.isShowSelect = fdshow
-    },
-    closeSelected(chiledArr, fdshow) {
-      if (chiledArr.length <= 0) {
-        this.$notify({
-          title: '提示',
-          message: '请选择数据',
-          type: 'warning',
-          duration: 2000
-        })
-      } else {
+        this.detailForm.salesAgentId = chiledArr.key
+      } else if(fdmag === '2') {
         this.detailForm.airlineCompany = chiledArr.value
-        // this.detailForm.complaintType = chiledArr.key
+        this.detailForm.airlineCompanyId = chiledArr.key
       }
       this.isShowSelect = fdshow
+      this.memberForm = fdmag
     },
     saveSecurityIncident() {
       const {
@@ -229,9 +222,9 @@ export default {
           message: '添加成功',
           path: '/securityIncidents'
         })
-         this.$router.push({
-        path: '/hxxd/securityIncidents',query: {}
-      })
+        for (const key in this.detailForm) {
+          this.detailForm[k] = ''
+        }
       })
     },
       cancel() {
@@ -243,5 +236,5 @@ export default {
 }
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

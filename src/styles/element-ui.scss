@@ -81,3 +81,12 @@
 .el-range-editor.el-input__inner {
   display: inline-flex !important;
 }
+.el-input__inner {
+  font-size: 12px;
+}
+.el-input.is-disabled .el-input__inner,
+.el-textarea.is-disabled .el-textarea__inner {
+  background-color: #ffffff;
+  border-color: #dfe4ed;
+  color: #C0C4CC;
+}

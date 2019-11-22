@@ -1,66 +1,61 @@
 <template>
   <div class="app-wrapper">
-    <header class="header-throwsf">
-      <div class="header-position">
-        <img class="logo" src="../../assets/img/logo.png">
-        <div class="head_group">
-          <img src='../../assets/img/menology_n.png'>
-          <div class="head_group_day">
-            <span>2019年9月26日</span>
-            <span class="head_group_week">星期四&nbsp;&nbsp;&nbsp;&nbsp;14:44</span>
-          </div>
-        </div>
-      </div>
-    </header>
-    <div class="contont-main">
-      <el-card style="min-height: 520px;">
+    <header-reload />
+    <div class="contont-main" v-bind:style="{height: Height+'px'}">
+      <el-card class="detailsContainer">
         <el-col :span="24" class="onl-con-c" style="padding-top: 20px;">
           <h3>在线投诉</h3>
         </el-col>
-        <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="formRule">
+        <el-form ref="detailForm" :model="detailForm" label-width="150px" :rules="rules1">
           <el-row :gutter="22">
             <el-col :span="22">
               <el-form-item label="投诉主题" size="mini" prop="complaintTheme">
-                <el-input v-model="detailForm.complaintTheme" size="mini"></el-input>
+                <el-input v-model="detailForm.complaintTheme" maxlength="20" placeholder="请输入投诉主题" show-word-limit size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="投诉单位" size="mini" prop="complaintName">
-                <el-input v-model="detailForm.complaintName" filterable placeholder="请选择" style="width:100%">
+              <el-form-item label="投诉单位" size="mini" :readonly="true" prop="complaintName">
+                <el-input v-model="detailForm.complaintName" filterable placeholder="请选择" :readonly="true" style="width:100%">
                   <el-button slot="append" icon="el-icon-search" @click="showSelect()" />
                 </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="投诉人" size="mini" prop="complainant">
-                <el-input v-model="detailForm.complainant" size="mini"></el-input>
+                <el-input v-model="detailForm.complainant" size="mini" placeholder="请输入投诉人" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="手机号" size="mini" prop="contractInformation">
-                <el-input v-model.number="detailForm.contractInformation" size="mini"></el-input>
+                <el-input v-model.number="detailForm.contractInformation" size="mini" placeholder="请输入手机号" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="联系邮箱" size="mini" prop="contractEmail">
-                <el-input v-model.number="detailForm.contractEmail" size="mini"></el-input>
+                <el-input v-model.number="detailForm.contractEmail" size="mini" placeholder="请输入联系邮箱" />
               </el-form-item>
             </el-col>
             <el-col :span="22">
               <el-form-item label="投诉内容" size="mini" prop="complaintsContents">
-                <el-input type="textarea" v-model="detailForm.complaintsContents" size="mini" :rows="4"></el-input>
+                <el-input type="textarea"  placeholder="请输入投诉内容" v-model="detailForm.complaintsContents" maxlength="100" show-word-limit size="mini" :rows="4"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="验证码" size="mini" prop="contractInformation">
-                <el-input v-model.number="detailForm.contractInformation" size="mini" style="width: 50%;"></el-input>
-                <el-button type="primary" size="mini" v-show="show" @click="getCode" class="count">发送验证码</el-button>
-                <el-button type="primary" size="mini" v-show="!show" disabled class="count">{{count}} s后重新发送</el-button>
+              <el-form-item label="验证码" size="mini" prop="telCode">
+                <el-row>
+                  <el-col :span="16">
+                    <el-input v-model.number="detailForm.telCode" size="mini" placeholder="请输入验证码" />
+                  </el-col>
+                  <el-col :span="8">
+                    <el-button type="primary" size="mini" v-show="show" @click="getCode" class="getCode">发送验证码</el-button>
+                    <el-button type="primary" size="mini" v-show="!show" disabled class="getCode">{{count}} s后重新发送</el-button>
+                  </el-col>
+                </el-row>
               </el-form-item>
             </el-col>
-            <el-col :span="22">
-              <div style="text-align: right;">
-                <el-button type="primary" icon="el-icon-check" size="mini" @click="saveComplainInfo">保存</el-button>
+            <el-col :span="24">
+              <div class="btn_bottom">
+                <el-button type="primary" icon="el-icon-check" size="mini" @click="saveComplainInfo">提 交</el-button>
               </div>
             </el-col>
           </el-row>
@@ -74,21 +69,33 @@
         />
       </el-dialog>
     </div>
-    <footer class="footer-throwsf">
-      <a href="javascrip:;">联系我们</a> | <a href="javascrip:;">声明</a>&nbsp;&nbsp;&nbsp;&nbsp;中国航空运输协会版权所有 | 京ICP备12001608号
-      | 京公网安备11010502034600号
-    </footer>
+    <footer-reload />
   </div>
 </template>
 
 <script>
+import HeaderReload from '@/components/HeaderReload'
+import FooterReload from '@/components/FooterReload'
 import { saveComplainInfo, sendCode } from "@/api/hxxd/complaintInfo"
 import CompanyQuery from "./company-query"
+import { isvalidPhone } from '@/utils/validate';
+//电话号码校验
+var validPhone = (rule, value, callback) => {
+  if (!value) {
+    console.log(validPhone)
+    callback(new Error('请输入电话号码'));
+  } else if (!isvalidPhone(value)) {
+    callback(new Error('请输入正确的11位手机号码'));
+  } else {
+    callback();
+  }
+}
 
 export default {
-  components: { CompanyQuery },
+  components: { CompanyQuery, FooterReload, HeaderReload },
   data() {
     return {
+      Height: 0,
       detailForm: {
         complaintTheme: '',
         complainant: '',
@@ -96,39 +103,18 @@ export default {
         contractEmail: '',
         complaintsContents: '',
         complaintType: '',
-        complaintName: ''
+        complaintName: '',
+        telCode: ''
       },
-      formRule: {
-        complaintTheme: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }],
-        complainant: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }],
-        contractInformation: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }],
-        contractEmail: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }],
-        complaintsContents: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }],
-        complaintType: [{
-          required: true,
-          message: '不能为空',
-          trigger: 'blur'
-        }]
+      rules1: {
+        complaintTheme: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        complaintName: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        complainant: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        contractInformation: [{ required: true, validator: validPhone, trigger: "blur" }],
+        contractEmail: [{ required: true, message: "不能为空", trigger: "blur" }, { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
+        complaintsContents: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        complaintType: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        telCode: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       memberForm: '',
       show: true,
@@ -137,7 +123,11 @@ export default {
       timer: null,
     }
   },
-  created() {},
+  mounted() {
+    this.Height = document.documentElement.clientHeight - 194;
+　　//监听浏览器窗口变化　
+    window.onresize = ()=> {this.Height = document.documentElement.clientHeight -194}
+  },
   methods: {
     showSelect() {
       this.isShowSelect = true
@@ -158,6 +148,14 @@ export default {
     },
     getCode() {
       const mobileNum = this.detailForm.contractInformation
+      if(mobileNum === ''){
+        this.$notify({
+          title: '提示',
+          message: '请输入手机号',
+          type: 'error'
+        })
+        return
+      }
       sendCode(mobileNum).then(res => {
         console.log('成功')
       })
@@ -191,7 +189,9 @@ export default {
           contractInformation,
           contractEmail,
           complaintsContents,
-          complaintType
+          complaintType,
+          complaintName,
+          telCode
         } = this.detailForm
         saveComplainInfo({
           complaintTheme,
@@ -199,17 +199,19 @@ export default {
           contractInformation,
           contractEmail,
           complaintsContents,
-          complaintType
+          complaintType,
+          complaintName,
+          telCode
         }).then(response => {
           if (response.status === 200) {
             this.$message({
-              message: '投诉成功',
-              // path: '/hxxd/complaintInfo'
+              message: '已成功投诉',
+              type: 'success'
             })
           } else {
             this.$message({
               message: response.message,
-              path: '/hxxd/complaintInfo'
+              type: 'error'
             })
           }
         })
@@ -220,7 +222,8 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-  @import '../../styles/register.scss';
+  @import '~@/styles/register.scss';
+  @import '~@/styles/hxxd.scss';
 
   .onl-con-c {
     text-align: center;
@@ -242,5 +245,10 @@ export default {
     font-size: 14px;
     padding: 6px 0 !important;
   }
+  .getCode {
+    padding: 6px 16px !important;
+    font-size: 12px;
+  }
+
 
 </style>

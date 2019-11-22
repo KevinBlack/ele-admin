@@ -69,15 +69,24 @@ export default {
     // xItems ：x轴分几个刻度
     // xDatas ：x轴分每个刻度对应的数据
     setOptions({ yItems,xItems,xDatas } = {}) {
+      if(!yItems){
+        return
+      }
+      if(!xItems){
+        return
+      }
+      if(!xDatas){
+        return
+      }
       // 生成具体的选项
       var typeArr=new Array();// series 处使用
       var itemArr=new Array()
       itemArr.push("xItem")
-      Object.keys(yItems).forEach(function(index) {
-        itemArr.push(yItems[index]);
-        typeArr.push({ type: "bar" })
-      });
-      // console.log("typeArr",typeArr)
+      for (let index = 0; index < yItems.length; index++) {
+         const yItem = yItems[index];
+         itemArr.push(yItems[index]);
+         typeArr.push({ type: "bar" })
+      }
       // 生成x轴数据
       var xDataArr=new Array()
       Object.keys(xDatas).forEach(function(index) {
@@ -87,7 +96,6 @@ export default {
         xData= Object.assign({}, xData, { "xItem": xItem})
         xDataArr.push(xData)
       });
-
       this.chart.setOption({
         title: { text: this.title ,x:'left' },
         tooltip: {},

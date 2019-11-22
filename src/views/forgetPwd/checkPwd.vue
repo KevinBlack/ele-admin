@@ -1,19 +1,8 @@
 <template>
 <div class="app-wrapper">
-  <header class="header-throwsf">
-    <div class="header-position">
-      <img class="logo" src="../../assets/img/logo.png">
-      <div class="head_group">
-        <img src='../../assets/img/menology_n.png'>
-        <div class="head_group_day">
-          <span>2019年9月26日</span>
-          <span class="head_group_week">星期四&nbsp;&nbsp;&nbsp;&nbsp;14:44</span>
-        </div>
-      </div>
-    </div>
-  </header>
+  <header-reload />
   <div class="contont-main">
-    <el-card style="min-height: 520px;">
+    <el-card class="detailsContainer">
       <el-col :span="24" class="rstpswd-c" style="padding-top: 20px;">
         <h3>重置密码</h3>
       </el-col>
@@ -44,15 +33,17 @@
       </el-form>
     </el-card>
   </div>
-  <footer class="footer-throwsf">
-    <a href="javascrip:;">联系我们</a> | <a href="javascrip:;">声明</a>&nbsp;&nbsp;&nbsp;&nbsp;中国航空运输协会版权所有 | 京ICP备12001608号 | 京公网安备11010502034600号
-  </footer>
+  <footer-reload />
 </div>
 </template>
 
 <script>
+import HeaderReload from '@/components/HeaderReload'
+import FooterReload from '@/components/FooterReload'
+
 export default {
   name: 'CheckPwd',
+  components: { FooterReload, HeaderReload },
   data() {
     return {
 
@@ -68,7 +59,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  @import '../../styles/register.scss';
+  @import '~@/styles/register.scss';
+  @import '~@/styles/hxxd.scss';
+
   .contont-main {
     .rstpswd-c {
       text-align: center;

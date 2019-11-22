@@ -123,6 +123,22 @@
               <el-input v-model="hxxdCompanyRegisterParam.postalAddr" />
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="附件选择" prop="expvmFiles">
+              <el-upload
+                class="upload-demo"
+                action=""
+                ref="upload"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-upload="handleUpload"
+                multiple
+                :auto-upload="false"
+              >
+                <el-button type="primary" size="small">选择</el-button>
+              </el-upload>
+            </el-form-item>
+          </el-col>
         </el-row>
 
       </el-form>
@@ -138,8 +154,9 @@
 </template>
 
 <script>
-import { companyRegisterSave } from "@/api/hxxd/agent";
+import { companyRegisterSave,initCompanyRegister  } from "@/api/hxxd/agent";
 import { isvalidPhone } from "@/utils/validate";
+import { getToken } from '@/utils/auth';
 //电话号码校验
 var validPhone = (rule, value, callback) => {
   if (!value) {
@@ -153,6 +170,10 @@ var validPhone = (rule, value, callback) => {
 export default {
   data() {
     return {
+      fileList: [],
+      uploadHeaders: {
+        'X-Token': getToken()
+      },
       ceshiOptions: [
         {
           value: "0",
@@ -193,13 +214,48 @@ export default {
       }
     };
   },
+   created() {
+    //初始化页面时
+    this.initCompanyRegister();
+  },
   methods: {
+     //初始化数据
+    initCompanyRegister() {
+      debugger;
+      initCompanyRegister(this.hxxdCompanyRegisterParam).then(response => {
+        debugger;
+        var msg = response.status == 200 ? "初始成功" : "初始化失败";
+        if (response.status == 200) {
+          //保存成功
+          this.hxxdCompanyRegisterParam = response.data;
+        } else {
+          //保存失败
+          this.$message({
+            type: "success",
+            error: msg
+          });
+        }
+      });
+    },
+    //文件上传方法
+    handleUpload(file) {
+      this.formData.append('file', file) // 附件文件导入
+      return false
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
     //企业注册信息保存
     companyRegisterSave() {
       debugger;
       // this.$refs["ruleForm"].validate(valid => {
       // if (valid) {
       //数据校验成功
+      this.$refs.upload.submit(); // 附件文件上传
+      // this.formData.append('key','222')
       companyRegisterSave(this.hxxdCompanyRegisterParam).then(response => {
         var msg = response.status == 200 ? "保存成功" : "保存失败"
         debugger;
@@ -247,5 +303,5 @@ export default {
 };
 </script>
 <style>
- @import '../../styles/hxxd.scss';
+ @import '~@/styles/hxxd.scss';
 </style>

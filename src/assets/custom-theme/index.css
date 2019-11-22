@@ -774,7 +774,7 @@
 }
 
 .custom-theme .el-input.is-disabled .el-input__inner {
-  background-color: #f5f7fa;
+  background-color: #fff;
   border-color: #dfe4ed;
   color: #b4bccc;
   cursor: not-allowed

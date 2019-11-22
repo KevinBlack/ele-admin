@@ -59,14 +59,14 @@
       </el-col>
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -149,13 +149,11 @@ export default {
       }
     },
     handleAdd(){
-      debugger
       this.$router.push({
-            path: '/agent/sys-message-edit',
+            path: '/message-manage/system-message-edit',
           })
     },
     deleteBatch() {
-      debugger
       var idList = []
       if (this.multipleSelection.length == 0) {
         this.$message({
@@ -191,7 +189,7 @@ export default {
         var id = this.multipleSelection[0].id
         if (id) {
           this.$router.push({
-            path: '/agent/sys-message-detail',
+            path: '/message-manage/system-message-detail',
             query: { id: id, type: type }
           })
         }
@@ -251,5 +249,5 @@ export default {
 }
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

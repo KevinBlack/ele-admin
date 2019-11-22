@@ -48,3 +48,10 @@ export function saveAndSend(data) {
   })
 }
 
+export function getSysNotelList(data) {
+  return request({
+    url: '/hxxd/hxXdSysSms/list',
+    method: 'post',
+    data
+  })
+}

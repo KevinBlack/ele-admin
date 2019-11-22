@@ -31,8 +31,13 @@
               <el-input v-model="hxXdAnnualReportParam.businessAddress" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="企业性质" prop="enterpriseNature">
+              <el-input v-model="hxXdAnnualReportParam.enterpriseNature" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="年报年份" prop="enterpriseNature">
               <el-input v-model="hxXdAnnualReportParam.enterpriseNature" />
             </el-form-item>
           </el-col>
@@ -293,14 +298,14 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="国内岗位技能证书" prop="homeSkillsCert1">
-              <el-input v-model="hxXdAnnualReportParam.homeSkillsCert1" />
-              <el-input v-model="hxXdAnnualReportParam.homeSkillsCert2" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeSkillsCert1" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeSkillsCert2" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际岗位技能证书" prop="interSkillsCert1">
-              <el-input v-model="hxXdAnnualReportParam.interSkillsCert1" />
-              <el-input v-model="hxXdAnnualReportParam.interSkillsCert2" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interSkillsCert1" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interSkillsCert2" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -328,54 +333,54 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="国内客运" prop="homeTransNum">
-              <el-input v-model="hxXdAnnualReportParam.homeTransNum" />
-              <el-input v-model="hxXdAnnualReportParam.homeTransMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeTransNum" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeTransMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际客运" prop="interTransNum">
-              <el-input v-model="hxXdAnnualReportParam.interTransNum" />
-              <el-input v-model="hxXdAnnualReportParam.interTransMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interTransNum" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interTransMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="其中外航承运张数" prop="acceptCarrNum">
-              <el-input v-model="hxXdAnnualReportParam.acceptCarrNum" />
-              <el-input v-model="hxXdAnnualReportParam.acceptCarrMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.acceptCarrNum" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.acceptCarrMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客运总计" prop="totalPassengerNum">
-              <el-input v-model="hxXdAnnualReportParam.totalPassengerNum" />
-              <el-input v-model="hxXdAnnualReportParam.totalPassengerMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.totalPassengerNum" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.totalPassengerMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国内货运" prop="homeFreightTon">
-              <el-input v-model="hxXdAnnualReportParam.homeFreightTon" />
-              <el-input v-model="hxXdAnnualReportParam.homeFreightMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeFreightTon" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeFreightMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际货运" prop="interFreightTon">
-              <el-input v-model="hxXdAnnualReportParam.interFreightTon" />
-              <el-input v-model="hxXdAnnualReportParam.interFreightMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interFreightTon" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interFreightMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="其中外航承运吨数" prop="carryTon">
-              <el-input v-model="hxXdAnnualReportParam.carryTon" />
-              <el-input v-model="hxXdAnnualReportParam.carryMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.carryTon" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.carryMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="货运总计" prop="freightTon">
-              <el-input v-model="hxXdAnnualReportParam.freightTon" />
-              <el-input v-model="hxXdAnnualReportParam.freightMoney" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.freightTon" />
+              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.freightMoney" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="已签订代理协议得航空公司二字代码" prop="airlineCode">
+            <el-form-item label="已签订代理协议的航空公司二字代码" prop="airlineCode">
               <el-input v-model="hxXdAnnualReportParam.airlineCode" />
             </el-form-item>
           </el-col>
@@ -411,7 +416,7 @@
       </el-form>
       <!-- 按钮区 -->
       <el-row :gutter="10">
-        <el-col :span="24" style="text-align:right;margin-top:20px;">
+        <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="reportInfoSave">保存</el-button>
           <el-button type="primary" size="mini" >上报</el-button>
         </el-col>
@@ -671,28 +676,15 @@ export default {
           duration: 2000
         });
       }
-    },
+    }
   }
 };
 </script>
-<style>
-.bg-font-color {
-  color: #3665ca;
-  font-weight: bold;
-}
+<style lang="scss">
+ @import '~@/styles/hxxd.scss';
 
-* {
-  font-weight: normal;
-}
-.detailsContainer {
-  margin: 0 10px;
-}
-.dtl-title-line {
-  display: inline-block;
-  border-left: 3px solid #409eff;
-  padding-left: 5px;
-}
-.el-table__fixed-right::before {
-  background-color: none;
-}
+ .double_ipt {
+   display: inline-block;
+   width: 48%;
+ }
 </style>

@@ -10,7 +10,7 @@ export function getDictList(data) {
 }
 
 // 获取字典项列表
-export function getDictDataList(data) {
+export function listDictData(data) {
   return request({
     url: '/system/jqSysDict/listDictData',
     method: 'post',
@@ -65,11 +65,4 @@ export function deleteDictData(ids) {
     data: { ids }
   })
 }
-// 获取json对象
-export function getDictJson(dictType) {
-  return request({
-    url: `/system/jqSysDict/getDictJson`,
-    method: 'post',
-    data: { dictType }
-  })
-}
+

@@ -56,17 +56,21 @@
             @click.native.prevent="handleEdit('show')"
           >查 看</el-radio-button>
         </el-radio-group>
+        <el-radio-group size="mini">
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">通知管理员</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">常见问题查看</el-radio-button>
+        </el-radio-group>
       </el-col>
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
+    <!-- <el-row :gutter="10">
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
           <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -152,7 +156,7 @@ export default {
     handleAdd(){
       debugger;
       this.$router.push({
-            path: "/agent/sys-leaveword-edit",
+            path: "/message-manage/leaving-message-edit",
           });
     },
     deleteBatch() {
@@ -195,7 +199,7 @@ export default {
         var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            path: "/agent/sys-leaveword-detail",
+            path: "/message-manage/leaving-message-detail",
             query: { id: id, type: type }
           });
         }
@@ -255,5 +259,5 @@ export default {
 };
 </script>
 <style>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

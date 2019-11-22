@@ -1,17 +1,16 @@
 <template>
   <div class="detailsContainer">
     <!-- part1 -->
-    <el-form ref="formQuery" :model="formQuery" :inline="true">
+    <el-form ref="formQuery" size="mini" :inline="true">
       <el-row>
         <el-col :span="18">
-          <el-form-item label="投诉单位名称" size="mini" prop="value">
-            <el-input v-model="formQuery.name" size="mini" />
+          <el-form-item :label="ttmsg" prop="value">
+            <el-input v-model="value" style="width: 100%;" size="mini" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item size="mini">
+          <el-form-item>
             <el-button type="primary" size="mini" @click="search">查询</el-button>
-            <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -54,12 +53,18 @@
 </template>
 
 <script>
-import { componyQueryList } from '@/api/hxxd/agent'
+import { getDictDataList } from "@/api/system/comm/comm";
+
 export default {
   name: 'SecurityQuery',
   props: {
     fdmsg: {
-      type: [String, Number,Object],
+      type: [String],
+      required: true,
+      default: ''
+    },
+    ttmsg: {
+      type: [String],
       required: true,
       default: ''
     }
@@ -69,13 +74,11 @@ export default {
       show:false,
       pageNo: 1,
       pageSize: 5,
-      formQuery: {
-        name:'',
-        pageNo: 1,
-        pageSize: 5
-      },
+      value: '',
+      key: '',
       pageTotal: 0,
       fdshow: false,
+      fdmag: this.fdmsg,
       selectArr: [],
       childArr: [],
       tableData: []
@@ -83,6 +86,12 @@ export default {
   },
   created(){
     this.getTableList()
+  },
+  watch: {
+    fdmsg (newV, oldV) {
+      this.fdmag = newV
+      this.getTableList()
+    }
   },
   methods: {
     handleCurrentChange(val) {
@@ -93,10 +102,15 @@ export default {
     },
     getTableList() {
       this.tableLoading = true
-      componyQueryList(this.formQuery).then(response => {
-        this.tableData = response.data
-      })
-
+      if (this.fdmag === '1') {
+        getDictDataList('97001003',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
+          this.tableData = response.data
+        })
+      } else if (this.fdmag === '2') {
+        getDictDataList('97001004',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
+          this.tableData = response.data
+        })
+      }
     },
      search() {
       this.getTableList()
@@ -106,16 +120,16 @@ export default {
         this.$refs[formName].resetFields()
       })
     },
-     handleSelectionChange(val) {
+    handleSelectionChange(val) {
       this.selectArr = val
     },
-     headRowStyle(row, rowIndex) {
+    headRowStyle(row, rowIndex) {
       return "height:15px;";
     },
-     rowStyle(row, rowIndex) {
+    rowStyle(row, rowIndex) {
       return "height:15px;font-size:13px;color:#333;font-weight:normal; ";
     },
-     getCellStyle({ row, column, rowIndex, columnIndex }) {
+    getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return "background:#F2F2F2;font-size:13px;color:#333;font-weight:normal;";
       } else {
@@ -123,46 +137,22 @@ export default {
       }
     },
     batchCheck() {
-      if (!this.selectArr) {
+      if (this.selectArr.length === 0) {
         this.$message({
           type: 'info',
           message: '请选中要操作的数据!'
         })
         return
-      }
-      // const selectRows = this.selectArr
-      // if (selectRows.length === 0) {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '请选中要操作的数据!'
-      //   })
-      //   return
-      // }
-      // if (selectRows.length > 1) {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '只能选中一条操作数据!'
-      //   })
-      //   return
-      // }
-      //     var idArr = []
-      //     Object.keys(selectRows).forEach(function(key) {
-      //       if (selectRows[key].id) {
-      //         idArr.push(selectRows[key].id)
-      //       }
-      //     })
-      //     if (idArr && idArr.length > 0) {
-      //       var Ids = idArr.join()
-      //         this.getTableList()
-      //     }
-        this.$emit('closeDalogPay', this.selectArr[0], this.fdshow)
+      } else {
+        this.$emit('closeDalogPay', this.selectArr[0], this.fdmag, this.fdshow)
         this.selectArr = []
         this.$refs.multipleTable.clearSelection() // 清空所有选择
+      }
     },
-     handleClose(e) {
+    handleClose(e) {
       if (e === 'saveBtn') {
         this.batchCheck();
-      }else{
+      } else if (e === 'canselBtn') {
         this.$emit('closeDalogPay', '', this.fdshow)
       }
     }
@@ -171,5 +161,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>

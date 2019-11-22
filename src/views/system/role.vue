@@ -1,97 +1,119 @@
 <template>
   <div>
-    <el-card class="box-card" style="margin: 0 10px;">
-      <div class="filter-container">
-        <el-card class="box-card" shadow="never">
-          <el-form ref="formQuery" :model="formQuery" label-width="80px" :inline="true">
-            <el-row>
-              <el-col :md="8" :lg="8" :xl="6">
-                <el-form-item label="角色编号" size="mini" prop="roleCode">
-                  <el-input v-model="formQuery.roleCode" size="mini" style="width: 200px"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :md="8" :lg="8" :xl="6">
-                <el-form-item label="角色名称" size="mini" prop="roleName">
-                  <el-input v-model="formQuery.roleName" size="mini" style="width: 200px"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :md="8" :lg="8" :xl="6">
-                <el-form-item label="状态" size="mini" prop="status">
-                  <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
-                    <el-option
-                      v-for="item in statusOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :md="8" :lg="8" :xl="6">
-                <el-form-item size="mini">
-                  <el-button type="primary" size="mini" @click="search">查询</el-button>
-                  <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
+    <el-card class="detailsContainer">
+      <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
+        <el-row :gutter="20" class="area_border">
+          <el-col :span="5">
+            <el-form-item label="角色编号" size="mini" prop="roleCode">
+              <el-input v-model="formQuery.roleCode" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="角色名称" size="mini" prop="roleName">
+              <el-input v-model="formQuery.roleName" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="状态" size="mini" prop="status">
+              <el-select
+                v-model="formQuery.status"
+                filterable
+                placeholder="请选择"
+                size="mini"
+                style="width:100%"
+              >
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="归属系统" size="mini" prop="system">
+              <el-select
+                v-model="formQuery.system"
+                filterable
+                clearable
+                placeholder="请选择"
+                size="mini"
+                style="width:100%"
+              >
+                <el-option
+                  v-for="item in dict.system"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.key"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
+            <el-form-item size="mini">
+              <el-button type="primary" size="mini" @click="search">查询</el-button>
+              <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
 
-        <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
-          <!-- 按钮区 -->
-          <el-card
-            shadow="never"
-            style="padding:15px;border-radius:0px;"
-            :body-style="{ padding: '0px' }"
-          >
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新建</el-button>
-            <el-dropdown trigger="click" size="mini" @command="handleBatchCommand">
-              <el-button type="primary" size="mini">
-                批量操作
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-delete" command="batchDelete">删除</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-close" command="batchStop">停用</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-check" command="batchStart">启用</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-card>
+      <!-- 按钮区域 -->
+      <el-row class="area_bordes">
+        <el-col :span="24">
+          <el-button-group size="mini">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
+            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete">批量删除</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-circle-check"
+              size="mini"
+              @click="batchStart"
+            >批量启用</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-circle-close"
+              size="mini"
+              @click="batchStop"
+            >批量停用</el-button>
+          </el-button-group>
+          <el-button-group size="mini" style="margin-left: 20px;">
+            <el-button
+              type="primary"
+              class="btn_line"
+              icon="el-icon-zoom-in"
+              size="mini"
+              @click="handleView"
+            >查看</el-button>
+             <el-button type="primary" icon="el-icon-view" size="mini" @click="editDataScope">数据权限</el-button>
+          </el-button-group>
+        </el-col>
+      </el-row>
 
-          <el-table
-            ref="roleTable"
-            :data="tableData"
-            style="width:100%"
-            :header-row-style="headRowStyle"
-            :row-style="rowStyle"
-            :header-cell-style="getCellStyle"
-            v-loading="tableLoading"
-            border
-            highlight-current-row
-            @selection-change="selectionChange"
-          >
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="roleCode" label="角色编码" width="200" align="center"></el-table-column>
-            <el-table-column prop="roleName" label="角色名称" width="200" align="center"></el-table-column>
-            <el-table-column
-              align="center"
-              prop="status"
-              width="150"
-              :formatter="statusFmt"
-              label="状态"
-            ></el-table-column>
-            <el-table-column prop="roleSort" label="排序号" width="150" align="center"></el-table-column>
-            <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
-            <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="150" align="center">
-              <template slot-scope="scope">
-                <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-                <el-button @click="editDataScope(scope.row)" type="text" size="small">数据权限</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </div>
+      <el-table
+        ref="roleTable"
+        :data="tableData"
+        border
+        tooltip-effect="dark"
+        style="width: 100%;margin-bottom:20px;"
+        @selection-change="selectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center"></el-table-column>
+        <el-table-column prop="roleCode" label="角色编码" width="200" align="left"></el-table-column>
+        <el-table-column prop="roleName" label="角色名称" width="250" align="left"></el-table-column>
+        <el-table-column prop="status"  label="状态"  width="150" align="center" :formatter="statusFmt" ></el-table-column>
+        <el-table-column
+          prop="system"
+          label="归属系统"
+          width="200"
+          align="center"
+          :formatter="systemFmt"
+        />
+        <el-table-column prop="roleSort" label="排序号" width="150" align="center"></el-table-column>
+        <el-table-column prop="updateDate" label="更新时间" width="200" align="center"></el-table-column>
+        <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>
@@ -104,17 +126,24 @@ import {
   stopRole,
   startRole
 } from "@/api/system/role";
+import { getDictDataLists } from "@/api/system/comm/comm";
+import { getDictName } from "@/utils/index.js";
 
 export default {
+  name:'Role',
   data() {
     return {
       formQuery: {
         roleCode: "",
         roleName: "",
+        system:'',
         status: "0",
         pageNo: 1,
         pageSize: 20,
         orderBy: "roleSort+"
+      },
+       dict: {
+        system: []
       },
       tableLoading: false,
       tableData: [],
@@ -132,9 +161,15 @@ export default {
     };
   },
   created() {
-    this.getTableList();
+    this.beforeLoading()
+    this.getTableList()
   },
   methods: {
+    beforeLoading() {
+      getDictDataLists("97001005").then(response => {
+        this.dict.system = response.data.jq97001005;
+      });
+    },
     statusFmt(row, column, cellValue, index) {
       let status = row.status;
       if (status === "0") {
@@ -305,40 +340,110 @@ export default {
     handleAdd() {
       this.$router.push({ path: "/system/role-detail", query: {} });
     },
-    handleEdit(row) {
-      var roleId = row.roleId;
+    handleView() {
+
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中查看的数据!"
+        });
+        return;
+      }
+      const selectRows = this.tableMultiSelection;
+      if (selectRows.length === 0 || selectRows.length > 1) {
+        var msg =
+          selectRows.length == 0
+            ? "请选中要查看的数据"
+            : "只能选择一条数据进行查看";
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      const roleId = selectRows[0].roleId;
       if (roleId) {
         this.$router.push({
           path: "/system/role-detail",
           query: { roleId: roleId }
         });
       }
+
     },
-    editDataScope(row) {
-      this.$router.push({
-        path: "/system/role-datascope",
-        query: { roleId: row.roleId }
-      });
+    systemFmt(row, column, cellValue, index) {
+      return getDictName(this.dict.system, row.system);
     },
-    rowStyle(row, rowIndex) {
-      return "height:15pxfont-size: 13pxcolor: #333font-weight: normal ";
-    },
-    headRowStyle(row, rowIndex) {
-      return "height:15px";
-    },
-    getCellStyle({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 0) {
-        return "background: #F2F2F2font-size: 13pxcolor: #333font-weight: normal";
-      } else {
-        return "";
+    editDataScope() {
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: "info",
+          message: "请选中要操作的数据!"
+        });
+        return;
+      }
+      const selectRows = this.tableMultiSelection;
+      if (selectRows.length === 0 || selectRows.length > 1) {
+        var msg =
+          selectRows.length == 0
+            ? "请选中要操作的数据"
+            : "只能选择一条数据进行操作";
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      const roleId = selectRows[0].roleId;
+      if (roleId) {
+        this.$router.push({
+          path: "/system/role-datascope",
+          query: { roleId: roleId }
+        });
       }
     }
   }
 };
 </script>
 <style>
-.el-table--medium th,
-.el-table--medium td {
-  padding: 0px 0;
+* {
+  font-weight: normal;
+}
+.detailsContainer {
+  margin: 0 10px;
+}
+.dtl-title-line {
+  display: inline-block;
+  border-left: 5px solid #409eff;
+  padding-left: 5px;
+}
+.el-table__fixed-right::before {
+  background-color: none;
+}
+.dtl-info-line {
+  height: 40px;
+  line-height: 40px;
+  margin: 10px auto;
+  border-radius: 3px;
+  font-size: 12px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  color: #000;
+  background-color: #dcecfd;
+}
+.el-table > th {
+  background-color: #eee !important;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

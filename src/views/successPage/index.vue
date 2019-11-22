@@ -61,7 +61,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  @import '../../styles/register.scss';
+  @import '~@/styles/register.scss';
   .contont-main {
     .rstpswd-c {
       height: 100%;

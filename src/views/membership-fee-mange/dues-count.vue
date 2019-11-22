@@ -50,11 +50,11 @@
     <el-row>
       <el-col :span="24">
         <!-- 引入柱状图 -->
-        <bar-chart :chart-data="barChartData" title="会员数量地区分布图" />
+        <bar-chart :chart-data="barChartData" title="会费地区柱状图" />
       </el-col>
       <el-col :span="24">
         <!-- 引入饼状图 -->
-        <line-chart :chart-data="lineCharData" title="线状图" />
+        <line-chart :chart-data="lineCharData" title="会费地区柱状图" width= "95%" />
       </el-col>
     </el-row>
     <!-- 引入省份表格结束 -->
@@ -89,7 +89,7 @@ export default {
       //柱状图
       barChartData: {},
       //柱状图
-      lineCharData: []
+      lineCharData: {}
     }
   },
   // 相当于javascript的 $.ready()
@@ -98,35 +98,9 @@ export default {
     this.initQueryForm()
     // 初始加载表格数据
     this.initLoadTable()
-    //初始化echart
-    this.barChartData = {
-      yItems: ['华中', '华北', '华东', '华南', '西北', '东北', '西南'],
-      xItems: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-      xDatas: [
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 },
-        { 华中: 43.3, 华北: 85.8, 华东: 93.7, 华南: 43.3, 西北: 85.8, 东北: 93.7, 西南: 1000.7 }
-      ]
-    }
-    this.lineCharData = {
-      xItems: ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8'],
-      lineTypes: ['第一条线', '第二条线'],
-      lineDatas: [
-        //第一条线x轴刻度对应的数据
-        [120, 120, 161, 134, 175, 160, 115, 120],
-        //第二条线x轴刻度对应的数据
-        [100, 140, 161, 184, 105, 190, 165, 230]
-      ]
-    }
+    // this.lineCharData = {
+
+    // }
   },
   methods: {
     initQueryForm() {
@@ -144,12 +118,9 @@ export default {
     getTableList() {
         var query = this.queryForm
         statisticalList(query).then(response => {
-          console.log(response.data)
-          this.tableData = response.data
-          for (const i in response.data) {
-            this.barChartData[i].yItems = response.data[i].region
-          }
-          // this.pageTotal = response.page.total || 0
+          this.tableData = response.data.tableStatistics
+          this.barChartData = response.data.barChartData
+          this.lineCharData = response.data.lineCharData
         })
     },
     summaryMethod(columns, data) {
@@ -181,5 +152,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/hxxd.scss';
+@import '~@/styles/hxxd.scss';
 </style>
