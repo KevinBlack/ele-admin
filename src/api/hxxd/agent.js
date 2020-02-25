@@ -11,6 +11,22 @@ export function companySave(formData) {
   })
 }
 
+export function deleteBatch(data) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/deleteBatch',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteBatchCheck(data) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/deleteBatchCheck',
+    method: 'post',
+    data
+  })
+}
+
 export function initCompanyRegister(data) {
   return request({
     url: '/hxxd/hxxd-company-register/initCompanyRegister',
@@ -27,11 +43,14 @@ export function initCompanyInfo(data) {
   })
 }
 
-export function companyUpdate(data) {
+export function companyUpdate(formData) {
   return request({
     url: '/hxxd/hxXdCompanyInfo/update',
     method: 'post',
-    data
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
 
@@ -83,6 +102,39 @@ export function reportSave(data) {
   })
 }
 
+export function reportSubmit(data) {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/submit',
+    method: 'post',
+    data
+  })
+}
+
+export function pubOrCancelAnnualReport(data) {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/pubOrCancelAnnualReport',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 会员审核
+ * @param {*} ids 操作数据id集合
+ * @param {*} auditType 审核类型 1：审核通过 2：审核不通过
+ * @param {*} auditReason 审核原因
+ */
+export function auditReport(ids, auditType, auditReason) {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/audit',
+    method: 'post',
+    data: {
+      ids,
+      auditType,
+      auditReason
+    }
+  })
+}
+
 export function annualReportDeleteBatch(data) {
   return request({
     url: '/hxxd/hxXdAnnualReport/deleteBatch',
@@ -101,15 +153,30 @@ export function getReportInfoList(data) {
 
 export function getReportInfoById(data) {
   return request({
-    url: '/hxxd/hxXdAnnualReport/query',
+    url: '/hxxd/hxXdAnnualReport/anonw/query',
     method: 'post',
     data
+  })
+}
+
+export function initReportInfo() {
+  return request({
+    url: '/hxxd/hxXdAnnualReport/initReportInfo',
+    method: 'post'
   })
 }
 
 export function getSignInfoList(data) {
   return request({
     url: '/hxxd/hxXdSignContract/list',
+    method: 'post',
+    data
+  })
+}
+
+export function pubOrCancelSign(data) {
+  return request({
+    url: '/hxxd/hxXdSignContract/pubOrCancelSign',
     method: 'post',
     data
   })
@@ -122,9 +189,28 @@ export function signInfoDeleteBatch(data) {
     data
   })
 }
+
 export function companyRegisterSave(data) {
   return request({
     url: '/hxxd/hxxd-company-register/anonw/save',
+    method: 'post',
+    data
+  })
+}
+
+export function registerCheckSocialCode(socialCode) {
+  return request({
+    url: '/hxxd/hxxd-company-register/anonw/registerCheckSocialCode',
+    method: 'post',
+    params: {
+      socialCode
+    }
+  })
+}
+
+export function companyRegisterSaveOrUpdate(data) {
+  return request({
+    url: '/hxxd/hxxd-company-register/saveOrUpdate',
     method: 'post',
     data
   })
@@ -137,17 +223,26 @@ export function getSysNoticeList(data) {
     data
   })
 }
-export function deleteBatch(data) {
+
+export function sysNoticeDeleteBatch(data) {
   return request({
-    url: '/hxxd/hxXdCompanyInfo/deleteBatch',
+    url: '/hxxd/hx-xd-sys-notice/deleteBatch',
     method: 'post',
     data
   })
 }
 
-export function sysNoticeDeleteBatch(data) {
+export function pubOrCancelNotice(data) {
   return request({
-    url: '/hxxd/hx-xd-sys-notice/deleteBatch',
+    url: '/hxxd/hx-xd-sys-notice/pubOrCancelNotice',
+    method: 'post',
+    data
+  })
+}
+
+export function sendMessage(data) {
+  return request({
+    url: '/hxxd/hx-xd-sys-notice/sendMessage',
     method: 'post',
     data
   })
@@ -180,6 +275,14 @@ export function sysNoticeUpdate(data) {
 export function sysMessageDeleteBatch(data) {
   return request({
     url: '/hxxd/hx-xd-sys-message/deleteBatch',
+    method: 'post',
+    data
+  })
+}
+
+export function msgMarksRead(data) {
+  return request({
+    url: '/hxxd/hx-xd-sys-message/msgMarksRead',
     method: 'post',
     data
   })
@@ -281,6 +384,14 @@ export function callInfoSaveOrUpdate(data) {
   })
 }
 
+export function sendCallInfo(id) {
+  return request({
+    url: '/hxxd/hx-xd-call-info/addJob',
+    method: 'post',
+    data: { id }
+  })
+}
+
 export function getCallInfoList(data) {
   return request({
     url: '/hxxd/hx-xd-call-info/list',
@@ -318,17 +429,37 @@ export function selectComponyRelevent(socialCreditCode) {
   return request({
     url: '/hxxd/hxXdCompanyInfo/anonw/selectComponyRelevent',
     method: 'post',
-    data: { socialCreditCode }
+    data: {
+      socialCreditCode
+    }
+  })
+}
+// 首页-企业查询
+export function confirmMembershipBySocialCreditCode(socialCreditCode) {
+  return request({
+    url: '/hxxd/hxXdCompanyInfo/anonw/confirmMembershipBySocialCreditCode',
+    method: 'post',
+    data: {
+      socialCreditCode
+    }
   })
 }
 
 // 首页-企业查询-年报
 export function query(id) {
   return request({
-    url: '/hxxd/hxXdAnnualReport/query',
+    url: '/hxxd/hxXdAnnualReport/anonw/query',
     method: 'post',
     params: {
       id
     }
+  })
+}
+// 根据企业注册信息初始化会员申请信息
+export function getCompanyRegister(data) {
+  return request({
+    url: '/hxxd/hxxd-company-register/getCompanyRegister',
+    method: 'post',
+    data
   })
 }

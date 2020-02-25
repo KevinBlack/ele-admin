@@ -30,19 +30,31 @@
       sum-text="月汇总"
       @summary-method="summaryMethod"
     >
-      <el-table-column prop="region" label="地区名" align="center"></el-table-column>
-      <el-table-column prop="january" label="一月" width="80" align="center"></el-table-column>
-      <el-table-column prop="february" label="二月" width="80" align="center"></el-table-column>
-      <el-table-column prop="march" label="三月" width="80" align="center"></el-table-column>
-      <el-table-column prop="april" label="四月" width="80" align="center"></el-table-column>
-      <el-table-column prop="may" label="五月" width="80" align="center"></el-table-column>
-      <el-table-column prop="june" label="六月" width="80" align="center"></el-table-column>
-      <el-table-column prop="july" label="七月" width="80" align="center"></el-table-column>
-      <el-table-column prop="august" label="八月" width="80" align="center"></el-table-column>
-      <el-table-column prop="september" label="九月" width="80" align="center"></el-table-column>
-      <el-table-column prop="october" label="十月" width="80" align="center"></el-table-column>
-      <el-table-column prop="november" label="十一月" width="80" align="center"></el-table-column>
-      <el-table-column prop="december" label="十二月" width="80" align="center"></el-table-column>
+      <el-table-column prop="region" label="地区名" align="center" width="120px">
+         <template slot-scope="scope" >
+					  <el-button v-model="scope.row.region"  @click="dialogShow()" type="text" v-show="btnShow('100021504010')" > {{ scope.row.region }} </el-button>
+				    <el-dialog title="所在地区缴费会员"  :visible.sync="isDialogShow" width="90%" >
+            <count-dialog
+              :fdmsg="queryForm"
+              :fdshow3="isDialogShow"
+              @closeDalog="closeDialogShow"
+              style="height:500px"
+            />
+          </el-dialog>
+          </template>
+      </el-table-column>
+      <el-table-column prop="january" label="一月"  align="center"></el-table-column>
+      <el-table-column prop="february" label="二月"  align="center"></el-table-column>
+      <el-table-column prop="march" label="三月"  align="center"></el-table-column>
+      <el-table-column prop="april" label="四月"  align="center"></el-table-column>
+      <el-table-column prop="may" label="五月"  align="center"></el-table-column>
+      <el-table-column prop="june" label="六月"  align="center"></el-table-column>
+      <el-table-column prop="july" label="七月"  align="center"></el-table-column>
+      <el-table-column prop="august" label="八月" align="center"></el-table-column>
+      <el-table-column prop="september" label="九月" align="center"></el-table-column>
+      <el-table-column prop="october" label="十月"  align="center"></el-table-column>
+      <el-table-column prop="november" label="十一月" align="center"></el-table-column>
+      <el-table-column prop="december" label="十二月" align="center"></el-table-column>
       <el-table-column prop="summary" label="汇总" width="100" align="center"></el-table-column>
     </el-table>
 
@@ -68,19 +80,25 @@ import { statisticalList } from "@/api/hxxd/membership-fee-mange";
 import { parseTime } from "@/utils/index.js";
 import BarChart from "@/views/comm/echarts/bar-chart";
 import LineChart from "@/views/comm/echarts/line-chart";
+import CountDialog from "./dues-count-dialog";
 
 export default {
   name: 'DuesCount',
   components: {
+    CountDialog,
     BarChart,
-    LineChart
+    LineChart,
   },
   data() {
     return {
+      btns: this.$store.getters.btns['1000215040'],
+      isDialogShow:false,
       //查询条件options集合
       queryFormOptions: {},
       // 查询条件
       queryForm: {
+        //地区
+        region:'',
         // 年份
         paymentYear: '2019'
       },
@@ -103,6 +121,31 @@ export default {
     // }
   },
   methods: {
+       btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    closeDialogShow(fdshow) {
+       console.log("fdshow=1=" +fdshow)
+      this.isDialogShow = fdshow;
+        console.log("fdshow=2=" +fdshow)
+    },
+    dialogShow(){
+       console.log("isDialogShow=1=" + this.isDialogShow)
+      this.isDialogShow = true;
+       console.log("isDialogShow=2=" + this.isDialogShow)
+    },
+    handleEditRegion(e){
+      console.log("1234===" + e)
+    },
     initQueryForm() {
       // 设置制单时间从，制单时间到
       var currDate = new Date()

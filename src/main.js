@@ -42,7 +42,7 @@ import JsEncrypt from 'jsencrypt'
 Vue.prototype.$encruption = function(obj) {
   const encrypt = new JsEncrypt()
   encrypt.setPublicKey(
-    `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAid8M7B+jQNnAo8lnNzxl8VUJ5wjMIhjwvA1v+NEup+UuOdbYzPYssnSIWEukazbiqdo6yk9HRuHa2vkjxuvLKzv92IAWCDxsyAOanunX+6U4map40cGMHhX/U3ybiOD4DEy7K+VauWVxYcrtuUIRauxYEB+TXoNaYYvsAsKH4E60uTGcVoOTO90HiJBW+pAlDLbZOU8p1J9SzZAFxD/a0/SFFGuLxAKse4LOOdKTHN9wvF+408jWE7QSvQ9HFr/RST+AAfwiyGD8WjG8LYduAZbMCjQ6LIx1rjjIzFWJTOrexHJj7qJLpyN/5i3cd0sUA21WOmlo4zkrB8OEMXKK/wIDAQAB`
+    'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUpyd0ukPyGXZg29OMqW6oeWgzZpd0AIxp5YIUOWLbeT0CKLFEoCaoDVT0LptsdrcZWlxiF37YLGb4vzi8ZkOP0KugQONlVQ9tpVPx7IMTHyqGeDlo/vM0UCUJ0mw8JeroR83JGzSFcGYTtylS7X3MjHswGVUbd0SfCyO+6p3RmQIDAQAB'
   )
   return encrypt.encrypt(obj)
 }

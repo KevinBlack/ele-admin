@@ -1,21 +1,21 @@
 <template>
   <el-card class="detailsContainer">
     <!-- part1 -->
-    <el-form ref="ruleForm" label-width="100px" size="mini">
+    <el-form ref="queryForm" :model="queryForm" label-width="100px" size="mini">
       <el-row :gutter="20" class="area_border">
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="会员证书编号" prop="memberCertNo">
             <el-input v-model="queryForm.memberCertNo" size="mini"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="会员名称" prop="memberName">
             <el-input v-model="queryForm.memberName" size="mini"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="提交时间从" size="mini" prop="submitDateFrom">
             <el-date-picker
               v-model="queryForm.submitDateFrom"
@@ -28,7 +28,7 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="提交时间到" size="mini" prop="submitDateTo">
             <el-date-picker
               v-model="queryForm.submitDateTo"
@@ -42,7 +42,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="退会原因类型" size="mini" prop="exitType">
             <el-select
               v-model="queryForm.exitType"
@@ -62,7 +62,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="状态" prop="status">
             <el-select
               v-model="queryForm.status"
@@ -83,12 +83,7 @@
 
         <el-col :span="24" style="text-align: center;margin: 10px 0;">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="formSearch">查询</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-refresh-right"
-            size="mini"
-            @click="resetForm('queryForm')"
-          >重置</el-button>
+          <el-button icon="el-icon-refresh-right" size="mini" @click="resetForm('queryForm')">重置</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -155,7 +150,16 @@
         align="center"
         :formatter="exitTypeFmt"
       ></el-table-column>
-      <el-table-column prop="exitReason" label="退会原因" align="left " :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="exitReason" label="退会原因" align="left" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column fixed="right" label="文件列表" align="center" width="100">
+        <template slot-scope="scope">
+          <el-button
+            @click="handleViewUploadFile(scope.row.attachIds)"
+            type="text"
+            size="small"
+          >文件列表</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-row class="area_bordes">
@@ -191,6 +195,15 @@
           @closeDalog="closeProcessLogDialog"
         />
       </el-dialog>
+
+      <!-- 文件列表弹框 -->
+      <el-dialog :visible.sync="uploadFile.show" title="文件列表查询" width="50%">
+        <SysFileUploadListDialog
+          :isShow="uploadFile.show"
+          :ids="uploadFile.ids"
+          @closeDalog="closeFileUploadListDialog"
+        />
+      </el-dialog>
     </el-row>
   </el-card>
 </template>
@@ -203,10 +216,11 @@ import { getDictName } from "@/utils/index.js";
 import { parseTime, getIdsFromArr } from "@/utils/index.js";
 import AuditDialog from "@/views/comm/audit-dialog";
 import SysProcessLogDialog from "@/views/comm/sys-process-log-dialog";
+import SysFileUploadListDialog from "@/views/comm/sys-file-upload-list-dialog";
 
 export default {
   name: "MembershipExitApplyAudit",
-  components: { AuditDialog, SysProcessLogDialog },
+  components: { AuditDialog, SysProcessLogDialog, SysFileUploadListDialog },
   data() {
     return {
       //查询条件options集合
@@ -217,6 +231,7 @@ export default {
         ],
         status: [
           { value: "20", label: "待审核" },
+          { value: "15", label: "审核驳回" },
           { value: "30", label: "审核通过" }
         ]
       },
@@ -256,6 +271,11 @@ export default {
         dataId: "",
         dataCode: "",
         system: "hxxd"
+      },
+      //附件列表弹框
+      uploadFile: {
+        show: false,
+        ids: ""
       }
     };
   },
@@ -304,19 +324,14 @@ export default {
         });
         return;
       }
-      var illegalNameArr = new Array();
-      Object.keys(rows).forEach(function(key) {
-        if (rows[key].status != "20") {
-          illegalNameArr.push(rows[key].memberName);
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].status != "20") {
+          this.$message({
+            type: "error",
+            message: "选择的数据包含已经审核的数据，不能重复审核"
+          });
+          return;
         }
-      });
-      if (illegalNameArr.length > 0) {
-        var msg = "选择的数据状态非法，会员名称：" + illegalNameArr.join(",");
-        this.$message({
-          type: "error",
-          message: msg
-        });
-        return;
       }
       this.auditDialog.auditType = "1";
       this.auditDialog.title = "审核通过";
@@ -333,19 +348,14 @@ export default {
         });
         return;
       }
-      var illegalNameArr = new Array();
-      Object.keys(rows).forEach(function(key) {
-        if (rows[key].status != "20") {
-          illegalNameArr.push(rows[key].memberName);
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].status != "20") {
+          this.$message({
+            type: "error",
+            message: "选择的数据包含已经审核的数据，不能重复审核"
+          });
+          return;
         }
-      });
-      if (illegalNameArr.length > 0) {
-        var msg = "选择的数据状态非法，会员名称：" + illegalNameArr.join(",");
-        this.$message({
-          type: "error",
-          message: msg
-        });
-        return;
       }
       this.auditDialog.auditType = "2";
       this.auditDialog.title = "审核不通过";
@@ -432,6 +442,15 @@ export default {
     //关闭流程日志框
     closeProcessLogDialog() {
       this.processLog.show = false;
+    },
+    handleViewUploadFile(ids) {
+      this.uploadFile.ids = ids;
+      this.uploadFile.show = true;
+    },
+    //关闭附件列表框
+    closeFileUploadListDialog() {
+      this.uploadFile.show = false;
+      this.uploadFile.ids = "";
     }
   }
 };

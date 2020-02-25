@@ -3,9 +3,9 @@
     <!-- part1 -->
     <el-form ref="formQuery" :inline="true">
       <el-row>
-        <el-col :span="18">
-          <el-form-item label="投诉单位名称" size="mini" prop="value">
-            <el-input v-model="value" size="mini" />
+         <el-col :span="18">
+          <el-form-item label="企业名称" size="mini" prop="businessName">
+            <el-input v-model="formQuery.businessName" size="mini"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -25,17 +25,22 @@
       @selection-change="handleSelectionChange"
       :header-cell-style="getCellStyle"
       class="table-hxxd"
+      v-loading="tableLoading"
     >
       <el-table-column type="selection" width="55"  align="center" />
-      <el-table-column prop="value" label="企业名称" align="center" />
-      <el-table-column prop="key" label="社会统一信用代码" align="center" />
+      <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
+      <el-table-column prop="businessName" label="企业名称" width="250" align="center"></el-table-column>
+      <el-table-column prop="socialCode" label="社会信用代码" align="center"></el-table-column>
     </el-table>
+    <!-- 分页 -->
     <el-row class="area_bordes">
-      <el-col :span="24" style="text-align: right">
+      <el-col :span="24" style="text-align: right;">
         <el-pagination
-          :current-page.sync="pageNo"
-          :page-size.sync="pageSize"
-          :page-sizes="[15, 30, 50, 100]"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[5, 30, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="pageTotal"
         />
@@ -51,7 +56,7 @@
 </template>
 
 <script>
-import { componyQueryList } from '@/api/hxxd/agent'
+import { getCompanyInfoList } from '@/api/hxxd/agent'
 import { getDictDataList } from "@/api/system/comm/comm";
 
 export default {
@@ -66,15 +71,17 @@ export default {
   data() {
     return {
       show:false,
-      pageNo: 1,
-      pageSize: 5,
-      value: '',
-      key: '',
       pageTotal: 0,
       fdshow: false,
       selectArr: [],
       tableData: [],
-
+      tableLoading: false,
+      formQuery: {
+        businessName: "",
+        pageNo: 1,
+        pageSize: 5,
+        orderBy: ""
+      },
     }
   },
   created(){
@@ -89,12 +96,13 @@ export default {
     },
     getTableList() {
       this.tableLoading = true
-      getDictDataList('97001003',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
-        this.tableData = response.data
-        this.pageTotal = response.page.total
-      })
+      getCompanyInfoList(this.formQuery).then(response => {
+        this.tableData = response.data;
+        this.pageTotal = response.page.total;
+        this.tableLoading = false;
+      });
     },
-     search() {
+    search() {
       this.getTableList()
     },
     resetForm(formName) {
@@ -117,6 +125,13 @@ export default {
         this.$message({
           type: 'info',
           message: '请选中要操作的数据!'
+        })
+        return
+      }
+      if (this.selectArr.length!=1) {
+        this.$message({
+          type: 'info',
+          message: '请选单条操作的数据!'
         })
         return
       }

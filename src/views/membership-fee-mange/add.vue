@@ -22,6 +22,7 @@
             <add-member-modality
               :fdmsg="memberForm"
               :fdshow3="isShowSelect"
+              v-show="btnShow('10002150107010')"
               @closeDalogPay="closeSelect"
             />
           </el-dialog>
@@ -71,15 +72,16 @@
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item label="会员类别" prop="memberTypeCode">
+          <el-form-item label="会员类别" prop="memberType">
             <el-select
-              v-model="addForm.memberTypeCode"
+              v-model="addForm.memberType"
               placeholder="请选择"
               style="width: 100%;"
               @change="selectGet"
+              :disabled="true"
             >
               <el-option
-                v-for="item in dict.memberTypeCode"
+                v-for="item in dict.memberType"
                 :key="item.key"
                 :label="item.value"
                 :value="item.key"
@@ -146,6 +148,7 @@
             <el-input
               v-model="addForm.paymentAmount"
               style="width: 100%;"
+              :readonly="true"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -167,7 +170,8 @@
             size="mini"
             style="cursor: pointer;"
             @click="showBox()"
-            v-if="btnDisplay('00')"
+            v-if="btnDisplay('20')"
+            v-show="btnShow('10002150107020')"
             >新增</el-button
           >
           <el-button
@@ -176,16 +180,17 @@
             size="mini"
             style="cursor: pointer;"
             @click="batchDelete()"
-            v-if="btnDisplay('00')"
+            v-if="btnDisplay('20')"
+            v-show="btnShow('10002150107030')"
             >删除</el-button
           >
         </el-button-group>
-        <el-dialog title="新增" :visible.sync="isShow" width="70%">
+        <el-dialog title="新增" :visible.sync="isShow" width="90%">
           <add-modality
             :fdmsg="addForm"
             :fdshow2="isShow"
             @closeDalog="closeBox"
-            style="height:300px;"
+            style="height:500px;"
           />
         </el-dialog>
       </el-col>
@@ -244,6 +249,7 @@
       />
       <el-table-column
         prop="currentPayment"
+        rules="rulesCurrentPayment"
         label="本次缴费金额"
         align="center"
         :show-overflow-tooltip="true"
@@ -257,7 +263,6 @@
               autocomplete="off"
               @keyup.enter.native="nextRowEdit(scope.$index, scope.row, $event)"
               @blur="loseFocus(true, $event)"
-              @focus="loseFocus(false, $event)"
               class="edit-input"
               placeholder="本次缴费金额"
             />
@@ -271,22 +276,24 @@
         <el-button
           type="primary"
           size="mini"
-          v-if="btnDisplay('00')"
+          v-if="btnDisplay('20')"
           @click="saveMemberPay"
+          v-show="btnShow('10002150107040')"
           >保存</el-button
         >
         <el-button
           type="primary"
           size="mini"
           @click="reload()"
-          v-if="btnDisplay('00')"
+          v-if="btnDisplay('20')"
           >刷新</el-button
         >
         <el-button
           type="primary"
           size="mini"
-          v-if="subBtnDisplay('10')"
+          v-if="btnDisplay('20')"
           @click="submitState"
+          v-show="btnShow('10002150107050')"
           >提交</el-button
         >
       </el-col>
@@ -296,7 +303,6 @@
 
 <script>
 import {
-  getDjInfoList,
   getFeeInfoByCode,
   saveMemberPay,
   deleteMember,
@@ -306,6 +312,7 @@ import {
 import {
   getMemberPayInfoList,
   getAdminHfInfo,
+  getMemberPaysByAdminId,
   deleteMemberPay
 } from "@/api/hxxd/memberPay";
 import { saveCheck } from "@/api/hxxd/financial";
@@ -319,20 +326,6 @@ export default {
   components: { AddModality, AddMemberModality },
   data() {
     return {
-      btnDisplay(status) {
-        //根据具体业务数据控制
-        if (this.addForm.spState == status) {
-          return true;
-        }
-        return false;
-      },
-      subBtnDisplay(status) {
-        //根据具体业务数据控制
-        if (this.addForm.spState === status) {
-          return true;
-        }
-        return false;
-      },
       //表单对应下拉字典
       mainFormOptions: {
         status: [
@@ -349,6 +342,8 @@ export default {
         memberName: "",
         memberId: ""
       },
+      // btns:["100021505010", "100021505020", "100021501030", "100021501040", "100021501050"],
+      btns: this.$store.getters.btns['100021501070'],
       selectId: 0,
       readonly: false,
       show: false,
@@ -389,7 +384,7 @@ export default {
         }
       ],
       dict: {
-        memberTypeCode: []
+        memberType: []
       },
       tableData: [],
       prevValue: {},
@@ -400,45 +395,134 @@ export default {
       currentPayment: ""
     };
   },
-   created() {
+  created() {
     //加载字典
     this.beforeLoading();
+    this.addForm.id = this.$route.query.selectId
+    if (this.addForm.id) {
+      this.getModifyList()
+    }
   },
   watch: {
     //监控传入对象变化（类似于监听）
     type: function() {
+      if(this.type){ 
       let sum = 0;
       this.tableData.forEach(item => {
         //遍历paymentAmount这个字段，并累加
-        // sum += parseInt(item.creditAmount);
-        sum += Number(item.currentPayment);
+        let tempVal = parseFloat(item.currentPayment).toFixed(10);
+        let balance = parseFloat(item.balance)
+        var realVal = tempVal.substring(0, tempVal.length - 8)
+        if(balance > parseFloat(realVal)) {
+          sum += parseFloat(realVal);
+        } else {
+          item.currentPayment = item.balance;
+          sum += parseFloat(item.balance);
+        }
       });
       //返回
-      this.addForm.paymentAmount = sum.toString();
+
+      this.addForm.paymentAmount = sum.toFixed(2);
+      this.type = false;
+       }
     },
     tableData: function(val, oldVal) {
       // 将改变的值赋值给addForm中对应的字段
       let sum = 0;
       this.tableData.forEach(item => {
         //遍历paymentAmount这个字段，并累加
-        // sum += parseInt(item.creditAmount);
-        sum += Number(item.currentPayment);
+        let tempVal = parseFloat(item.currentPayment).toFixed(10);
+        let balance = parseFloat(item.balance)
+        var realVal = tempVal.substring(0, tempVal.length - 8)
+         if(balance > parseFloat(realVal)) {
+          sum += parseFloat(realVal);
+        } else {
+          item.currentPayment = item.balance;
+          sum += parseFloat(item.balance);
+        }
       });
       //返回
-      this.addForm.paymentAmount = sum.toString();
+
+      //  var regExp = /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+      //  var res = regExp.exec(sum)
+      this.addForm.paymentAmount = sum.toFixed(2);
     },
     deep: true
   },
   methods: {
-      beforeLoading() {
-      getDictDataLists("97001009").then(response => {
-        this.dict.memberTypeCode = response.data.jq97001009;
-        console.log(this.dict.memberTypeCode)
+    //制保留2位小数，如：2，会在2后面补上00.即2.00  
+     toDecimal(x) {  
+        var f = parseFloat(x);  
+        if (isNaN(f)) {  
+            return false;  
+        }  
+        var f = Math.round(x*100)/100;  
+        var s = f.toString();  
+        var rs = s.indexOf('.');  
+        if (rs < 0) {  
+            rs = s.length;  
+            s += '.';  
+        }  
+        while (s.length <= rs + 2) {  
+            s += '0';  
+        }  
+        return s;  
+    },
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+        //根据具体业务数据控制
+        let num = parseInt(this.addForm.spState)
+        let currentNum = parseInt(status)
+        if (num < currentNum) {
+          return true;
+        }else if(this.addForm.spState === '25') {
+          return true;
+        }
+        return false;
+      },
+    getModifyList() {
+      getAdminHfInfoById(this.addForm.id).then(response => {
+        this.addForm.memberName = response.data.memberName
+        this.addForm.paymentAmount = response.data.paymentAmount
+        this.addForm.memberId = response.data.memberId
+        this.addForm.amountDue = response.data.amountDue
+        this.addForm.discount = response.data.discount
+        this.addForm.memberGrade = response.data.memberGrade
+        this.addForm.paymentYear = response.data.paymentYear
+        this.addForm.memberType = response.data.memberType
+        this.addForm.memberTypeCode = response.data.memberTypeCode
+        this.addForm.spState = response.data.spState
+        this.addForm.contributionStandard = response.data.contributionStandard
+        this.addForm.amountRequired = response.data.amountRequired
+        this.addForm.amountPaid = response.data.amountPaid
+      }).then(() => {
+        getMemberPaysByAdminId(this.addForm.id, '1').then(response => {
+          this.tableData = response.data
+        })
+      })
+    },
+    beforeLoading() {
+      getDictDataLists("97001014").then(response => {
+        this.dict.memberType = response.data.jq97001014;
       });
     },
     loseFocus(type, e) {
+      // console.log(this.type)
+      // console.log(type)
+      e.target.value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0] || null;
+      //  console.log("e.target.value "+ e.target.value )
       this.type = type;
-      const val = e.target.value;
     },
     getIds() {
       if (!this.tableData) {
@@ -458,23 +542,25 @@ export default {
       }
     },
     nextRowEdit(index, row, e) {
-      // (index+1).focus()
-      const val = e.target.value;
+      e.target.value = e.target.value.match(/^\d*(\.?\d{0,2})/g)[0] || null;
       var keyCode = e.keyCode || e.which || e.charCode;
       if (keyCode === 13) {
         // 当按键为回车时
-        this.$refs[row.id].blur(); // 当前行失去焦点
         this.type = true;
+        this.$refs[row.id].blur(); // 当前行失去焦点
+        
         if (Object.keys(this.$refs).length - 2 === index) {
           // index = -1;
           this.$message({
             type: "info",
             message: "到底儿了!"
           });
+          this.$refs[row.id].blur();
+          this.type = true;
           return;
         }
         this.$refs[Object.keys(this.$refs)[index + 1]].focus();
-        this.type = false;
+        
       }
     },
     batchDelete() {
@@ -529,7 +615,7 @@ export default {
         });
         return;
       }
-      if (!this.addForm.memberTypeCode) {
+      if (!this.addForm.memberType) {
         this.$message({
           title: "提示",
           message: "请选择会员类别",
@@ -537,42 +623,24 @@ export default {
         });
         return;
       }
+     
       let nums =
-        Number(this.addForm.paymentAmount) -
-        Number(this.addForm.amountRequired);
+        parseFloat(this.addForm.paymentAmount) * 1 -
+        parseFloat(this.addForm.amountRequired) * 1;
       const memberPayInfos = JSON.stringify(this.tableData);
-      console.log(this.addForm.memberTypeCode)
+      //封装 多个对象 到saveDate 传参
       const saveData = Object.assign({}, this.addForm, {
         memberPayInfos,
         memberPayInfos
       });
+       //实缴金额 - 需缴金额 > 0 = 缴费已超出需缴金额
       if (nums > 0) {
-        this.$confirm("缴费超出需缴金额,是否执行保存操作?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            saveMemberPay(saveData).then(response => {
-              this.addForm = response.data;
-              if (response.status === 200) {
-                //保存成功
-                this.$message({
-                  type: "success",
-                  message: "保存成功!"
-                });
-              } else {
-                //保存失败
-                this.$message({
-                  type: "success",
-                  error: "保存失败!"
-                });
-              }
-            });
-          })
-          .catch(() => {
-            return;
-          });
+        //保存成功
+        this.$message({
+          type: "warning",
+          message: "缴费已超出需缴金额！"
+        });
+        return;
       } else {
         saveMemberPay(saveData).then(response => {
           this.addForm = response.data;
@@ -631,6 +699,10 @@ export default {
         getMemberPayInfoList(this.addForm.memberId, "0").then(response => {
           this.tableData = response.data;
         });
+      }else if(this.addForm.id) {
+        getMemberPaysByAdminId(this.addForm.id, "1").then(response => {
+          this.tableData = response.data;
+        });
       }
     },
     headRowStyle(row, rowIndex) {
@@ -659,6 +731,7 @@ export default {
         this.addForm.contributionStandard = response.data.memberFeeBz;
         this.addForm.amountDue = response.data.amountPay;
         this.addForm.paymentAmount = response.data.actualPay;
+        this.addForm.memberType = response.data.memberType;
         // this.addForm.memberTypeCode = code
       });
     },
@@ -710,36 +783,41 @@ export default {
         this.addForm.memberName = chiledArr.name;
         this.addForm.memberId = chiledArr.code;
         this.addForm.memberTypeCode = chiledArr.memberTypeCode;
-        //this.addForm.memberTypeCode = A101
-        if (this.addForm.memberTypeCode) {
-          this.getFeeInfoByCode(this.addForm.memberTypeCode);
-        }
+        this.getFeeInfoByCode(this.addForm.memberTypeCode);
         this.getAdminHfInfo();
       }
       this.isShowSelect = fdshow;
     },
-    getAdminHfInfo() {
-      getAdminHfInfo(this.addForm).then(response => {
+    async  getAdminHfInfo() {
+      await getAdminHfInfo(this.addForm).then(response => {
         var AdminHfInfoDate = [];
         AdminHfInfoDate = response.data;
         if (AdminHfInfoDate.length > 0 && AdminHfInfoDate != "") {
           let count = 0;
-          Object.keys(AdminHfInfoDate).forEach(function(key) {
-            //获取已交金额 amountPaid
-            if (AdminHfInfoDate[key].spState === "30") {
-              var paymentAmount = parseInt(AdminHfInfoDate[key].paymentAmount);
-              count += paymentAmount;
+             for (var i = 0; i < AdminHfInfoDate.length; i++) {
+            if (AdminHfInfoDate[i].spState === "30") {
+              let tempVal = parseFloat(AdminHfInfoDate[i].paymentAmount).toFixed(10);
+              var realVal = tempVal.substring(0, tempVal.length - 8) 
+              count += Number(realVal);
             }
-          });
-          let amountDue = parseInt(this.addForm.amountDue);
-          let num = amountDue - count;
-          if (num <= 0) {
-            this.addForm.spState = "费用已缴清";
-          }
+          };
+          //获取已交金额 amountPaid
+          this.addForm.amountPaid = count.toFixed(2);
+          // let amountDue = parseFloat(this.addForm.amountDue.match(/^\d+(?:\.\d{0,2})?/));
+          let amountDue = this.toDecimal(AdminHfInfoDate[0].amountDue);
+          let num = this.toDecimal(amountDue - count);
           this.addForm.amountRequired = num.toString();
-          this.addForm.amountPaid = count.toString();
+          if (num <= 0) {
+            this.$message({
+              title: "提示",
+              message: "费用已缴清",
+              type: "success"
+            });
+            this.addForm.spState = "40"
+          }
         } else {
           this.addForm.amountRequired = this.addForm.amountDue;
+          this.addForm.amountPaid ="0.00";
         }
       });
     }

@@ -32,9 +32,15 @@
               <el-input v-model='hxXdSysMessageParam.despatcher' />
             </el-form-item>
           </el-col>
-          <el-col :span='12'>
+          <el-col :span='24'>
             <el-form-item label='消息内容' prop='content'>
-              <el-input v-model='hxXdSysMessageParam.content' />
+               <el-input
+                type="textarea"
+                maxlength="30"
+                :autosize="{ minRows: 6, maxRows: 8 }"
+                show-word-limit
+                v-model="hxXdSysMessageParam.content"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -42,8 +48,8 @@
       <!-- 按钮区 -->
       <el-row v-if="isButton" :gutter="10">
         <el-col :span="24" class="btn_bottom">
-          <el-button type="primary" size="mini" @click='save'>保存</el-button>
-          <el-button type="primary" size="mini">发送</el-button>
+          <el-button type="primary" size="mini"  v-show="btnShow('10002090507010')" @click='save'>保存</el-button>
+          <el-button type="primary" size="mini"  v-show="btnShow('10002090507010')" >发送</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -55,6 +61,7 @@ import { getSysMessageById, sysMessageUpdate } from '@/api/hxxd/agent'
 export default {
   data() {
     return {
+      btns: this.$store.getters.btns['100020905070'],
       disabled: true,
       isButton: true,
       title: '',
@@ -97,13 +104,24 @@ export default {
     }
   },
   methods: {
+     btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     // 系统信息保存
     save() {
       // this.$refs['ruleForm'].validate(valid => {
       // if (valid) {
       // 数据校验成功
       sysMessageUpdate(this.hxXdSysMessageParam).then(response => {
-        debugger
         var msg = response.status === 200 ? '保存成功' : '保存失败'
         if (response.status === 200) {
           // 保存成功

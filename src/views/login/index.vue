@@ -50,20 +50,20 @@
               placeholder="请输入右侧验证码"
               name="identifyCode"
               type="text"
-              tabindex="1"
+              tabindex="3"
               autocomplete="on"
               maxlength="6"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="7">  
           <div @click="refreshCode">
             <s-identify :identify-code="identifyCode" />
           </div>
         </el-col>
       </el-row>
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-      <el-button type="primary" style="width:100%;margin:0px !important;" @click.native.prevent="handleRegister">注册</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"  tabindex="4" @click.native.prevent="handleLogin">登录</el-button>
+      <el-button type="primary" style="width:100%;margin:0px !important;" tabindex="5" @click.native.prevent="handleRegister">注册</el-button>
       <!-- <div style="position:relative">
         <div class="tips">
           <span>Username : admin</span>
@@ -99,13 +99,13 @@ export default {
   name: 'Login',
   components: { SIdentify },
   data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密码不能少于8个字符！'))
-      } else {
-        callback()
-      }
-    }
+    // const validatePassword = (rule, value, callback) => {
+    //   if (value.length < 8) {
+    //     callback(new Error('密码不能少于8个字符！'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     // const validateIdentifyCode = (rule, value, callback) => {
     //   // console.log(value,this.identifyCode);
     //   if (value && value.toLowerCase() !== this.identifyCode.toLowerCase()) {
@@ -117,13 +117,13 @@ export default {
     return {
       identifyCode: '',
       loginForm: {
-        username: '李科建',
-        password: '123456789',
+        username: '',
+        password: '',
         identifyCode: ''
       },
       loginRules: {
         username: [],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password:[]
         // identifyCode: [{ required: true, trigger: ['blur', 'change'], validator: validateIdentifyCode }]
       },
       passwordType: 'password',
@@ -168,8 +168,8 @@ export default {
     },
     makeCode() {
       getValidateCode().then(response => {
-        this.identifyCode = response.data.validateCode
-        this.loginForm.identifyCode = response.data.validateCode
+        this.identifyCode =  response.data.validateCode
+        // this.loginForm.identifyCode = response.data.validateCode
       })
     },
     checkCapslock({ shiftKey, key } = {}) {
@@ -201,7 +201,7 @@ export default {
       var loginFormEcode = {
         username: this.loginForm.username,
         password: this.$encruption(this.loginForm.password.trim()),
-        validateCode: this.loginForm.identifyCode
+        validateCode: this.$encruption(this.loginForm.identifyCode)
       }
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -214,10 +214,10 @@ export default {
             .catch((err) => {
               this.$message.error(err)
               // 清空输入框
-              this.loginForm.username = ''
-              this.loginForm.password = ''
+              // this.loginForm.username = ''
+              // this.loginForm.password = ''
               // this.loginForm.identifyCode=''
-              // this.makeCode()
+              this.makeCode()
               this.loading = false
             })
         } else {

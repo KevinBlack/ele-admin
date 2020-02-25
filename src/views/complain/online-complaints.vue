@@ -14,7 +14,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item label="投诉单位" size="mini" :readonly="true" prop="complaintName">
+              <el-form-item :key="Math.random()" label="投诉单位" size="mini" :readonly="true" prop="complaintName">
                 <el-input v-model="detailForm.complaintName" filterable placeholder="请选择" :readonly="true" style="width:100%">
                   <el-button slot="append" icon="el-icon-search" @click="showSelect()" />
                 </el-input>
@@ -32,7 +32,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="联系邮箱" size="mini" prop="contractEmail">
-                <el-input v-model.number="detailForm.contractEmail" size="mini" placeholder="请输入联系邮箱" />
+                <el-input v-model="detailForm.contractEmail" size="mini" placeholder="请输入联系邮箱" />
               </el-form-item>
             </el-col>
             <el-col :span="22">
@@ -85,7 +85,7 @@ var validPhone = (rule, value, callback) => {
     console.log(validPhone)
     callback(new Error('请输入电话号码'));
   } else if (!isvalidPhone(value)) {
-    callback(new Error('请输入正确的11位手机号码'));
+    callback(new Error('请输入正确的手机号码'));
   } else {
     callback();
   }
@@ -111,7 +111,10 @@ export default {
         complaintName: [{ required: true, message: '不能为空', trigger: 'blur' }],
         complainant: [{ required: true, message: '不能为空', trigger: 'blur' }],
         contractInformation: [{ required: true, validator: validPhone, trigger: "blur" }],
-        contractEmail: [{ required: true, message: "不能为空", trigger: "blur" }, { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
+        contractEmail: [{ required: true, message: "不能为空", trigger: "blur" }, 
+        { 
+          type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] 
+        }],
         complaintsContents: [{ required: true, message: '不能为空', trigger: 'blur' }],
         complaintType: [{ required: true, message: '不能为空', trigger: 'blur' }],
         telCode: [{ required: true, message: '不能为空', trigger: 'blur' }]
@@ -156,8 +159,19 @@ export default {
         })
         return
       }
+      this.$refs['detailForm'].validate(valid => {
+        if (!valid) {
+          this.$message({
+            type: 'failure',
+            message: '请按照要求填写相关内容 !'
+          })
+          show=false;
+          return false
+        }
+        })
       sendCode(mobileNum).then(res => {
-        console.log('成功')
+        var msg = res.message;
+        this.message(success==="请查看手机验证码!",msg)
       })
       const TIME_COUNT = 60
       if (!this.timer) {
@@ -208,6 +222,9 @@ export default {
               message: '已成功投诉',
               type: 'success'
             })
+            this.$router.push({
+             path: "/newlogin",query: {}
+            });
           } else {
             this.$message({
               message: response.message,

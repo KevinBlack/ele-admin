@@ -19,7 +19,7 @@
         <el-col :span="12">
           <el-form-item label="处罚类别" size="mini" prop="punishmentType">
             <el-select v-model="formQuery.punishmentType" filterable placeholder="请选择" size="mini"  >
-              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" >
+              <el-option v-for="item in dict.punishmentType" :key="item.key" :label="item.value" :value="item.key" >
               </el-option>
             </el-select>
           </el-form-item>
@@ -32,7 +32,7 @@
         <el-col :span="12" style="padding-left: 100px;">
           <el-form-item size="mini">
             <el-button type="primary" size="mini" @click="search">查询</el-button>
-            <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+            <el-button type="primary" size="mini" @click="resetForm('formQuery')">重置</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -42,12 +42,12 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd()">新 增</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleEdit" >修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleCheck" >查 看</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handlePublish" >发 布</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleCanclePublish" >取 消 发 布</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101090')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleAdd()">新 增</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101020')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleEdit" >修 改</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101030')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101040')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleCheck" >查 看</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101050')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handlePublish" >发 布</el-radio-button>
+          <el-radio-button v-show="btnShow('100021101060')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleCanclePublish" >取 消 发 布</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
@@ -95,6 +95,7 @@
 
 <script>
 import { selectSecurityIncident,deleteSecurityIncident , publishSecurityIncident, cancalPublishSecurityIncident} from "@/api/hxxd/complaintInfo";
+import { getDictDataLists } from "@/api/system/comm/comm";
 import { parseTime } from "@/utils/index.js";
 export default {
   props: {
@@ -106,6 +107,7 @@ export default {
   // data 开始
   data() {
     return {
+      btns: this.$store.getters.btns['1000211010'],
       show: false,
       treeData: [],
       treeDefaultProps: {
@@ -113,6 +115,9 @@ export default {
         label: function(data, node) {
           return data.complainant
         }
+      },
+      dict: {
+        punishmentType: []
       },
       multipleSelection: [],
       pageTotal: 0,
@@ -127,30 +132,43 @@ export default {
       },
       tableLoading: false,
       tableData: [],
-      tableMultiSelection: [],
-      statusOptions: [
-        {
-          value: '1',
-          label: '警告'
-        },
-        {
-          value: '2',
-          label: '罚款'
-        }
-      ]
+      tableMultiSelection: []
     }
   },
   // data 结束
   created() {
-    // const end = new Date()
-    // const start = new Date()
-    // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-    // this.formQuery.timeValue = [parseTime(start), parseTime(end)]
+    //加载字典
+    this.beforeLoading();
     this.formQuery.startTime = this.formQuery.timeValue[0]
     this.formQuery.endTime = this.formQuery.timeValue[1]
     this.getTableList()
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
+    beforeLoading() {
+      getDictDataLists("97001013").then(response => {
+        this.dict.punishmentType = response.data.jq97001013;
+      });
+    }, 
     handleAdd() {
        this.$router.push({
         name: 'SecurityIncidentAdd',
@@ -230,7 +248,7 @@ export default {
           var ids = ids.join()
           console.log(ids)
           publishSecurityIncident(ids).then(response => {
-            if(response.data.status == 200){
+            if(response.status == 200){
               this.$message({
               type: 'success',
               message: '发布成功!'
@@ -275,7 +293,7 @@ export default {
           var ids = ids.join()
           console.log(ids)
           cancalPublishSecurityIncident(ids).then(response => {
-            if(response.data.status == 200){
+            if(response.status == 200){
               this.$message({
               type: 'success',
               message: '取消发布成功!'
@@ -319,7 +337,7 @@ export default {
         if (ids && ids.length > 0) {
           var ids = ids.join()
           deleteSecurityIncident(ids).then(response => {
-            if(response.data.status == 200){
+            if(response.status == 200){
               this.$message({
               type: 'success',
               message: '删除成功!'

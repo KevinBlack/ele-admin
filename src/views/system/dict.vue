@@ -4,17 +4,17 @@
       <!-- 查询面板 -->
       <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
         <el-row :gutter="20" class="area_border">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="字典名称" size="mini" prop="loginCode">
               <el-input v-model="formQuery.dictName" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="字典类型" size="mini" prop="userName">
               <el-input v-model="formQuery.dictType" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="是否系统" size="mini" prop="status">
               <el-select v-model="formQuery.isSys" filterable placeholder="请选择" size="mini">
                 <el-option
@@ -26,12 +26,14 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
+
+           <el-col :span="6" >
             <el-form-item size="mini">
-              <el-button type="primary" size="mini" @click="search">查询</el-button>
-              <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetForm('formQuery')">重置</el-button>
             </el-form-item>
           </el-col>
+          
         </el-row>
       </el-form>
 

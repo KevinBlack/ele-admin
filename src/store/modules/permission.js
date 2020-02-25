@@ -1,14 +1,23 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 
 /**
- * Use meta.role to determine if the current user has permission
+ * Use meta.mem to determine if the current user has permission
  * @param mecodes
  * @param route
  */
 function hasPermission(menuCodes, route) {
-  if (route.meta && route.meta.menuCodes) {
-    return menuCodes.some(role => route.meta.menuCodes.includes(role))
+  if (route.meta) {
+    if (!route.meta.menuCodes) {
+      return false
+    }
+    // return menuCodes.some(menuCode => route.meta.menuCodes.includes(menuCode))
+    var success = menuCodes.some(menuCode => route.meta.menuCodes === menuCode)
+    // if(success){
+    //   console.log(route.path)
+    // }
+    return success
   } else {
+    // console.log(route.path)
     return true
   }
 }
@@ -49,11 +58,15 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, menuCodes) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (menuCodes.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, menuCodes)
+      var accessedRoutes = []
+      if (menuCodes) {
+        // 当时管理员时，显示所有菜单项
+        if (menuCodes === 'ROLE_ADMIN') {
+          accessedRoutes = asyncRoutes
+        } else {
+          // 当非管理员时，显示部分
+          accessedRoutes = filterAsyncRoutes(asyncRoutes, menuCodes)
+        }
       }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)

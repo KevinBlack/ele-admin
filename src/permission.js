@@ -19,7 +19,6 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -27,18 +26,20 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done()
     } else {
       // 确定用户是否通过getInfo获得了他的权限角色
-      const hasMenuCodes = store.getters.menuCodes && store.getters.menuCodes.length > 0
+      const hasMenuCodes = store.getters.menuCodes && store.getters.menuCodes.length > 0    
       if (hasMenuCodes) {
         next()
       } else {
         try {
           // get user info
           // note: menuCodes must be a object array! such as: ['admin'] or ,['developer','editor']
-          const { menuCodes } = await store.dispatch('user/getInfo')
-
+          var { menuCodes, roleType } = await store.dispatch('user/getInfo')
+          // 此处写法很蛋疼。期待大牛改进
+          if (roleType === '1') {
+            menuCodes = 'ROLE_ADMIN'
+          }
           // generate accessible routes map based on menuCodes
           const accessRoutes = await store.dispatch('permission/generateRoutes', menuCodes)
-
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
 
@@ -56,14 +57,17 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     // has no token
-
-    if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
+    if (to.path && to.path.indexOf('/anonw/') >= 0) {
       next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
+      if (whiteList.indexOf(to.path) !== -1) {
+        // in the free login whitelist, go directly
+        next()
+      } else {
+        // other pages that do not have permission to access are redirected to the login page.
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
+      }
     }
   }
 })

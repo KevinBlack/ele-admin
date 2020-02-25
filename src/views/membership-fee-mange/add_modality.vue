@@ -22,21 +22,18 @@
       :data="tableData"
       border
       tooltip-effect="dark"
-      style="width: 100%;"
-      height="200px"
+      height="400px"
       @selection-change="handleSelectionChange"
-      :header-row-style="headRowStyle"
-      :row-style="rowStyle"
       :header-cell-style="getCellStyle"
       class="table-hxxd"
     >
-      <el-table-column type="selection" width="55"  align="center" />
-      <el-table-column prop="id" label="ID" width="" align="center" v-if='show'/>
-      <el-table-column prop="tradeTime" label="交易时间" width="" align="center" />
-      <el-table-column prop="tradePipelineNum" label="交易流水号" width="" align="center" />
-      <el-table-column prop="tradeMoney" label="贷方发生额" width="" align="center" />
-      <el-table-column prop="abstractContent" label="摘要" width="" align="center" />
-      <el-table-column prop="oppositeAccount" label="对方账号" width="" align="center" />
+      <el-table-column type="selection" align="center" />
+      <el-table-column prop="id" label="ID" align="center" v-if='show'/>
+      <el-table-column prop="tradeTime" label="交易时间" align="center" />
+      <el-table-column prop="tradePipelineNum" label="交易流水号" align="center" />
+      <el-table-column prop="tradeMoney" label="贷方发生额" align="center" />
+      <el-table-column prop="abstractContent" label="摘要" align="center" />
+      <el-table-column prop="oppositeAccount" label="对方账号" align="center" />
       <el-table-column prop="oppositeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="openingBank" label="对方开户行" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="balance" label="余额" align="center" :show-overflow-tooltip="true" />

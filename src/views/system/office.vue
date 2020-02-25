@@ -2,13 +2,13 @@
   <div style="margin: 0 10px;">
     <el-row>
       <el-col :md="5" :lg="5" :xl="4">
-        <el-card class="box-card" style="height:736px">
+        <el-card class="box-card" style="height:1050px">
           <el-tree :data="treeData" :props="treeDefaultProps" @node-click="handleNodeClick"></el-tree>
         </el-card>
       </el-col>
       <el-col :md="19" :lg="19" :xl="20">
         <!-- 查询面板 -->
-        <el-card class="detailsContainer" style="height:736px">
+        <el-card class="detailsContainer" style="height:1050px">
           <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
             <el-row :gutter="20" class="area_border">
               <el-col>
@@ -16,17 +16,17 @@
                   <el-input v-model="formQuery.officeId" size="mini"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="5">
+              <el-col :span="6">
                 <el-form-item label="机构编号" size="mini" prop="officeCode">
                   <el-input v-model="formQuery.officeCode" size="mini"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="5">
+              <el-col :span="6">
                 <el-form-item label="机构名称" size="mini" prop="officeName">
                   <el-input v-model="formQuery.officeName" size="mini"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="5">
+              <el-col :span="6">
                 <el-form-item label="归属系统" size="mini" prop="system">
                   <el-select
                     v-model="formQuery.system"
@@ -44,7 +44,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="5">
+              <el-col :span="6">
                 <el-form-item label="状态" size="mini" prop="status">
                   <el-select v-model="formQuery.status" filterable clearable placeholder="请选择" size="mini"  
                   >
@@ -57,7 +57,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-             <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
+             <el-col :span="24" style="text-align: center;margin: 10px 0;">
                 <el-form-item size="mini">
                   <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
                   <el-button size="mini" icon="el-icon-refresh-right" @click="resetForm('formQuery')">重置</el-button>

@@ -1,17 +1,17 @@
 <template>
   <div class="detailsContainer">
     <el-table ref="multipleTable" :data="tableData" border style="width: 100%;" size="mini">
-      <el-table-column prop="dataId" label="数据主键" align="center" width="80"></el-table-column>
-      <el-table-column prop="dataCode" label="数据编号" align="center" width="300" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="statusFrom" label="状态从" align="center" width="100"></el-table-column>
-      <el-table-column prop="statusTo" label="状态到" align="center" width="100"></el-table-column>
-      <el-table-column prop="operator" label="操作人" align="center" width="120"></el-table-column>
-      <el-table-column prop="operateTime" label="操作时间" align="center" width="180"></el-table-column>
-      <el-table-column prop="statusField" label="状态字段" align="center" width="80"></el-table-column>
-      <el-table-column prop="system" label="归属系统" align="center"></el-table-column>
+      <!-- <el-table-column prop="dataId" label="数据主键" align="center" width="80"></el-table-column>
+      <el-table-column prop="dataCode" label="数据编号" align="center" width="200" ></el-table-column> -->
+      <el-table-column prop="statusFrom" label="状态从" align="center" width="250"></el-table-column>
+      <el-table-column prop="statusTo" label="状态到" align="center" width="250"></el-table-column>
+      <el-table-column prop="operator" label="操作人" align="center" width="250"></el-table-column>
+      <el-table-column prop="operateTime" label="操作时间" align="center" width="286"></el-table-column>
+      <!-- <el-table-column prop="statusField" label="状态字段" align="center" width="80"></el-table-column>
+      <el-table-column prop="system" label="归属系统" align="center" :show-overflow-tooltip="true"></el-table-column> -->
     </el-table>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" icon="el-icon-check" size="mini" @click="handleClose('ok')">确定</el-button>
+      <!-- <el-button type="primary" icon="el-icon-check" size="mini" @click="handleClose('ok')">确定</el-button> -->
       <el-button type="primary" icon="el-icon-close" size="mini" @click="handleClose('close')">关闭</el-button>
     </div>
   </div>

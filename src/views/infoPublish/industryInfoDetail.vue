@@ -11,7 +11,14 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属分组" prop="industryType">
-              <el-input v-model="detailForm.industryType" style="width: 100%;" :readonly="true" placeholder="请选择" />
+              <el-select v-model="detailForm.industryType" :readonly="true" style="width: 100%;" placeholder="请选择">
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+                </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -67,13 +74,17 @@ export default {
       cascaderOpts: [],
       statusOptions: [{
           value: 1,
-          label: "消代分会"
+          label: "站内新闻"
         },
         {
           value: 2,
-          label: "航食分会"
+          label: "公示信息"
+        },
+        {
+          value: 3,
+          label: "最新动态"
         }
-      ]
+      ],
     };
   },
   created() {

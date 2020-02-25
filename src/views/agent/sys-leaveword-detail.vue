@@ -17,14 +17,26 @@
         :rules="rules1"
       >
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="消息标题" prop="header">
-              <el-input v-model="hxXdSysLeaveWordParam.header" />
+          <el-col :span="24">
+            <el-form-item label="消息内容" prop="content">
+              <el-input
+                type="textarea"
+                maxlength="30"
+                :autosize="{ minRows: 6, maxRows: 8 }"
+                show-word-limit
+                v-model="hxXdSysLeaveWordParam.content"
+              />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="消息内容" prop="content">
-              <el-input v-model="hxXdSysLeaveWordParam.content" />
+          <el-col :span="24">
+            <el-form-item label="消息反馈" prop="content">
+              <el-input
+                type="textarea"
+                maxlength="30"
+                :autosize="{ minRows: 6, maxRows: 8 }"
+                show-word-limit
+                v-model="hxXdSysLeaveWordParam.feedback"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -37,8 +49,8 @@
       <!-- 按钮区 -->
       <el-row :gutter="10" v-if="isButton">
         <el-col :span="24" class="btn_bottom">
-          <el-button type="primary" size="mini" @click="save">保存</el-button>
-          <el-button type="primary" size="mini" >发送</el-button>
+          <el-button type="primary" size="mini" v-show="btnShow('10002090407010')" @click="save">保存</el-button>
+          <el-button type="primary" size="mini" v-show="btnShow('10002090407010')" >发送</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -50,6 +62,7 @@ import { sysLeaveWordSave , getSysLeaveWordById , sysLeaveWordUpdate } from "@/a
 export default {
   data() {
     return {
+       btns: this.$store.getters.btns['100020904070'],
       disabled: true,
       title: '',
       isButton: true,
@@ -91,6 +104,18 @@ export default {
     }
   },
   methods: {
+     btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     //系统信息保存
     save() {
       // this.$refs["ruleForm"].validate(valid => {

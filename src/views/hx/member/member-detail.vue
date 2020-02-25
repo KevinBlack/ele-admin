@@ -228,13 +228,23 @@
 
               <el-col :span="12">
                 <el-form-item label="会员证书编号" size="mini" prop="certificateNo">
-                  <el-input v-model="hxXdForm.certificateNo" size="mini" maxlength="200" :readonly="true"></el-input>
+                  <el-input
+                    v-model="hxXdForm.certificateNo"
+                    size="mini"
+                    maxlength="200"
+                    :readonly="true"
+                  ></el-input>
                 </el-form-item>
               </el-col>
 
               <el-col :span="24">
                 <el-form-item label="批准会议" size="mini" prop="entryMeeting">
-                  <el-input v-model="hxXdForm.entryMeeting" size="mini" maxlength="200" :readonly="true"></el-input>
+                  <el-input
+                    v-model="hxXdForm.entryMeeting"
+                    size="mini"
+                    maxlength="200"
+                    :readonly="true"
+                  ></el-input>
                 </el-form-item>
               </el-col>
 
@@ -283,8 +293,9 @@
               <el-col :span="24">
                 <!-- 是否同意申请 -->
                 <el-form-item label size="mini" prop="hasReadApply">
-                  <el-checkbox v-model="hxXdForm.hasReadApply" :disabled="true" ></el-checkbox>
-                  <el-button :disabled="true"
+                  <el-checkbox v-model="hxXdForm.hasReadApply" :disabled="true"></el-checkbox>
+                  <el-button
+                    :disabled="true"
                     type="text"
                     @click=" memberApplyDialogShow=true"
                   >《中国航空运输协会销售代理分会单位会员申请书》</el-button>
@@ -294,8 +305,40 @@
                 <!-- 是否已读权利和义务 -->
                 <el-form-item label size="mini" prop="hasReadRight">
                   <el-checkbox v-model="hxXdForm.hasReadRight" :disabled="true"></el-checkbox>
-                  <el-button type="text" @click=" memberRightDialogShow=true" :disabled="true">《会员的权利与义务》</el-button>
+                  <el-button
+                    type="text"
+                    @click=" memberRightDialogShow=true"
+                    :disabled="true"
+                  >《会员的权利与义务》</el-button>
                 </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="10">
+              <el-col :span="24">
+                <h5 class="dtl-title-line">附件</h5>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-card class="box-card" shadow="never" :body-style="{ minHeight: '300px' }">
+                  <el-table
+                    ref="attachTable"
+                    :data="attachTableData"
+                    border
+                    tooltip-effect="dark"
+                    style="width: 100%;margin-bottom:20px;"
+                  >
+                    <el-table-column type="selection" width="55" align="center"></el-table-column>
+                    <el-table-column prop="fileName" label="文件名" align="center"></el-table-column>
+                    <el-table-column label="下载" align="center" width="150">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="downloadFile(scope.row.id)">下载</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-card>
               </el-col>
             </el-row>
           </el-form>
@@ -423,7 +466,12 @@ import {
 } from "@/api/hxxd/member";
 import { getHxMember } from "@/api/hx/member";
 import { parseTime, strToArr } from "@/utils/index.js";
-import { getAreaTree } from "@/api/system/comm/comm";
+import {
+  getAreaTree,
+  listFile,
+  downloadFile,
+  getValidateCode
+} from "@/api/system/comm/comm";
 
 export default {
   name: "MemberDetail",
@@ -440,7 +488,7 @@ export default {
         ],
         hxStatus: [
           { value: "10", label: "生效" },
-          { value: "30", label: "作废" }
+          { value: "30", label: "已退会" }
         ],
         area: []
       },
@@ -516,7 +564,8 @@ export default {
       memberApplyDialogShow: false,
       memberRightDialogShow: false,
       // 查询面板
-      activeTabName: "hxXdMember"
+      activeTabName: "hxXdMember",
+      attachTableData: []
     };
   },
   created() {
@@ -526,34 +575,62 @@ export default {
   methods: {
     // 面板切换时触发的函数
     handleTabClick() {},
-    initForm(id) {
+    async initForm(id) {
       getAreaTree().then(response => {
         this.formOptions.area = response.data;
       });
+      var attachIds;
       //加载航协会员表
-      getHxMember(id).then(response => {
+      await getHxMember(id).then(response => {
         // 同名字段覆盖，不同名字段添加
         Object.assign(this.hxForm, response.data);
         this.hxForm.areas = strToArr(response.data.areas, ",");
-        //加载航协会员信息
-        console.log("this.hxForm.certificateNo", this.hxForm.certificateNo);
-        if (this.hxForm.certificateNo) {
-          getMemberByCertNo(this.hxForm.certificateNo).then(response => {
+      });
+      //加载航协会员信息
+      if (this.hxForm.certificateNo) {
+          await getMemberByCertNo(this.hxForm.certificateNo).then(response => {
             // 同名字段覆盖，不同名字段添加
+            attachIds = response.data.attachIds;
             Object.assign(this.hxXdForm, response.data);
             this.hxXdForm.areas = strToArr(response.data.areas, ",");
             this.hxXdForm.hasReadApply = response.data.hasReadApply == 1;
             this.hxXdForm.hasReadRight = response.data.hasReadRight == 1;
           });
         }
-      });
+      // 附件id
+      if (attachIds) {
+        var validateCode;
+        // 获取验证码
+        await getValidateCode("").then(response => {
+          if (response.data) {
+            validateCode = response.data.validateCode;
+            if (!validateCode) {
+              this.$message({
+                type: "error",
+                message: "获取验证码失败!"
+              });
+              return;
+            }
+            validateCode = this.$encruption(validateCode);
+          }
+        });
+        // 加载附件
+        await listFile(attachIds, validateCode).then(response => {
+          if (response.data) {
+            this.attachTableData = response.data;
+          }
+        });
+      }
     },
     //data中这个不能少：btns: this.$store.getters.btns['100010'],
     btnShow(menuCode) {
       //根据用户所具有的菜单项控制
-      for (var i = 0; i < this.btns.length; i++) {
-        if (menuCode === this.btns[i]) {
-          return true;
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
         }
       }
       return false;
@@ -580,6 +657,45 @@ export default {
       } else {
         this.hxXdForm.hasReadRight = false;
       }
+    },
+    async downloadFile(id) {
+      //获取验证码
+      var key;
+      await getValidateCode("").then(response => {
+        if (response.data) {
+          var validateCode = response.data.validateCode;
+          if (!validateCode) {
+            this.$message({
+              type: "error",
+              message: "获取验证码失败!"
+            });
+            return;
+          }
+          key = this.$encruption(validateCode);
+        }
+      });
+      await downloadFile(id, key).then(response => {
+        console.log(response.headers);
+        var contentDisposition = response.headers["content-disposition"];
+        var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
+        var result = patt.exec(contentDisposition);
+        var fileName = decodeURIComponent(result[1]).trim();
+        const blob = new Blob([response.data]);
+        if ("download" in document.createElement("a")) {
+          // 非IE下载
+          const elink = document.createElement("a");
+          elink.download = fileName;
+          elink.style.display = "none";
+          elink.href = URL.createObjectURL(blob);
+          document.body.appendChild(elink);
+          elink.click();
+          URL.revokeObjectURL(elink.href); // 释放URL 对象
+          document.body.removeChild(elink);
+        } else {
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName);
+        }
+      });
     }
   }
 };
@@ -607,5 +723,18 @@ export default {
   margin-top: 30px;
   padding-top: 10px;
   text-align: right;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

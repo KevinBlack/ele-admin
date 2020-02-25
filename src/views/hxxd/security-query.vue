@@ -105,10 +105,12 @@ export default {
       if (this.fdmag === '1') {
         getDictDataList('97001003',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
           this.tableData = response.data
+         this.pageTotal = response.pageTotal
         })
       } else if (this.fdmag === '2') {
         getDictDataList('97001004',this.value,this.key,true,this.pageNo,this.pageSize).then(response => {
           this.tableData = response.data
+          this.pageTotal = response.pageTotal
         })
       }
     },
@@ -143,7 +145,13 @@ export default {
           message: '请选中要操作的数据!'
         })
         return
-      } else {
+      } else if(this.selectArr.length >= 2){
+        this.$message({
+          type: 'info',
+          message: '请选择单条数据!'
+        })
+        return
+      }else {
         this.$emit('closeDalogPay', this.selectArr[0], this.fdmag, this.fdshow)
         this.selectArr = []
         this.$refs.multipleTable.clearSelection() // 清空所有选择

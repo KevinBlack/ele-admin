@@ -25,7 +25,7 @@
       :rules="rules">
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="手机号" prop="receiveUser">
+          <el-form-item label="手机号" prop="mobileNum">
             <el-input v-model="detailForm.mobileNum"  :readonly="prohibit"/>
           </el-form-item>
         </el-col>
@@ -50,8 +50,8 @@
     </el-form>
     <el-row class="btn_bottom">
       <el-col :span="12" style="text-align:right;">
-        <el-button type="primary" size="mini" @click="saveOrUpdateNote" v-if="!prohibit" >保存</el-button>
-        <el-button type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
+        <el-button v-show="btnShow('10002090106020')" type="primary" size="mini" @click="saveOrUpdateNote" v-if="!prohibit" >保存</el-button>
+        <el-button v-show="btnShow('10002090106010')" type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
       </el-col>
     </el-row>
     <el-dialog :title="showTitle" :visible.sync="isShow" width="70%">
@@ -65,21 +65,8 @@ import { saveOrUpdateNote, getNoet, saveAndSend } from "@/api/msgManage/mobileNo
 
 export default {
   data() {
-    let checkEmail = (rule, value, callback) => {
-        const emailReg = /^((([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6}\;))*(([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})))$/
-        if (!value) {
-          return callback(new Error('邮箱不能为空'))
-        }
-        setTimeout(() => {
-          if (emailReg.test(value)) {
-            callback()
-          } else {
-            callback(new Error('邮箱格式不正确'))
-          }
-        }, 100)
-      };
-
     return {
+      btns: this.$store.getters.btns['100020901060'],
       isShow: false,
       showTitle: '消息邮件-新增',
       prohibit: false,
@@ -89,7 +76,7 @@ export default {
         content:'',
       },
       rules: {
-        receiveUser: [
+        mobileNum: [
           { required: true, message: "手机号不能为空" ,trigger: "blur" },
           { pattern: /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/, message: '格式不正确', trigger: ['blur', 'change'] }
         ],
@@ -103,18 +90,38 @@ export default {
   created() {
     let id=this.$route.query.id;
     if (id) {
-      this.showTitle = "消息邮件-编辑";
+      this.showTitle = "短信通知-编辑";
       this.getNoet(id);
     } else {
-      this.showTitle = "消息邮件-新增";
+      this.showTitle = "短信通知-新增";
     }
     if(this.$route.query.readonly){
       this.rules={}
       this.prohibit=this.$route.query.readonly;
-      this.showTitle='消息邮件-查看详情';
+      this.showTitle='短信通知-查看详情';
     }
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
     getNoet(id) {
       getNoet(id).then(response => {
         this.detailForm = response.data;
@@ -132,7 +139,7 @@ export default {
                 message: "保存成功"
               });
               this.$router.push({
-                path: "/msgManage/email",query: {}
+                path: "/message-manage/sms-notice",query: {}
               });
             } else {
               //保存失败
@@ -163,7 +170,7 @@ export default {
                 message: "保存并发送成功"
               });
               this.$router.push({
-                path: "/msgManage/email",query: {}
+                path: "/message-manage/sms-notice",query: {}
               });
             } else {
               //保存失败

@@ -64,6 +64,12 @@ const hxxdRouter = {
       meta: { title: '企业注册信息录入' }
     },
     {
+      path: 'company-register-audit',
+      component: () => import('@/views/agent/company-register-edit'),
+      name: 'company-register-audit',
+      meta: { title: '企业注册审核' }
+    },
+    {
       path: 'sys-message-query',
       component: () => import('@/views/agent/sys-message-query'),
       name: 'SysMessageQuery',

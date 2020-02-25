@@ -55,6 +55,14 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+              <!-- 弹框区 -->
+            <el-dialog :visible.sync="dialog.isShow" :title="dialog.title">
+              <leaguer
+              :fdmsg="callInfoParam.sendScope" 
+              :isShow="dialog.isShow" 
+              @callBack="dialogCallBack" 
+              />
+            </el-dialog>
           </el-col>
           <el-col :span="12">
             <el-form-item label="重复规则" prop="repetRule">
@@ -77,15 +85,12 @@
           </el-col>
         </el-row>
       </el-form>
-       <!-- 弹框区 -->
-      <el-dialog :visible.sync="dialog.isShow" :title="dialog.title">
-        <Leaguer :isShow="dialog.isShow" @callBack="dialogCallBack" />
-      </el-dialog>
+     
       <!-- 按钮区 -->
       <el-row :gutter="10">
         <el-col :span="24" v-if="isButon" class="btn_bottom">
-          <el-button type="primary" size="mini" v-if="isSave" @click="save">保存</el-button>
-          <el-button type="primary" size="mini" v-if="isSend" @click="save">发送信息</el-button>
+          <el-button type="primary" size="mini" v-show="btnShow('100021011010')" v-if="isSave" @click="save">保存</el-button>
+          <el-button type="primary" size="mini" v-if="isSend" v-show="btnShow('100021011020')" @click="sendCallInfo">发送信息</el-button>
           <!-- <el-button type="primary" size="mini" @click="goback" v-if="this.type==this.show">返回查询列表</el-button> -->
         </el-col>
       </el-row>
@@ -94,12 +99,15 @@
 </template>
 
 <script>
-import { getCallInfoById, callInfoSaveOrUpdate } from "@/api/hxxd/agent"
+import { getCallInfoById, callInfoSaveOrUpdate, sendCallInfo } from "@/api/hxxd/agent"
 import Leaguer from "./leaguer"
+import { stringify } from 'querystring'
 export default {
+  name: "Call",
   components: { Leaguer },
   data() {
     return {
+      btns: this.$store.getters.btns['1000210110'],
       dialog: {
         isShow: false,
         title: "选择会员"
@@ -112,6 +120,7 @@ export default {
       disabled: true,
       title: '',
       callInfoParam: {
+        id: 0,
         messageType: "",
         sendTime: "",
         content: "",
@@ -128,10 +137,6 @@ export default {
         {
           value: "1",
           label: "欠费"
-        },
-        {
-          value: "2",
-          label: "个别会员"
         }
       ],
       messageOptions: [
@@ -161,6 +166,7 @@ export default {
     // 参数传递 router.push({ path: 'register', query: { plan: 'private' }})
     // 参数接受 let id = this.$route.query.jId
     let id = this.$route.query.id
+    this.callInfoParam.id = this.$route.query.id
     let type = this.$route.query.type
     if (type == "update") {
       this.$route.meta.title = this.title = '系催缴信息详情修改'
@@ -180,13 +186,24 @@ export default {
     }
   },
   methods: {
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
      showBox() {
       this.dialog.isShow = true
     },
     dialogCallBack(command, data) {
       this.dialog.isShow = false
       if (command == "ok") {
-        debugger
         data.forEach(i => {
           this.callInfoParam.member =
             this.callInfoParam.member + i.name + "-" + i.code + ","
@@ -205,7 +222,6 @@ export default {
       // if (valid) {
       //数据校验成功
       callInfoSaveOrUpdate(this.callInfoParam).then(response => {
-        debugger
         var msg = response.status == 200 ? "保存成功" : "保存失败"
         if (response.status == 200) {
           //保存成功
@@ -219,7 +235,6 @@ export default {
             type: "success",
             error: msg
           })
-          console.log(response.message)
         }
       })
       // } else {
@@ -230,6 +245,27 @@ export default {
       //   })
       // }
       // })
+    },
+    //系统信息保存
+    sendCallInfo() {
+      const i = stringify(this.callInfoParam.id)
+      console.log("fklajdflkjalsdjfl")
+      sendCallInfo(i).then(response => {
+        var msg = response.status == 200 ? "发送成功" : "发送失败"
+        if (response.status == 200) {
+          //保存成功
+          this.$message({
+            type: "success",
+            message: msg
+          })
+        } else {
+          //保存失败
+          this.$message({
+            type: "success",
+            error: msg
+          })
+        }
+      })
     },
     //系统消息查询
     getCallInfoById(id) {

@@ -27,11 +27,11 @@
         <el-form-item label="收款账户" size="mini" prop="paymentAccount">
           <el-select v-model="formQuery.paymentAccount" filterable placeholder="请选择" size="mini">
             <el-option
-              v-for="item in accountOptions"
-              :key="item.value"
-              :label="item.label"
+              v-for="item in dict.paymentAccount"
               style="width:100%"
-              :value="item.value"
+              :key="item.key"
+              :label="item.value"
+              :value="item.key"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -40,11 +40,11 @@
         <el-form-item label="记录状态" size="mini" prop="status">
           <el-select v-model="formQuery.status" filterable placeholder="请选择" size="mini">
             <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
+              v-for="item in dict.status"
               style="width:100%"
-              :value="item.value"
+              :key="item.key"
+              :label="item.value"
+              :value="item.key"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -74,9 +74,9 @@
   <el-row class="area_bordes">
     <el-col :span="24">
       <el-form :inline="true" label-width="80px">
-        <el-button type="primary" icon="el-icon-check" size="mini" @click="handleImport">收款导入</el-button>
-        <el-button type="primary" icon="el-icon-delete" size="mini" @click="deleteFinancialData">删除</el-button>
-        <el-button type="primary" icon="el-icon-paperclip" size="mini" @click="dataReferenceView">引用查看</el-button>
+        <el-button v-show="btnShow('100021204010')" v-if="btnDisplay('10')" type="primary" icon="el-icon-check" size="mini" @click="handleImport">收款导入</el-button>
+        <el-button v-show="btnShow('100021204020')" v-if="btnDisplay('10')" type="primary" icon="el-icon-delete" size="mini" @click="deleteFinancialData">删除</el-button>
+        <el-button v-show="btnShow('100021204030')" v-if="btnDisplay('10')" type="primary" icon="el-icon-paperclip" size="mini" @click="dataReferenceView">引用查看</el-button>
       </el-form>
     </el-col>
   </el-row>
@@ -103,7 +103,7 @@
     <el-table-column prop="status" width="100" :formatter="statusFmt" label="记录状态" align="center" />
   </el-table>
   <!-- part4 -->
-  <el-dialog title="收款导入" :visible.sync="isShow">
+  <el-dialog title="收款导入" :visible.sync="isShow" @close="closeDiaLog">
     <h5 class="count-intruds">说明：请按照“导入说明”里面的步骤进行操作！</h5>
     <table class="count-import">
       <tr>
@@ -137,7 +137,8 @@
       </tr>
     </table>
     <div class="count-submit">
-      <el-button type="primary" icon="el-icon-check" size="mini" @click="submitUpload">收款导入确认</el-button>
+      <el-button style="margin: 0 0 0 508px;" type="primary" icon="el-icon-check" size="mini" @click="submitUpload">导入确认</el-button>
+      <el-button type="primary" icon="el-icon-close" size="mini" @click="closeDiaLog">关 闭</el-button>
     </div>
   </el-dialog>
   <!-- part4 -->
@@ -154,74 +155,171 @@
       <el-table-column prop="documentNo" label="单据编号" align="center" />
       <el-table-column prop="documentName" label="单据名称" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="createTime" label="核销时间" align="center" />
-      <el-table-column prop="paymentAmount" label="核销金额" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="currentPayment" label="核销金额" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="remarks" label="摘要" align="center" :show-overflow-tooltip="true" />
       <el-table-column prop="oppositeAccountName" label="查看" align="center" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
+        <template>
           <el-button type="text" @click="showDialog">查 看</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="详情查看" :visible.sync="dialogShow" append-to-body>
-      <el-form ref="addForm" label-width="100px" size="mini">
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="缴费会员" prop="memberName">
-              <el-input v-model="addForm.memberName" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="会员ID" prop="memberId">
-              <el-input v-model="addForm.memberId" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="缴费年度" prop="paymentYear">
-              <el-input v-model="addForm.paymentYear" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="会员类别" prop="memberTypeCode">
-              <el-input v-model="addForm.memberTypeCode" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="会员等级" prop="memberGrade">
-              <el-input v-model="addForm.memberGrade" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="等级金额" prop="contributionStandard">
-              <el-input v-model="addForm.contributionStandard" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="折扣" prop="discount">
-              <el-input v-model="addForm.discount" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="等级应缴金额" prop="amountDue">
-              <el-input v-model="addForm.amountDue" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="已缴金额" prop="amountPaid">
-              <el-input v-model="addForm.amountPaid" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="需缴金额" prop="amountRequired">
-              <el-input v-model="addForm.amountRequired" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="实缴金额" prop="paymentAmount">
-              <el-input v-model="addForm.paymentAmount" style="width: 100%;" :readonly="true" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+    <el-dialog title="详情查看" :visible.sync="dialogShow" style="width: 160%;margin-left: -30%;" append-to-body>
+       <!-- part1 -->
+    <el-row :gutter="10">
+      <el-col :span="24">
+        <h5 class="dtl-title-line">会费登记单据</h5>
+      </el-col>
+    </el-row>
+    <el-form ref="addForm" label-width="100px" size="mini">
+      <el-row>
+        <el-col :span="6">
+          <el-form-item label="缴费会员" prop="memberName">
+            <el-input v-model="addForm.memberName" style="width: 100%;">
+            </el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="6">
+          <el-form-item label="会员ID" prop="memberId">
+            <el-input
+              v-model="addForm.memberId"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="缴费年度" prop="paymentYear">
+            <el-select
+              v-model="addForm.paymentYear"
+              placeholder="请选择"
+              style="width: 100%;"
+            >
+              <el-option
+                v-for="item in yearOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="状态" size="mini" prop="spState">
+            <el-select
+              v-model="addForm.spState"
+              size="mini"
+              style="width:100%"
+              :disabled="true"
+            >
+              <el-option
+                v-for="item in mainFormOptions.status"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="会员类别" prop="memberTypeCode">
+            <el-select
+              v-model="addForm.memberTypeCode"
+              placeholder="请选择"
+              style="width: 100%;"
+              @change="selectGet"
+            >
+              <el-option
+                v-for="item in dict.memberTypeCode"
+                :key="item.key"
+                :label="item.value"
+                :value="item.key"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="会员等级" prop="memberGrade">
+            <el-input
+              v-model="addForm.memberGrade"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="等级金额" prop="contributionStandard">
+            <el-input
+              v-model="addForm.contributionStandard"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="折扣" prop="discount">
+            <el-input
+              v-model="addForm.discount"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="等级应缴金额" prop="amountDue">
+            <el-input
+              v-model="addForm.amountDue"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="已缴金额" prop="amountPaid">
+            <el-input
+              v-model="addForm.amountPaid"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="需缴金额" prop="amountRequired">
+            <el-input
+              v-model="addForm.amountRequired"
+              style="width: 100%;"
+              :readonly="true"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="实缴金额" prop="paymentAmount">
+            <el-input
+              v-model="addForm.paymentAmount"
+              style="width: 100%;"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+    <!-- part1 end -->
+    <!-- part3开始 -->
+    <el-row :gutter="10">
+      <el-col :span="24">
+        <h5 class="dtl-title-line">缴费信息</h5>
+      </el-col>
+    </el-row>
+    <el-table :data="feeDatas"  border style="width: 100%;" :header-row-style="headRowStyle" :row-style="rowStyle"  :header-cell-style="getCellStyle" height="250" >
+      <el-table-column type="selection" width="55"  align="center" />
+      <el-table-column prop="saleDate" label="交易时间" align="center" :show-overflow-tooltip="true"/>
+      <el-table-column prop="saleNum" label="交易流水号" align="center" :show-overflow-tooltip="true"/>
+      <el-table-column prop="creditAmount" label="贷方发生额" align="center" />
+      <el-table-column prop="remarks" label="摘要" align="center" />
+      <el-table-column prop="payerAccount" label="对方账号" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="oppositeAccountName" label="对方账号名称" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="balance" label="余额" align="center" :show-overflow-tooltip="true" />
+      <el-table-column prop="currentPayment" label="本次缴费金额" align="center" :show-overflow-tooltip="true" />
+    </el-table>
+   <!-- part3结束 -->
     </el-dialog>
   </el-dialog>
   <!-- part5 -->
@@ -242,12 +340,25 @@
 </template>
 <script>
 import { selectFinancialManageByParam, uploadTemplate, downloadTemplate, deleteFinancialData, selectLog, selectReference, getAdminHfInfoById } from '@/api/hxxd/financialManage'
+import { getFeeInfoByCode,getMemberPaysByAdminIdAndPipLine } from "@/api/hxxd/membership-fee-mange";
 import { downloadFile } from "@/api/system/comm/comm";
+import { getDictDataLists } from "@/api/system/comm/comm";
 import { parseTime } from '@/utils/index.js';
 import { getToken } from '@/utils/auth';
 export default {
   data() {
     return {
+      btns: this.$store.getters.btns['1000212040'],
+      //表单对应下拉字典
+      mainFormOptions: {
+        status: [
+          { value: "10", label: "未提交" },
+          { value: "25", label: "审核驳回" },
+          { value: "20", label: "待审核" },
+          { value: "30", label: "审核通过" },
+          { value: "00", label: "制单中" }
+        ]
+      },
       isShow: false,
       reaportShow: false,
       dialogShow: false,
@@ -281,6 +392,11 @@ export default {
         tradeEndTime: '',
         timeValue: []
       },
+      newForm: {
+        id: '',
+        status: '',
+        saleNum: '',
+      },
       addForm: {
         id: "",
         memberName: "",
@@ -295,11 +411,36 @@ export default {
         memberType: "",
         contributionStandard: "",
         amountRequired: "",
-        amountPaid: "0"
+        amountPaid: "0",
+        spState: "",
+      },
+       yearOptions: [
+        {
+          value: "2019",
+          label: "2019"
+        },
+        {
+          value: "2020",
+          label: "2020"
+        },
+        {
+          value: "2021",
+          label: "2021"
+        },
+        {
+          value: "2022",
+          label: "2022"
+        }
+      ],
+      dict: {
+        memberTypeCode: [],
+        paymentAccount: [],
+        status: []
       },
       pageTotal: 0,
       tableLoading: false,
       tableData: [],
+      feeDatas: [],
       tableQuote: [],
       tableMultiSelection: [],
       //文件上传
@@ -307,31 +448,7 @@ export default {
       fileList: [],
       uploadHeaders: {
         'X-Token': getToken()
-      },
-      statusOptions: [
-        {
-          value: '0',
-          label: '未核销'
-        },
-        {
-          value: '1',
-          label: '核销中'
-        },
-        {
-          value: 'STATUS_YSD',
-          label: '已核销'
-        }
-      ],
-      accountOptions: [
-        {
-          value: '0118014210001347',
-          label: '0118014210001347'
-        },
-        {
-          value: '0115014210001671',
-          label: '0115014210001671'
-        }
-      ]
+      }
     }
   },
   created() {
@@ -339,27 +456,134 @@ export default {
     // const start = new Date()
     // start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
     // this.formQuery.timeValue = [parseTime(start), parseTime(end)]
+    //加载字典
+    this.beforeLoading();
+
     this.formQuery.tradeStartTime = this.formQuery.timeValue[0]
     this.formQuery.tradeEndTime = this.formQuery.timeValue[1]
     this.getTableList()
   },
   methods: {
+    guid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+    },
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
+    headRowStyle(row, rowIndex) {
+      return "height:15px";
+    },
+    rowStyle(row, rowIndex) {
+      return "height:15pxfont-size:13pxcolor:#333font-weight:normal ";
+    },
+    beforeLoading() {
+      getDictDataLists("97001009").then(response => {
+        this.dict.memberTypeCode = response.data.jq97001009;
+      });
+      getDictDataLists("97001011").then(response => {
+        this.dict.paymentAccount = response.data.jq97001011;
+      });
+      getDictDataLists("97001012").then(response => {
+        this.dict.status = response.data.jq97001012;
+      });
+    },
+    selectGet(key) {
+      this.getFeeInfoByCode(key);
+    },
+    getFeeInfoByCode(code) {
+      getFeeInfoByCode(code).then(response => {
+        this.addForm.memberGrade = response.data.memberDj;
+        this.addForm.discount = response.data.memberZk;
+        this.addForm.contributionStandard = response.data.memberFeeBz;
+        this.addForm.amountDue = response.data.amountPay;
+        this.addForm.paymentAmount = response.data.actualPay;
+      });
+    },
     dataReferenceView(){
+      if (!this.tableMultiSelection) {
+        this.$message({
+          type: 'info',
+          message: '请选中要查看的数据!'
+        })
+        return
+      }
+      const selectRows = this.tableMultiSelection
+      if (selectRows.length === 0) {
+        this.$message({
+          type: 'info',
+          message: '请选中要查看的数据!'
+        })
+        return
+      } else if (selectRows.length >= 2) {
+        this.$message({
+          type: 'info',
+          message: '只能选择单条!'
+        })
+        return
+      }
       this.tableLoading = true
       this.reaportShow = true
-      const tradePipelineNum = this.waterCode
-      selectReference(tradePipelineNum).then(response => {
+      const pipeLine = selectRows[0].tradePipelineNum
+      selectReference(pipeLine).then(response => {
         this.tableQuote = response.data
         this.addId = response.data[0].adminHfInfoId
         this.tableLoading = false
       })
     },
     showDialog() {
-      this.dialogShow = true
       const id = this.addId
+      if(id){
+        const saleNum = this.waterCode
       getAdminHfInfoById(id).then(response => {
-        this.addForm = response.data
+        if(response.status==200){
+          this.addForm  = response.data
+          this.dialogShow = true
+        }else {
+          this.$message({
+          type: 'info',
+          message: '当前没有单据被使用!'
+        })
+        }
       })
+      }else{
+        this.dialogShow = false
+        this.$message({
+          type: 'info',
+          message: '当前没有单据被使用!'
+        })
+      }
+      
+      this.newForm.id=id;
+      this.newForm.saleNum=saleNum
+      getMemberPaysByAdminIdAndPipLine(this.newForm).then(response => {
+        this.feeDatas = response.data
+      })
+    },
+    closeDiaLog(){
+      this.dialogShow = false
+      this.isShow = false
+      this.logMsg=''
+      this.getTableList()
     },
     resetForm(formName) {
       this.$nextTick(() => {
@@ -381,11 +605,10 @@ export default {
     },
     selectionChange(val) {
       this.tableMultiSelection = val
-      this.waterCode = val[0].tradePipelineNum
+      
     },
     getTableList() {
       this.tableLoading = true
-      // console.log(this.formQuery)
       this.formQuery.tradeStartTime = this.formQuery.timeValue[0]
       this.formQuery.tradeEndTime = this.formQuery.timeValue[1]
       selectFinancialManageByParam(this.formQuery).then(response => {
@@ -397,26 +620,12 @@ export default {
     handleImport() {
       this.isShow = true
     },
-    // handleDownload() {
-    //   downloadTemplate(this.downloadQuery).then(res => this.downloads(res.data))
-    //   // window.location.href = "http://localhost:9527/zuul/hxxd/hxXdSysFile/anonw/fileDownload?fileCatalog="+this.downloadQuery.fileCatalog+"&belongId="+this.downloadQuery.belongId
-    // },
     handleDownload() {
-      // console.log(this.downloadQuery)
-      // const aa=this.downloadQuery.belongId
-      // const bb=this.downloadQuery.fileCatalog
-      // console.log("aa"+aa)
-      // console.log("bb"+bb)
       downloadTemplate(this.downloadQuery.belongId,this.downloadQuery.fileCatalog).then(response => {
-        // console.log(response.headers)
         var contentDisposition = response.headers["content-disposition"]; //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
-        console.log('contentDisposition',contentDisposition)
         var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*")
         var result = patt.exec(contentDisposition)
-        // console.log(contentDisposition)
         var fileName = decodeURIComponent(result[1]).trim()
-        // var fileName="20190906~航协系统项目开发蓝图.xlsx"
-        // console.log(fileName);
         const blob = new Blob([response.data])
         if ("download" in document.createElement("a")) {
           // 非IE下载
@@ -424,7 +633,6 @@ export default {
           elink.download = fileName
           elink.style.display = "none"
           elink.href = URL.createObjectURL(blob)
-          console.log(elink.href)
           document.body.appendChild(elink)
           elink.click()
           URL.revokeObjectURL(elink.href) // 释放URL 对象
@@ -451,7 +659,6 @@ export default {
     },
     // 文件上传相关方法
     handlePreview(file) {
-      console.log(file);
     },
     handleUpload(file) {
       this.formData=new FormData()
@@ -460,38 +667,37 @@ export default {
     },
     submitUpload() {
       this.$refs.upload.submit();
+      // this.formData.append('key',this.guid())
       this.formData.append('key','333')
       uploadTemplate(this.formData).then(res => {
-        this.handleCheckLog()
+        if(res.status === 200){
+          this.handleCheckLog()
+        }
       }).catch(error => {
-        console.log(error);
       })
     },
     //日志查询方法
     handleCheckLog() {
       const selectData = new FormData
+      // selectData.append('key', this.guid())
       selectData.append('key', '333')
       var beginSelect = setInterval(() => {
         selectLog(selectData).then(res => {
           const resData = res.data
-          console.log(resData)
           for(var i in resData){
             if (resData[i].code === 'OWN_SUCCESS') {
               this.logMsg += `<li>${ resData[i].msg }</li>`
             } else if (resData[i].code === 'OWN_FAIL') {
               this.logMsg += `<li>${ resData[i].msg }</li>`
             } else if (resData[i].code === 'ALL_SUCCESS') {
-              console.log(1)
               // handleBeforeClose()
               clearInterval(beginSelect)
             } else if (resData[i].code === 'ALL_FAIL') {
-              console.log(2)
               // handleBeforeClose()
               clearInterval(beginSelect)
             }
           }
         }).catch(error => {
-          console.log(error);
         })
       }, 2000)
     },

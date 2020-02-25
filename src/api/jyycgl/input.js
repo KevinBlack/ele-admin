@@ -39,3 +39,11 @@ export function moveData(data) {
     data
   })
 }
+
+export function pubData(data) {
+  return request({
+    url: '/hxxd/hxXdAbnormalOperation/pubData',
+    method: 'post',
+    data
+  })
+}

@@ -52,8 +52,8 @@
     </el-form>
     <el-row class="btn_bottom">
       <el-col :span="12" style="text-align:right;">
-        <el-button type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存</el-button>
-        <el-button type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
+        <el-button v-show="btnShow('10002090205010')" type="primary" size="mini" @click="saveOrUpdateEmail" v-if="!prohibit" >保存</el-button>
+        <el-button v-show="btnShow('10002090205020')" type="primary" size="mini" @click="saveAndSend" v-if="!prohibit" >保存并发送</el-button>
       </el-col>
     </el-row>
     <el-dialog :title="showTitle" :visible.sync="isShow" width="70%">
@@ -82,6 +82,7 @@ export default {
       };
 
     return {
+      btns: this.$store.getters.btns['100020902050'],
       isShow: false,
       showTitle: '消息邮件-新增',
       prohibit: false,
@@ -121,6 +122,26 @@ export default {
     }
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
     getEmail(id) {
       getEmail(id).then(response => {
         this.detailForm = response.data;
@@ -138,7 +159,7 @@ export default {
                 message: "保存成功"
               });
               this.$router.push({
-                path: "/msgManage/email",query: {}
+                path: "/message-manage/mail-notice",query: {}
               });
             } else {
               //保存失败
@@ -169,7 +190,7 @@ export default {
                 message: "保存并发送成功"
               });
               this.$router.push({
-                path: "/msgManage/email",query: {}
+                path: "/message-manage/mail-notice",query: {}
               });
             } else {
               //保存失败

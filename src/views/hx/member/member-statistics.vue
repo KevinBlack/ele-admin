@@ -1,10 +1,11 @@
 <template>
   <el-card class="detailsContainer">
     <!-- part1 -->
-    <el-form ref="ruleForm" label-width="100px" size="mini">
-      <el-row>
-        <el-col :span="5">
-          <el-form-item label="年份" prop="code">
+
+    <el-form ref="ruleForm" :model="queryForm" label-width="100px" size="mini">
+      <el-row :gutter="20" class="area_border">
+        <el-col :span="6">
+          <el-form-item label="年份" prop="year">
             <el-date-picker
               v-model="queryForm.year"
               type="year"
@@ -16,11 +17,12 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
+        <el-col :span="6" style="text-align: left;padding-left: 1.3em;">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="formSearch">查询</el-button>
         </el-col>
       </el-row>
     </el-form>
+
     <!-- part3 -->
     <el-table
       ref="multipleTable"
@@ -45,15 +47,17 @@
       <el-table-column prop="october" label="十月" width="90" align="center"></el-table-column>
       <el-table-column prop="november" label="十一月" width="90" align="center"></el-table-column>
       <el-table-column prop="december" label="十二月" width="90" align="center"></el-table-column>
-      <el-table-column prop="summary" label="汇总"  align="center"></el-table-column>
+      <el-table-column prop="summary" label="汇总" align="center"></el-table-column>
     </el-table>
 
     <!-- 引入省份表格开始 -->
-    <el-row>
+    <el-row :gutter="20" class="area_border">
       <el-col :span="24">
         <!-- 引入柱状图 -->
         <bar-chart :chart-data="barChartData" title="会员数量地区柱状图" />
       </el-col>
+    </el-row>
+    <el-row :gutter="20" class="area_border">
       <el-col :span="24">
         <!-- 引入饼状图 -->
         <line-chart :chart-data="lineChartData" title="会员数量地区线状图" />

@@ -1,4 +1,4 @@
-  <template>
+<template>
   <el-card class="detailsContainer">
     <!-- part1 -->
     <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
@@ -8,7 +8,7 @@
             <el-date-picker
               v-model="createDate"
               type="datetimerange"
-              value-format= "yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
@@ -26,13 +26,21 @@
         </el-col>
 
         <el-col :span="6" style="text-align: center;">
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            v-show="btnShow('1000210030')"
+            size="mini"
+            @click="getTableList"
+            >查询</el-button
+          >
           <el-button
             type="primary"
             icon="el-icon-refresh-right"
             @click="resetForm('formQuery')"
             size="mini"
-          >重置</el-button>
+            >重置</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -40,40 +48,47 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">新 增</el-radio-button>
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('1000210040')"
+            @click.native.prevent="handleAdd"
+            >新 增</el-radio-button
+          >
+          <el-radio-button
+            type="primary"
+            class="btn_line"
+            v-show="btnShow('1000210080')"
             @click.native.prevent="handleEdit('update')"
-          >修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="callInfoDeleteBatch">删 除</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleEdit('show')">查 看</el-radio-button>
+            >修 改</el-radio-button
+          >
+          <el-radio-button
+            type="primary"
+            class="btn_line"
+            v-show="btnShow('1000210050')"
+            @click.native.prevent="callInfoDeleteBatch"
+            >删 除</el-radio-button
+          >
+          <el-radio-button
+            type="primary"
+            class="btn_line"
+            v-show="btnShow('1000210060')"
+            @click.native.prevent="handleEdit('show')"
+            >查 看</el-radio-button
+          >
         </el-radio-group>
         <el-radio-group size="mini" style="margin-left: 20px;">
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('1000210070')"
             @click.native.prevent="handleEdit('send')"
-          >催缴消息发送</el-radio-button>
+            >催缴消息发送</el-radio-button
+          >
         </el-radio-group>
       </el-col>
-      <!-- <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-        <span>请确认是否删除</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-        </span>
-      </el-dialog>-->
     </el-row>
     <!-- part3 -->
-    <el-row :gutter="10">
-      <el-col :span="24">
-        <div class="dtl-info-line">
-          已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
-        </div>
-      </el-col>
-    </el-row>
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -86,12 +101,40 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
-      <el-table-column prop="sendTime" label="日期" width="250" align="center"></el-table-column>
-      <el-table-column prop="content" label="消息正文" width="250" align="center"></el-table-column>
-      <el-table-column prop="sendScope" label="发送范围" align="center"></el-table-column>
-      <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
-      <el-table-column prop="repetRule" label="重复规则" align="left" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column
+        type="index"
+        width="55"
+        label="序号"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="sendTime"
+        label="日期"
+        width="250"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="content"
+        label="消息正文"
+        width="250"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="sendScope"
+        label="发送范围"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="remarks"
+        label="备注"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="repetRule"
+        label="重复规则"
+        align="left"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
     </el-table>
 
     <!-- 分页 -->
@@ -115,9 +158,11 @@
 import { getCallInfoList, callInfoDeleteBatch } from "@/api/hxxd/agent";
 import { parseTime } from "@/utils/index.js";
 export default {
-  name: 'CallInfoManage',
+  name: "CallInfoManage",
   data() {
     return {
+      //获取有权限的按钮
+      btns: this.$store.getters.btns["1000210020"],
       param: {
         ids: []
       },
@@ -136,7 +181,7 @@ export default {
         pageNo: 1,
         pageSize: 5,
         orderBy: ""
-      },
+      }
     };
   },
   created() {
@@ -150,11 +195,23 @@ export default {
     // }
   },
   methods: {
+     btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
+        return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal";
       } else {
-        return ''
+        return "";
       }
     },
     handleAdd() {
@@ -192,7 +249,7 @@ export default {
         });
       } else {
         this.multipleSelection.forEach(i => {
-          ids=ids + i.id+",";
+          ids = ids + i.id + ",";
         });
         //批量删除
         this.param.ids = ids;
@@ -217,9 +274,8 @@ export default {
     },
     getTableList() {
       this.tableLoading = true;
-      debugger;
-      this.formQuery.beginTime =  this.createDate[0];
-      this.formQuery.endTime =  this.createDate[1];
+      this.formQuery.beginTime = this.createDate[0];
+      this.formQuery.endTime = this.createDate[1];
       getCallInfoList(this.formQuery).then(response => {
         this.tableData = response.data;
         this.pageTotal = response.page.total;
@@ -233,18 +289,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      if (val.length > 1) {
-        this.$message({
-          message: "只能选择单条",
-          type: "warning"
-        });
-      }
-      if (val.length !== 0) {
-        this.added = val.length;
-        this.sum = this.added;
-      } else if (val.length === 0) {
-        this.sum -= this.added;
-      }
     },
     toggleSelection(rows) {
       if (rows) {
@@ -259,5 +303,5 @@ export default {
 };
 </script>
 <style>
-@import '~@/styles/hxxd.scss';
+@import "~@/styles/hxxd.scss";
 </style>

@@ -116,3 +116,13 @@ export function statisticalList(data) {
     data
   })
 }
+/**
+ * 按会费登记单id和流水号查询会费缴纳信息
+ */
+export function getMemberPaysByAdminIdAndPipLine(data) {
+  return request({
+    url: '/hxxd/memberPay/getMemberPaysByAdminIdAndPipLine',
+    method: 'post',
+    data
+  })
+}

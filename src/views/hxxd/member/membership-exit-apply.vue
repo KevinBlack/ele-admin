@@ -5,17 +5,22 @@
       <!-- label-width="65px" -->
       <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
         <el-row :gutter="20" class="area_border">
-          <el-col :span="5">
+          <el-col :span="6">
+            <el-form-item label="申请编号" size="mini" prop="code">
+              <el-input v-model="formQuery.code" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="会员证书编号" size="mini" prop="memberCertNo">
               <el-input v-model="formQuery.memberCertNo" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="会员名称" size="mini" prop="memberName">
               <el-input v-model="formQuery.memberName" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="退会原因类型" size="mini" prop="exitType">
               <el-select
                 v-model="formQuery.exitType"
@@ -36,12 +41,7 @@
           </el-col>
           <el-col :span="24" style="text-align: center;margin: 10px 0;">
             <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
-            <el-button
-              type="primary"
-              icon="el-icon-refresh-right"
-              size="mini"
-              @click="resetForm('formQuery')"
-            >重置</el-button>
+            <el-button icon="el-icon-refresh-right" size="mini" @click="resetForm('formQuery')">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -84,30 +84,31 @@
           style="width: 100%;margin-bottom:20px;"
           @selection-change="selectionChange"
         >
-          <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column prop="code" label="申请编号" width="250" align="center"></el-table-column>
-          <el-table-column prop="memberCertNo" label="会员证书编号" width="250" align="center"></el-table-column>
-          <el-table-column prop="memberName" label="会员名称" width="150" align="center"></el-table-column>
-          <el-table-column
-            align="center"
-            prop="status"
-            width="150"
-            :formatter="statusFmt"
-            label="状态"
-          ></el-table-column>
-          <el-table-column prop="createDate" label="制单时间" width="200" align="center"></el-table-column>
+          <el-table-column type="selection"  align="center"></el-table-column>
+          <el-table-column prop="code" label="申请编号"  align="center"></el-table-column>
+          <el-table-column prop="memberCertNo" label="会员证书编号"  align="center"></el-table-column>
+          <el-table-column prop="memberName" label="会员名称"  align="center"></el-table-column>
+          <el-table-column prop="createDate" label="制单时间"  align="center"></el-table-column>
           <el-table-column
             prop="exitType"
             label="退会原因类型"
-            width="150"
+            width="120"
             align="center"
             :formatter="exitTypeFmt"
           ></el-table-column>
           <el-table-column
             prop="exitReason"
             label="退会原因"
-            align="left"
+            align="center"
+            width="100"
             :show-overflow-tooltip="true"
+          ></el-table-column>
+           <el-table-column
+            align="center"
+            prop="status"
+            width="80"
+            :formatter="statusFmt"
+            label="状态"
           ></el-table-column>
         </el-table>
         <el-col class="area_bordes">
@@ -145,13 +146,14 @@ import { getDictName } from "@/utils/index.js";
 import SysProcessLogDialog from "@/views/comm/sys-process-log-dialog";
 
 export default {
-  name: "MembershipExitApply",
+  // name: "MembershipExitApply",
   components: { SysProcessLogDialog },
   data() {
     return {
       downloadLoading: false,
       pageTotal: 0,
       formQuery: {
+        code: "",
         memberCertNo: "",
         memberName: "",
         exitType: "",
@@ -286,10 +288,7 @@ export default {
         if (row.status != "10" && row.status != "15") {
           this.$message({
             type: "error",
-            message:
-              "申请编号：" +
-              row.code +
-              "状态非未提交或审核驳回，不能进行删除!"
+            message: "已审核数据不能删除"
           });
           return;
         }

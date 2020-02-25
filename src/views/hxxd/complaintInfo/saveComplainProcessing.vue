@@ -76,6 +76,18 @@
               <el-input v-model.number="detailForm.contactTel" size="mini"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="投诉分类" size="mini" prop="complaintClassification">
+              <el-select v-model="detailForm.complaintClassification" filterable placeholder="请选择" style="width: 100%;" size="mini">
+                  <el-option
+                    v-for="item in businessOptions"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key"
+                  />
+                </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item label="处理内容" size="mini" prop="processingResults">
               <el-input
@@ -121,13 +133,14 @@ import { parseTime } from "@/utils/index.js"
 import { parse } from "path"
 import { getToken } from '@/utils/auth';
 import { isvalidPhone } from '@/utils/validate';
+import { getDictDataLists, getDictDataList } from "@/api/system/comm/comm";
 //电话号码校验
 var validPhone = (rule, value, callback) => {
   if (!value) {
     console.log(validPhone)
     callback(new Error('请输入电话号码'));
   } else if (!isvalidPhone(value)) {
-    callback(new Error('请输入正确的11位手机号码'));
+    callback(new Error('请输入正确的手机号码'));
   } else {
     callback();
   }
@@ -143,14 +156,16 @@ export default {
         contactTel: '',
         processingResults: '',
         remarks: '',
-        complaintId: ''
+        complaintId: '',
+        complaintClassification: ""
       },
+      businessOptions: [],
       formQuery: {
         complaintTheme: "",
         complaintsContents: "",
         complainant: "",
         contractInformation: "",
-        contractEmail: "",
+        contractEmail: ""
       },
       formData: new FormData(),
       rules: {
@@ -158,7 +173,8 @@ export default {
         contactMail: [{ required: true, message: '不能为空', trigger: 'blur' },{ type: 'email', message: '请输入正确的邮箱', trigger: ['blur', 'change'] }],
         contactTel: [{ required: true, validator: validPhone, trigger: "blur" }],
         processingResults: [{ required: true, message: '处理结果不能为空', trigger: 'blur' }],
-        processingTime: [{ required: true, message: '处理时间不能为空', trigger: 'blur' }]
+        processingTime: [{ required: true, message: '处理时间不能为空', trigger: 'blur' }],
+        complaintClassification: [{ required: true, message: '投诉分类不能为空', trigger: 'blur' }],
       },
       fileList: [],
       uploadHeaders: {
@@ -174,8 +190,15 @@ export default {
     if (id) {
       this.getMessageById(id)
     }
+    //加载字典
+    this.beforeLoading();
   },
   methods: {
+    beforeLoading() {
+      getDictDataLists("97001017").then(response => {
+        this.businessOptions = response.data.jq97001017;
+      });
+    },
     //系统消息查询
     getMessageById(id) {
       var id = id;
@@ -195,6 +218,14 @@ export default {
     },
     // 文件上传相关方法end
     saveComplainProcessing() {
+       this.$refs['detailForm'].validate(valid => {
+        if (!valid) {
+          this.$message({
+            type: 'failure',
+            message: '请按照要求填写相关内容 !'
+          })
+          return false
+        }
       const dataDetail = this.detailForm
       for (const key in dataDetail) {
         this.formData.append(key, dataDetail[key])
@@ -203,11 +234,17 @@ export default {
 
       this.$refs.upload.submit(); // 附件文件上传
       saveComplainProcessing(this.formData).then(response => {
+        if(response.status == 200){
         this.$message({
           type: 'success',
           message: '处理成功'
         })
+        this.$router.push({
+             path: "/complaint-manage/complaint-query",query: {}
+            });
+        }
         // this.detailForm.complaintId = response.data.id
+      })
       })
     },
     resetForm(formName) {

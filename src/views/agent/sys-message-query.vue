@@ -1,14 +1,14 @@
-  <template>
+<template>
   <el-card class="detailsContainer">
     <!-- part1 -->
     <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
       <el-row :gutter="20" class="area_bordes">
-        <el-col :span="11" >
+        <el-col :span="11">
           <el-form-item label="生成时间从" size="mini" prop="createDate">
-           <el-date-picker
+            <el-date-picker
               v-model="createDate"
               type="datetimerange"
-              value-format= "yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               :picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
@@ -29,13 +29,21 @@
           </el-form-item>
         </el-col>
         <el-col :span="24" style="text-align: center;margin: 10px 0">
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            v-show="btnShow('100020905050')"
+            size="mini"
+            @click="getTableList"
+            >查询</el-button
+          >
           <el-button
             type="primary"
             icon="el-icon-refresh-right"
             @click="resetForm('formQuery')"
             size="mini"
-          >重置</el-button>
+            >重置</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -43,30 +51,45 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">新 增</el-radio-button>
+          <el-radio-button
+            type="primary"
+            v-show="btnShow('100020905010')"
+            class="btn_line"
+            @click.native.prevent="handleAdd"
+            >新 增</el-radio-button
+          >
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('100020905020')"
             @click.native.prevent="handleEdit('update')"
-          >修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
+            >修 改</el-radio-button
+          >
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('100020905030')"
+            @click.native.prevent="deleteBatch"
+            >删 除</el-radio-button
+          >
+          <el-radio-button
+            type="primary"
+            class="btn_line"
+            v-show="btnShow('100020905040')"
             @click.native.prevent="handleEdit('show')"
-          >查 看</el-radio-button>
+            >查 看</el-radio-button
+          >
+          <el-radio-button
+            type="primary"
+            class="btn_line"
+            v-show="btnShow('100020905090')"
+            @click.native.prevent="handleRead()"
+            >标记已读</el-radio-button
+          >
         </el-radio-group>
       </el-col>
     </el-row>
     <!-- part3 -->
-    <!-- <el-row :gutter="10">
-      <el-col :span="24">
-        <div class="dtl-info-line">
-          已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px" @click="toggleSelection()">清空</el-button>
-        </div>
-      </el-col>
-    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -79,11 +102,35 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" width="55" label="序号" align="center"></el-table-column>
-      <el-table-column prop="time" label="日期" align="center" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="header" label="消息标题" width="325" align="center" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="despatcher" label="发送人" align="center"></el-table-column>
-      <el-table-column prop="isRead" label="是否已读" align="center"></el-table-column>
+      <el-table-column
+        type="index"
+        width="55"
+        label="序号"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="time"
+        label="日期"
+        align="center"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        prop="header"
+        label="消息标题"
+        width="325"
+        align="center"
+        :show-overflow-tooltip="true"
+      ></el-table-column>
+      <el-table-column
+        prop="despatcher"
+        label="发送人"
+        align="center"
+      ></el-table-column>
+      <el-table-column v-if="btnShow('100020905090')"
+        prop="isRead"
+        label="是否已读"
+        align="center"
+      ></el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-row class="area_bordes">
@@ -103,13 +150,50 @@
 </template>
 
 <script>
-import { getSysMessageList,sysMessageDeleteBatch } from '@/api/hxxd/agent'
-import { parseTime } from '@/utils/index.js'
+import {
+  getSysMessageList,
+  sysMessageDeleteBatch,
+  msgMarksRead
+} from "@/api/hxxd/agent";
+import { parseTime } from "@/utils/index.js";
 export default {
-  name: 'SysMessageQuery',
+  name: "SysMessageQuery",
   data() {
     return {
-      param:{
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      //获取有权限的按钮
+      btns: this.$store.getters.btns["1000209050"],
+      param: {
         idList: []
       },
       sum: 0,
@@ -120,15 +204,15 @@ export default {
       tableData: [],
       createDate: [],
       formQuery: {
-        companyBel: '',
-        header: '',
-        beginTime: '',
-        endTime: '',
+        companyBel: "",
+        header: "",
+        beginTime: "",
+        endTime: "",
         pageNo: 1,
         pageSize: 5,
-        orderBy: ''
+        orderBy: ""
       }
-    }
+    };
   },
   created() {
     // 初始化页面时
@@ -136,118 +220,169 @@ export default {
     // 参数接受 let id = this.$route.query.jId
     // let flag = this.$route.query.flag
     // if (flag) {
-    this.getTableList()
-    this.formQuery.endTime = parseTime(new Date())
+    this.getTableList();
+    this.formQuery.endTime = parseTime(new Date());
     // }
   },
   methods: {
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }else if ("10001050" === btns[i]){
+            // 存在10001050则为管理员，隐藏是否已读 字段
+        }
+        }
+      }
+      return false;
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
+        return "background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal";
       } else {
-        return ''
+        return "";
       }
     },
-    handleAdd(){
+    handleAdd() {
       this.$router.push({
-            path: '/message-manage/system-message-edit',
-          })
+        path: "/message-manage/system-message-edit"
+      });
     },
     deleteBatch() {
-      var idList = []
+      var idList = [];
       if (this.multipleSelection.length == 0) {
         this.$message({
-          message: '请选择数据',
-          type: 'warning'
-        })
+          message: "请选择数据",
+          type: "warning"
+        });
       } else {
         this.multipleSelection.forEach(i => {
-          idList.push(i.id)
-        })
+          idList.push(i.id);
+        });
         // 批量删除
-        this.param.idList=idList
+        this.param.idList = idList;
         sysMessageDeleteBatch(this.param).then(response => {
           if (response.status == 200) {
             // 删除成功
             this.$message({
-              type: 'success',
-              message: '删除成功'
-            })
+              type: "success",
+              message: "删除成功"
+            });
             // 更新列表
-             this.getTableList()
+            this.getTableList();
           }
-        })
+        });
       }
     },
-   handleEdit(type) {
+    handleEdit(type) {
       if (this.multipleSelection.length === 0) {
         this.$message({
-          message: '请选择数据',
-          type: 'warning'
-        })
+          message: "请选择数据",
+          type: "warning"
+        });
       } else if (this.multipleSelection.length === 1) {
-        var id = this.multipleSelection[0].id
+        var id = this.multipleSelection[0].id;
         if (id) {
           this.$router.push({
-            path: '/message-manage/system-message-detail',
+            path: "/message-manage/system-message-detail",
             query: { id: id, type: type }
-          })
+          });
         }
       } else if (this.multipleSelection.length > 1) {
         this.$message({
-          message: '请选择单条数据',
-          type: 'warning'
-        })
+          message: "请选择单条数据",
+          type: "warning"
+        });
       }
     },
+    handleRead() {
+      var idList = [];
+      var rows = this.multipleSelection;
+      if (!rows || rows.length == 0) {
+        this.$message({
+          type: "warning",
+          message: "请选择要操作的数据!"
+        });
+        return;
+      }
+      var illegalNameArr = new Array();
+      Object.keys(rows).forEach(function(key) {
+        idList.push(rows[key].id);
+        if (rows[key].isRead === "1") {
+          //已读消息
+          illegalNameArr.push(rows[key].header);
+        }
+      });
+
+      if (illegalNameArr.length > 0) {
+        var msg = "请选择未读数据，标题：" + illegalNameArr.join(",");
+        this.$message({
+          type: "warning",
+          message: msg
+        });
+        return;
+      }
+      this.param.idList = idList;
+      msgMarksRead(this.param).then(response => {
+        debugger;
+        if (response.data) {
+          var message = "标记为已读"; //操作成功
+          this.$message({
+            type: "success",
+            message: message
+          });
+          //更新列表
+          this.getTableList();
+        } else {
+          var message = "标记为已读"; //操作失败
+          this.$message({
+            type: "false",
+            message: message
+          });
+        }
+        // 更新列表
+        this.getTableList();
+      });
+    },
     handleSizeChange(val) {
-      this.getTableList()
+      this.getTableList();
     },
     handleCurrentChange(val) {
-      this.getTableList()
+      this.getTableList();
     },
     getTableList() {
-      this.tableLoading = true
-      this.formQuery.beginTime =  this.createDate[0]
-      this.formQuery.endTime =  this.createDate[1]
+      this.tableLoading = true;
+      this.formQuery.beginTime = this.createDate[0];
+      this.formQuery.endTime = this.createDate[1];
       getSysMessageList(this.formQuery).then(response => {
-        this.tableData = response.data
-        this.pageTotal = response.page.total
-        this.tableLoading = false
-      })
+        this.tableData = response.data;
+        this.pageTotal = response.page.total;
+        this.tableLoading = false;
+      });
     },
     resetForm(formName) {
       this.$nextTick(() => {
-        this.$refs[formName].resetFields()
-      })
+        this.$refs[formName].resetFields();
+      });
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val
-      if (val.length > 1) {
-        this.$message({
-          message: '只能选择单条',
-          type: 'warning'
-        })
-      }
-      if (val.length !== 0) {
-        this.added = val.length
-        this.sum = this.added
-      } else if (val.length === 0) {
-        this.sum -= this.added
-      }
+      this.multipleSelection = val;
     },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row)
-        })
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
       } else {
-        this.$refs.multipleTable.clearSelection()
+        this.$refs.multipleTable.clearSelection();
       }
     }
   }
-}
+};
 </script>
 <style>
-@import '~@/styles/hxxd.scss';
+@import "~@/styles/hxxd.scss";
 </style>

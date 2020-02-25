@@ -26,7 +26,7 @@ export function saveComplainProcessing(formData) {
 }
 export function saveComplainInfo(data) {
   return request({
-    url: '/hxxd/hxxd-complaint-info/saveComplainInfo',
+    url: '/hxxd/hxxd-complaint-info/anonw/saveComplainInfo',
     method: 'post',
     data
   })
@@ -86,7 +86,7 @@ export function selectSecurityIncidentById(id) {
 }
 export function selectComplainInfoAndProcessingById(id) {
   return request({
-    url: '/hxxd/hxxd-complaint-info/selectComplainInfoAndProcessingById',
+    url: '/hxxd/hxxd-complaint-info/anonw/selectComplainInfoAndProcessingById',
     method: 'post',
     data: {
       id
@@ -95,7 +95,7 @@ export function selectComplainInfoAndProcessingById(id) {
 }
 export function sendCode(mobileNum) {
   return request({
-    url: '/hxxd/hxxd-complaint-info/telSendCode',
+    url: '/hxxd/hxxd-complaint-info/anonw/telSendCode',
     method: 'post',
     data: {
       mobileNum

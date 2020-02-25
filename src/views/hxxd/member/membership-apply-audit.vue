@@ -1,9 +1,9 @@
 <template>
   <el-card class="detailsContainer">
     <!-- part1 -->
-    <el-form ref="ruleForm" label-width="100px" size="mini">
+    <el-form ref="queryForm" :model="queryForm" label-width="100px" size="mini">
       <el-row :gutter="20" class="area_border">
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="提交时间从" size="mini" prop="submitDateFrom">
             <el-date-picker
               v-model="queryForm.submitDateFrom"
@@ -16,7 +16,7 @@
             ></el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="提交时间到" size="mini" prop="submitDateTo">
             <el-date-picker
               v-model="queryForm.submitDateTo"
@@ -30,37 +30,43 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="申请编号" prop="code">
             <el-input v-model="queryForm.code" size="mini"></el-input>
           </el-form-item>
         </el-col>
 
-         <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="会员证书编号" prop="certificateNo">
             <el-input v-model="queryForm.certificateNo" size="mini"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="会员名称" prop="name">
             <el-input v-model="queryForm.name" size="mini"></el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="公司性质" prop="corporateNature">
             <el-input v-model="queryForm.corporateNature" size="mini"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="法人代表" prop="legalRepresentName">
             <el-input v-model="queryForm.legalRepresentName" size="mini"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item label="状态" size="mini" prop="status">
-            <el-select v-model="queryForm.status" filterable placeholder="请选择" size="mini" style="width:100%">
+            <el-select
+              v-model="queryForm.status"
+              filterable
+              placeholder="请选择"
+              size="mini"
+              style="width:100%"
+            >
               <el-option
                 v-for="item in queryFormOptions.status"
                 :key="item.value"
@@ -73,12 +79,7 @@
 
         <el-col :span="24" style="text-align: center;margin: 10px 0;">
           <el-button type="primary" icon="el-icon-search" size="mini" @click="formSearch">查询</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-refresh-right"
-            size="mini"
-            @click="resetForm('queryForm')"
-          >重置</el-button>
+          <el-button icon="el-icon-refresh-right" size="mini" @click="resetForm('queryForm')">重置</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -90,12 +91,14 @@
             icon="el-icon-circle-check"
             size="mini"
             @click="handleAuditPass"
+            v-show="btnShow('100020602010')"
           >审核通过</el-button>
           <el-button
             type="primary"
             icon="el-icon-circle-close"
             size="mini"
             @click="handleAuditNotPass"
+            v-show="btnShow('100020602020')"
           >审核驳回</el-button>
         </el-button-group>
         <el-button-group size="mini" style="margin-left: 20px;">
@@ -105,14 +108,16 @@
             icon="el-icon-zoom-in"
             size="mini"
             @click="handleView"
+            v-show="btnShow('100020602030')"
           >查看</el-button>
-           <el-button
-              type="primary"
-              class="btn_line"
-              icon="el-icon-zoom-in"
-              size="mini"
-              @click="handleProcessLogView"
-            >流程日志</el-button>
+          <el-button
+            type="primary"
+            class="btn_line"
+            icon="el-icon-zoom-in"
+            size="mini"
+            @click="handleProcessLogView"
+            v-show="btnShow('100020602040')"
+          >流程日志</el-button>
           <!-- <el-button type="primary" icon="el-icon-download" size="mini" @click="handleExport">导出</el-button> -->
         </el-button-group>
       </el-col>
@@ -171,7 +176,7 @@
         :dataId="processLog.dataId"
         :dataCode="processLog.dataCode"
         :isShow="processLog.show"
-        tableName='HX_XD_MEMBER'
+        tableName="HX_XD_MEMBER"
         @closeDalog="closeProcessLogDialog"
       />
     </el-dialog>
@@ -188,15 +193,15 @@ import SysProcessLogDialog from "@/views/comm/sys-process-log-dialog";
 
 export default {
   name: "MembershipApplyAudit",
-  components: { ApplyAuditDialog,SysProcessLogDialog },
+  components: { ApplyAuditDialog, SysProcessLogDialog },
   data() {
     return {
       //查询条件options集合
       queryFormOptions: {
         status: [
-          { value:"20", label: "待审核" },
-          { value:"30", label: "审核通过" },
-          { value:"40",label: "退会" }
+          { value: "20", label: "待审核" },
+          { value: "30", label: "审核通过" },
+          { value: "40", label: "退会" }
         ]
       },
       // 查询条件
@@ -214,8 +219,8 @@ export default {
         // 制单时间至
         submitDateTo: "",
         // 会员证书编号
-        certificateNo: '',
-        status:"20",
+        certificateNo: "",
+        status: "20",
         // 当前页码
         pageNo: 0,
         // 每页查询条数
@@ -232,12 +237,13 @@ export default {
         title: "审核通过",
         auditType: "1"
       },
-      processLog:{
-        show:false,
-        dataId:'',
-        dataCode:'',
-        system:'hxxd'
-      }
+      processLog: {
+        show: false,
+        dataId: "",
+        dataCode: "",
+        system: "hxxd"
+      },
+      btns: this.$store.getters.btns["1000206020"]
     };
   },
   // 相当于javascript的 $.ready()
@@ -271,27 +277,28 @@ export default {
     //查看
     handleView() {
       var rows = this.multipleSelection;
-      if (!rows || rows.length == 0 ) {
+      if (!rows || rows.length == 0) {
         this.$message({
           type: "info",
           message: "请选择要操作的数据!"
         });
         return;
       }
-      if(rows.length.length>1){
+      if (rows.length.length > 1) {
         this.$message({
           type: "info",
           message: "只能选择一条要操作的数据!"
         });
         return;
       }
-      var id = rows[0].id
-      this.$router.push({ path: "/membership-manage/membership-apply-audit-detail", query: {id: id} });
+      var id = rows[0].id;
+      this.$router.push({
+        path: "/membership-manage/membership-apply-audit-detail",
+        query: { id: id }
+      });
     },
     //导出
-    handleExport() {
-     
-    },
+    handleExport() {},
     handleProcessLogView() {
       if (!this.multipleSelection) {
         this.$message({
@@ -313,8 +320,8 @@ export default {
         return;
       }
       //数据id
-      this.processLog.dataId=selectRows[0].id
-      this.processLog.show=true
+      this.processLog.dataId = selectRows[0].id;
+      this.processLog.show = true;
     },
     //关闭流程日志框
     closeProcessLogDialog() {
@@ -330,19 +337,14 @@ export default {
         });
         return;
       }
-      var illegalNameArr = new Array();
-      Object.keys(rows).forEach(function(key) {
-        if (rows[key].status != "20") {
-          illegalNameArr.push(rows[key].name);
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].status != "20") {
+          this.$message({
+            type: "error",
+            message: "选择的数据包含已经审核的数据，不能重复审核"
+          });
+          return;
         }
-      });
-      if (illegalNameArr.length > 0) {
-        var msg = "选择的数据不能进行审核，会员名称：" + illegalNameArr.join(",");
-        this.$message({
-          type: "error",
-          message: msg
-        });
-        return;
       }
       this.auditDialog.isShow = true;
       this.auditDialog.auditType = "1";
@@ -358,19 +360,14 @@ export default {
         });
         return;
       }
-      var illegalNameArr = new Array();
-      Object.keys(rows).forEach(function(key) {
-        if (rows[key].status != "20") {
-          illegalNameArr.push(rows[key].name);
+      for (var i = 0; i < rows.length; i++) {
+        if (rows[i].status != "20") {
+          this.$message({
+            type: "error",
+            message: "选择的数据包含已经审核的数据，不能重复审核"
+          });
+          return;
         }
-      });
-      if (illegalNameArr.length > 0) {
-        var msg = "选择的数据不能进行审核，会员名称：" + illegalNameArr.join(",");
-        this.$message({
-          type: "error",
-          message: msg
-        });
-        return;
       }
       this.auditDialog.isShow = true;
       this.auditDialog.auditType = "2";
@@ -384,14 +381,16 @@ export default {
         var auditReason = data.auditReason;
         var identityMark = data.identityMark;
         var ids = getIdsFromArr(this.multipleSelection);
-        auditMember(ids, auditType, auditReason, identityMark).then(response => {
-          this.$message({
-            type: "success",
-            message: "操作成功!"
-          });
-          //审核成功重新加载数据
-          this.getTableList();
-        });
+        auditMember(ids, auditType, auditReason, identityMark).then(
+          response => {
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            //审核成功重新加载数据
+            this.getTableList();
+          }
+        );
       }
     },
     //分页改变触发
@@ -427,6 +426,19 @@ export default {
     },
     handleTableSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    //data中这个不能少：
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === this.btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   }
 };

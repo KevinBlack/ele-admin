@@ -56,7 +56,7 @@ export function cancleIndustryInfoPublish(ids) {
 }
 export function selectIndustryById(id) {
   return request({
-    url: '/hxxd/hx-xd-industry-info-publish/selectIndustryById',
+    url: '/hxxd/hx-xd-industry-info-publish/anonw/selectIndustryById',
     method: 'post',
     data: {
       id

@@ -1,13 +1,5 @@
 <template>
   <el-card class="detailsContainer">
-    <el-row style="border-bottom: 1px solid #e6e6e6;margin-bottom: 20px;padding-bottom:10px;">
-      <el-col :span="12">
-        <a href="javascrip:;" style="color: #409EFF"><i class="el-icon-back" style="color: #409EFF;margin-right: 5px;c" />返 回</a> | <a href="javascript:;" @click="handleShow">{{ showTitle }}</a>
-      </el-col>
-      <el-col :span="12" style="text-align:right;">
-          <el-button type="primary" size="mini" @click="saveAbnormalOperation" v-if="!prohibit" >保存</el-button>
-      </el-col>
-    </el-row>
     <!-- part1 -->
     <el-row :gutter="10">
       <el-col :span="24">
@@ -17,16 +9,43 @@
     <el-form 
       ref="detailForm" 
       :model="detailForm"
-      label-width="110px" 
+      label-width="130px" 
       size="mini" 
       :rules="rules">
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="企业名称" prop="companyName">
-            <el-input v-model="detailForm.companyName"  :readonly="prohibit"/>
+          <el-form-item label="企业名称" prop="companyName" :readonly="true">
+            <el-input v-model="detailForm.companyName" filterable placeholder="请选择" :readonly="true">
+              <el-button slot="append" icon="el-icon-search" @click="showSelect()" v-if="!prohibit"/>
+            </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item label="企业统一信用代码" prop="companyCode" :readonly="true">
+            <el-input v-model="detailForm.companyCode" :readonly="true">
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="执行单位" prop="implementedBy">
+            <el-input v-model="detailForm.implementedBy"  :readonly="prohibit"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="执行时间" prop="executionTime">
+            <el-date-picker
+              v-model="detailForm.executionTime"
+              type="date"
+              :readonly="prohibit"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="列入日期" prop="inclusionTime">
             <el-date-picker
               v-model="detailForm.inclusionTime"
@@ -40,26 +59,31 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="执行单位" prop="implementedBy">
-            <el-input v-model="detailForm.implementedBy"  :readonly="prohibit"/>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="执行时间" prop="executionTime">
-            <el-input v-model="detailForm.executionTime"  :readonly="prohibit"/>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
         <el-col :span="24">
           <el-form-item label="列入名录原因" prop="inclusionDirectoryReason">
             <el-input
               type="textarea"
               :autosize="{ minRows: 4}"
-              placeholder="请输入内容"
+              placeholder="请输入列入名录原因"
               v-model="detailForm.inclusionDirectoryReason"
+              maxlength="100"
+              show-word-limit
                :readonly="prohibit">
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form-item label="列入备注" prop="inclusionRemark">
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 4}"
+              placeholder="请输入备注"
+              v-model="detailForm.inclusionRemark"
+               :readonly="prohibit"
+              show-word-limit
+              maxlength="200">
             </el-input>
           </el-form-item>
         </el-col>
@@ -95,33 +119,61 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row :gutter="20" v-if="prohibit">
+        <el-col :span="24">
+          <el-form-item label="移出备注" prop="removeRemark">
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 4}"
+              placeholder="请输入备注"
+              v-model="detailForm.removeRemark"
+               :readonly="prohibit"
+              show-word-limit
+              maxlength="200">
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
-        
-    <el-dialog :title="showTitle" :visible.sync="isShow" width="70%">
-      <pop-tab />
-    </el-dialog>
+    <el-row>
+      <el-col :span='24' class="btn_bottom">
+        <el-button v-show="btnShow('10002020108010')" v-if="!prohibit" type="primary" size="mini" @click="saveAbnormalOperation" >保存</el-button>
+      </el-col>
+    </el-row>  
+     <!-- 弹框区 -->
+  <el-dialog title="选择企业" :visible.sync="isShowSelect">
+    <company-query 
+    :fdmsg="memberForm"
+    :fdshow3="isShowSelect"
+    @closeDalogPay="closeSelect" />
+  </el-dialog>  
   </el-card>
 </template>
 
 <script>
 import {getAbnormal,saveAbnormalOperation} from "@/api/jyycgl/input.js";
-
+import CompanyQuery from "./company-query"
 export default {
+  components: { CompanyQuery },
   data() {
     return {
+      btns: this.$store.getters.btns['100020201080'],
       isShow: false,
       showTitle: '经营异常-新增',
       prohibit: false,
       detailForm: {
         id:'',
         companyName: '',
-        inclusionTime: '',
+        inclusionTime: new Date(),
+        companyCode: '',
         inclusionDirectoryReason:'',
-        implementedBy:'',
+        implementedBy:'中国航空运输协会',
         executionTime:'',
         removeDirectoryReason:'',
         removeTime:'',
         status:'',
+        inclusionRemark:'',
+        removeRemark:'',
       },
       rules: {
         companyName: [
@@ -143,6 +195,8 @@ export default {
           { required: true, message: "不能为空", trigger: "blur" }
         ]
       },
+      isShowSelect: false,
+      memberForm: '',
     }
   },
   created() {
@@ -160,6 +214,43 @@ export default {
     }
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
+    showSelect() {
+      this.isShowSelect = true
+    },
+    closeSelect(chiledArr, fdshow) {
+      if (chiledArr.length <= 0) {
+        this.$notify({
+          title: '提示',
+          message: '请选择数据',
+          type: 'warning',
+          duration: 2000
+        })
+      } else {
+        this.detailForm.companyName = chiledArr.businessName
+        this.detailForm.companyCode = chiledArr.socialCode
+      }
+      this.isShowSelect = fdshow
+    },
     getAbnormal(abnormalId) {
       getAbnormal(abnormalId).then(response => {
         this.detailForm = response.data;

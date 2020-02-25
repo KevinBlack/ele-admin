@@ -47,13 +47,13 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group  size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="addData">新 增</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="updData">修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="delData">删 除</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="sendData">发 送</el-radio-button>
+          <el-radio-button v-show="btnShow('100020902010')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="addData">新 增</el-radio-button>
+          <el-radio-button v-show="btnShow('100020902060')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="updData">修 改</el-radio-button>
+          <el-radio-button v-show="btnShow('100020902020')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="delData">删 除</el-radio-button>
+          <el-radio-button v-show="btnShow('100020902040')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="sendData">发 送</el-radio-button>
         </el-radio-group>
         <el-radio-group size="mini" style="margin-left: 20px;">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleSee">查 看</el-radio-button>
+          <el-radio-button v-show="btnShow('100020902030')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleSee">查 看</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
@@ -99,6 +99,7 @@ import { getSysEmailList,delData,sendData } from "@/api/msgManage/email.js";
 export default {
   data() {
     return {
+      btns: this.$store.getters.btns['1000209020'],
       pageTotal: 0,
       tableLoading: false,
       tableData: [],
@@ -131,9 +132,29 @@ export default {
     this.getTableList();
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
     addData() {
       this.$router.push({
-        path: "/msgManage/emailAdd",query: {}
+        path: "/message-manage/email-add",query: {}
       });
     },
     updData() {
@@ -152,7 +173,7 @@ export default {
         return;
       }
       this.$router.push({
-        path: "/msgManage/emailUpd",query: {id:this.tableMultiSelection[0].id}
+        path: "/message-manage/email-upd",query: {id:this.tableMultiSelection[0].id}
       });
     },
     handleSee() {
@@ -171,7 +192,7 @@ export default {
         return;
       }
       this.$router.push({
-        path: "/msgManage/emailSee",query: {readonly:true,id:this.tableMultiSelection[0].id}
+        path: "/message-manage/email-see",query: {readonly:true,id:this.tableMultiSelection[0].id}
       });
     },
     delData() {

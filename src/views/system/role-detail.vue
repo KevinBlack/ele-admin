@@ -69,7 +69,6 @@
             <el-tree
               :data="menuTreeData"
               show-checkbox
-              default-expand-all
               node-key="id"
               ref="tree"
               highlight-current

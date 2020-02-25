@@ -38,6 +38,19 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="附件">
+               <el-upload
+              class="upload-demo"
+              ref="upload"
+              action
+              :on-preview="handlePreview"
+              :before-upload="handleUpload"
+              :headers="uploadHeaders"
+              :multiple="true"
+              :file-list="fileList"
+              :auto-upload="false"
+            >
+              <el-button slot="trigger" size="mini" type="primary">选取文件</el-button>
+              </el-upload>
               <el-button :key="index" v-for="(item, index) in detailForm.fileList" type="text" @click="fileClick(item.fileCatalog,item.belongId,item.fileName)">{{ item.fileName }}</el-button>
             </el-form-item>
           </el-col>
@@ -47,7 +60,6 @@
         <el-col :span="24" class="btn_bottom">
           <div style="text-align: center;">
             <el-button type="primary" size="mini" @click="saveMenu">保存</el-button>
-            <el-button type="warning" size="mini" @click="resetForm('detailForm')">重置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -57,8 +69,9 @@
 
 <script>
 import { selectIndustry, updateIndustryInfo } from '@/api/hxxd/industryInfoPublish'
+import { downloadTemplate } from '@/api/hxxd/financialManage'
 import RichComponents from './rich-components'
-
+import { getToken } from "@/utils/auth";
 export default {
   name: 'UpdateIndustryInfo',
   components: { RichComponents },
@@ -78,14 +91,23 @@ export default {
         industryTitle: '',
         fileList: []
       },
+       fileList: [],
+      uploadHeaders: {
+        "X-Token": getToken()
+      },
+      formData: new FormData(),
       cascaderOpts: [],
       statusOptions: [{
           value: 1,
-          label: "消代分会"
+          label: "站内新闻"
         },
         {
           value: 2,
-          label: "航食分会"
+          label: "公示信息"
+        },
+        {
+          value: 3,
+          label: "最新动态"
         }
       ],
       rules1: {
@@ -113,18 +135,59 @@ export default {
         this.detailForm.industryTitle = response.data[0].industryTitle
         this.detailForm.fileList = response.data[0].fileList
         this.content = response.data[0].contentBody
+        // console.log(this.content)
       })
+    },
+    fileClick(fileCatalog, belongId,fileName){
+    downloadTemplate(belongId,fileCatalog).then(response => {
+        console.log("fileCatalog=="+fileCatalog)
+        var contentDisposition = response.headers["content-disposition"]; //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
+        var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*")
+        var result = patt.exec(contentDisposition)
+        var fileName = decodeURIComponent(result[1]).trim()
+        const blob = new Blob([response.data])
+        if ("download" in document.createElement("a")) {
+          // 非IE下载
+          const elink = document.createElement("a")
+          elink.download = fileName
+          elink.style.display = "none"
+          elink.href = URL.createObjectURL(blob)
+          console.log(elink.href)
+          document.body.appendChild(elink)
+          elink.click()
+          URL.revokeObjectURL(elink.href) // 释放URL 对象
+          document.body.removeChild(elink)
+        } else {
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName)
+        }
+      })
+    },
+    // 文件上传相关方法
+    handleUpload(file) {
+      this.formData.append("file", file);
+      return false;
+    },
+    handlePreview(file) {
     },
     handlecatchData:function (params) {
       this.editorContent = params
     },
     saveMenu() {
-      const {
-        id,
-        industryContent,
-        industryType
-      } = this.detailForm
-      updateIndustryInfo(this.detailForm).then(response => {
+      // const {
+      //   id,
+      //   industryContent,
+      //   industryTitle,
+      //   industryType
+      // } = this.detailForm
+          // this.industryInfoParam.industryBody = this.editor.txt.html()
+          this.detailForm.industryBody = this.editorContent;
+          const dataDetail = this.detailForm;
+          for (const key in dataDetail) {
+            this.formData.append(key, dataDetail[key]);
+          }
+          this.$refs.upload.submit(); // 附件文件上传
+      updateIndustryInfo(this.formData).then(response => {
         // this.$router.push({
         //   path: '/infoPublish/selectIndustryInfo',
         //   query: {}
@@ -135,17 +198,14 @@ export default {
             type: 'success',
             message: msg
           })
+          this.$router.push({ path: "/infoPublish/selectIndustryInfo",query: {} });
+          this.getMenuInfo(this.checkId)
         } else {
           this.$message({
             type: 'success',
             error: msg
           })
         }
-      })
-    },
-    resetForm(formName) {
-      this.$nextTick(() => {
-        this.$refs[formName].resetFields()
       })
     }
   }

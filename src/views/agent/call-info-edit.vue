@@ -24,12 +24,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="消息日期" prop="sendTime">
-              <el-date-picker v-model="callInfoParam.sendTime" type="datetime" style="width: 100%;" placeholder="选择日期时间"></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="消息正文" prop="content">
-              <el-input v-model="callInfoParam.content" />
+              <el-date-picker v-model="callInfoParam.sendTime" type="datetime" style="width: 100%;" format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -48,6 +44,13 @@
                 ></el-option>
               </el-select>
             </el-form-item>
+              <!-- 弹框区 -->
+            <el-dialog :visible.sync="dialog.isShow" :title="dialog.title">
+              <leaguer 
+              :fdmsg="callInfoParam.sendScope" 
+              :isShow="dialog.isShow" 
+              @callBack="dialogCallBack" />
+            </el-dialog>
           </el-col>
           <el-col :span="12">
             <el-form-item label="重复规则" prop="repetRule">
@@ -59,7 +62,7 @@
               <el-input v-model="callInfoParam.max" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="选择的会员" prop="member">
               <el-input
                 v-model="callInfoParam.member"
@@ -68,17 +71,19 @@
               ></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="24">
+            <el-form-item label="消息正文" prop="content">
+              <el-input type="textarea" v-model="callInfoParam.content" maxlength="200" show-word-limit :rows="4"/>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
-      <!-- 弹框区 -->
-      <el-dialog :visible.sync="dialog.isShow" :title="dialog.title">
-        <Leaguer :isShow="dialog.isShow" @callBack="dialogCallBack" />
-      </el-dialog>
+    
       <!-- 按钮区 -->
       <el-row :gutter="10">
-        <el-col :span="24" class="btn_bottom">
-          <el-button type="primary" size="mini" @click="save">保 存</el-button>
-          <el-button type="primary" size="mini">发送信息</el-button>
+        <el-col :span="24" class="btn_bottom" style="text-align: center;">
+          <el-button type="primary" size="mini"  v-show="btnShow('100021009010')" @click="save">保 存</el-button>
+          <!-- <el-button type="primary" size="mini" v-show="btnShow('100021009020')" >发送信息</el-button> -->
         </el-col>
       </el-row>
     </el-row>
@@ -94,6 +99,8 @@ export default {
   components: { Leaguer },
   data() {
     return {
+      //获取有权限的按钮
+      btns: this.$store.getters.btns['1000210090'],
       dialog: {
         isShow: false,
         title: "选择会员"
@@ -115,10 +122,6 @@ export default {
         {
           value: "1",
           label: "欠费"
-        },
-        {
-          value: "2",
-          label: "个别会员"
         }
       ],
       messageOptions: [
@@ -139,18 +142,30 @@ export default {
         messageType: [{ required: true, message: "不能为空", trigger: "blur" }],
         sendTime: [{ required: true, message: "不能为空" }],
         content: [{ required: true, message: "不能为空", trigger: "change" }],
-        repetRule: [{ required: true, message: "不能为空", trigger: "blur" }]
+        repetRule: [{ required: true, message: "不能为空", trigger: "blur" }],
+        max: [{ required: true, pattern: /^[1-9]+[0-9]*$/, message: "请输入数字", trigger: "blur" }]
       }
     };
   },
   methods: {
+      btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     showBox() {
       this.dialog.isShow = true;
     },
     dialogCallBack(command, data) {
       this.dialog.isShow = false;
       if (command == "ok") {
-        debugger;
         data.forEach(i => {
           this.callInfoParam.member =
             this.callInfoParam.member + i.name + "-" + i.code + ",";
@@ -159,11 +174,10 @@ export default {
     },
     //系统信息保存
     save() {
-      // this.$refs["ruleForm"].validate(valid => {
-      // if (valid) {
+      this.$refs["ruleForm"].validate(valid => {
+      if (valid) {
       //数据校验成功
       callInfoSaveOrUpdate(this.callInfoParam).then(response => {
-        debugger;
         var msg = response.status == 200 ? "保存成功" : "保存失败";
         if (response.status == 200) {
           //保存成功
@@ -180,14 +194,14 @@ export default {
           console.log(response.message);
         }
       });
-      // } else {
-      //   //校验失败
-      //   this.$message({
-      //     message: "请正确录入页面数据",
-      //     type: "warning"
-      //   });
-      // }
-      // });
+      } else {
+        //校验失败
+        this.$message({
+          message: "请正确录入页面数据",
+          type: "warning"
+        });
+      }
+      });
     }
   }
 };

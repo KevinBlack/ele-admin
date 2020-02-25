@@ -46,22 +46,14 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">新 增</el-radio-button>
-          <el-radio-button
-            type="primary"
-            class="btn_line"
-            @click.native.prevent="handleEdit"
-          >修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
-          <el-radio-button
-            type="primary"
-            class="btn_line"
-            @click.native.prevent="handleCheck"
-          >查 看</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401010')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleAdd">新 增</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401020')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleEdit" >修 改</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401030')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401040')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handleCheck" >查 看</el-radio-button>
         </el-radio-group>
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handlePublish('send')">发 布</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handlePublish('cancle')">取消发布</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401050')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handlePublish('send')">发 布</el-radio-button>
+          <el-radio-button v-show="btnShow('100021401060')" v-if="btnDisplay('10')" type="primary" class="btn_line" @click.native.prevent="handlePublish('cancle')">取消发布</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
@@ -115,6 +107,7 @@ export default {
   name: 'SysMessageQuery',
   data() {
     return {
+      btns: this.$store.getters.btns['1000214010'],
       statusOptions: [
         {
           value: 1,
@@ -152,6 +145,26 @@ export default {
     this.getTableList()
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
@@ -209,7 +222,7 @@ export default {
           }
           });
         // 批量删除
-        if (idList && idList.length > 0) {
+        if (idList && idList.length >= 1) {
             var idsList = idList.join();
             this.idList=idsList
         deleteIndustryByIds(this.idList).then(response => {
@@ -238,14 +251,11 @@ export default {
           this.$router.push({
             name: 'UpdateIndustryInfo',
             query: {
-              id: id,
-              industryType: this.formQuery.industryType,
-              industryTitle: this.formQuery.industryTitle,
-              industryContent: this.formQuery.industryContent
+              id: id
             }
           })
         }
-      } else if (this.multipleSelection.length > 1) {
+      } else if (this.multipleSelection.length >= 2) {
         this.$message({
           message: '请选择单条数据',
           type: 'warning'
@@ -266,7 +276,7 @@ export default {
             query: { id: id }
           })
         }
-      } else if (this.multipleSelection.length > 1) {
+      } else if (this.multipleSelection.length >= 2) {
         this.$message({
           message: '请选择单条数据',
           type: 'warning'
@@ -314,7 +324,7 @@ export default {
             })
           }
         }
-      } else if (this.multipleSelection.length > 1) {
+      } else if (this.multipleSelection.length >= 2) {
         this.$message({
           message: '请选择单条数据',
           type: 'warning'

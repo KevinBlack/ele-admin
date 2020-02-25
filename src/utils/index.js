@@ -3,6 +3,46 @@
  */
 
 /**
+  * 判断元素是否在数组中
+  * @param {*} array 数组
+  * @param {*} element 元素
+*/
+export function elementInArray(array, element) {
+  if (!array || array.length === 0) {
+    return false
+  }
+  for (var i = 0; i < array.length; i++) {
+    if (element === array[i]) {
+      return true
+    }
+  }
+  return false
+}
+
+/**
+  * 生成随机数字
+  * @param {*} prefix 前缀
+  * @param {*} dateFormat 时间格式
+  * @param {*} numberLength 随机数长度
+*/
+export function makeCode(prefix, dateFormat, numberLength) {
+  // 生成随机数字
+  numberLength = numberLength || 4
+  var number = getNumber(numberLength)
+  dateFormat = dateFormat || '{y}{m}{d}{h}{i}{s}'
+  var timeStr = parseTime(new Date(), dateFormat)
+  return prefix + timeStr + number
+}
+
+export function getNumber(numberLength) {
+  var number = ''
+  for (var i = 0; i < numberLength; i++) {
+    number += Math.floor(Math.random() * 10)
+  }
+  return number
+}
+
+/**
  * 从字典中获取key对应的value值
  * @param {*} dictList 字典数据
  * @param {*} dictKey 字典的key

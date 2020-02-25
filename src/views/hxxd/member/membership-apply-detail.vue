@@ -6,8 +6,8 @@
           <a href="javascript:;">会员申请详情</a>
         </el-col>
         <el-col :span="12" style="text-align:right;">
-          <el-button type="primary" size="mini" @click="save" v-if="btnDisplay('10,15')">保存</el-button>
-          <el-button type="primary" size="mini" @click="submit" v-if="btnDisplay('10,15')">提交</el-button>
+          <el-button type="primary" size="mini" @click="save" v-if="btnDisplay('10,15')" v-show="btnShow('10002060105010')">保存</el-button>
+          <el-button type="primary" size="mini" @click="submit" v-if="btnDisplay('10,15')" v-show="btnShow('10002060105040')">提交</el-button>
         </el-col>
       </el-row>
       <!-- <el-row>
@@ -29,14 +29,19 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="申请编号" size="mini" prop="code">
               <el-input v-model="mainForm.code" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
+            <el-form-item label="统一信用代码" size="mini" prop="socialCode">
+              <el-input v-model="mainForm.socialCode" size="mini" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="会员姓名" size="mini" prop="name">
-              <el-input v-model="mainForm.name" size="mini"></el-input>
+              <el-input v-model="mainForm.name" size="mini" ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -53,12 +58,24 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="公司性质" size="mini" prop="corporateNature">
-              <el-input v-model="mainForm.corporateNature" size="mini"></el-input>
+              <el-select
+                    v-model="mainForm.corporateNature"
+                    filterable
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="item in enterpriseNatureOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="法人代表姓名" size="mini" prop="legalRepresentName">
-              <el-input v-model="mainForm.legalRepresentName" size="mini"></el-input>
+              <el-input v-model="mainForm.legalRepresentName" size="mini" ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -136,16 +153,19 @@
 
           <el-col :span="12">
             <el-form-item label="归属地区" size="mini" prop="areas">
-              <el-cascader
-                :props="mainFormProps.area"
-                :options="mainFormOptions.area"
-                v-model="mainForm.areas"
-                clearable
-                filterable
-                size="mini"
-                style="width:100%;"
-                change-on-select
-              ></el-cascader>
+               <el-select
+                    v-model="mainFormProps.area"
+                    filterable
+                    placeholder="请选择"
+                    style="width: 100%;"
+                  >
+                    <el-option
+                      v-for="item in areaOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
             </el-form-item>
           </el-col>
 
@@ -156,7 +176,7 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="10">
+        <!-- <el-row :gutter="10">
           <el-col :span="24">
             <h5 class="dtl-title-line">入会信息</h5>
           </el-col>
@@ -206,7 +226,8 @@
               ></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
+        
 
         <el-row :gutter="10">
           <el-col :span="24">
@@ -233,36 +254,48 @@
 
         <el-row :gutter="10">
           <el-col :span="24">
-            <h5 class="dtl-title-line">附件</h5>
+            <h5 class="dtl-title-line">附件（营业执照）</h5>
           </el-col>
         </el-row>
 
         <!-- 按钮区域 -->
-        <el-row class="area_bordes">
+        <el-row class="area_bordes" v-if="btnDisplay('10,15')">
           <el-col :span="24">
             <el-button-group size="mini">
-              <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleFileAdd">新增</el-button>
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleFileAdd"
+              v-show="btnShow('10002060105020')"
+              >新增</el-button>
               <el-button
                 type="primary"
                 icon="el-icon-delete"
                 size="mini"
-                @click="batchFileDelete"
+                @click="handleFileDelete"
+                v-show="btnShow('10002060105030')"
               >删除</el-button>
             </el-button-group>
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-table
-            ref="fileTable"
-            :data="fileTable"
-            border
-            tooltip-effect="dark"
-            style="width: 100%;margin-bottom:20px;"
-            @selection-change="fileTableSelectChange"
-          >
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="filename" label="文件名" align="center"></el-table-column>
-          </el-table>
+          <el-col :span="24">
+            <el-card class="box-card" shadow="never" :body-style="{ minHeight: '300px' }">
+              <el-table
+                ref="attachTable"
+                :data="attachTableData"
+                border
+                tooltip-effect="dark"
+                style="width: 100%;margin-bottom:20px;"
+                @selection-change="attachTableSelectChange"
+              >
+                <el-table-column type="selection" width="55" align="center"></el-table-column>
+                <el-table-column prop="fileName" label="文件名" align="center"></el-table-column>
+                <el-table-column label="下载" align="center" width="150">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="downloadFile(scope.row.id)">下载</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </el-col>
         </el-row>
       </el-form>
 
@@ -373,7 +406,15 @@
           <el-button type="primary" @click="memberRightDialogCallBack('no')">不同意</el-button>
         </div>
       </el-dialog>
-      
+
+      <!-- 附件上传弹框 -->
+      <el-dialog :visible.sync="fileUploadDialog.show" title="附件上传" width="50%">
+        <SysFileUploadDialog
+          :isShow="fileUploadDialog.show"
+          :limit="fileUploadDialog.limit"
+          @closeDalog="closeFileUploadDialog"
+        />
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -381,15 +422,84 @@
 <script>
 // 引入axios
 import { memberApply, submitMember, getMember } from "@/api/hxxd/member";
+import { getCompanyRegister } from "@/api/hxxd/agent";
+import {
+  getAreaTree,
+  listFile,
+  downloadFile,
+  getValidateCode
+} from "@/api/system/comm/comm";
 import { parseTime, strToArr, makeCode } from "@/utils/index.js";
-import { getAreaTree } from "@/api/system/comm/comm";
+import SysFileUploadDialog from "@/views/comm/sys-file-upload-dialog";
 
 export default {
   name: "MembershipApplyDetail",
+  components: { SysFileUploadDialog },
   data() {
     return {
+      fileUploadDialog: {
+        show: false,
+        limit: 3
+      },
+      enterpriseNatureOptions: [
+        {
+          value: "0",
+          label: "有限责任公司"
+        },
+        {
+          value: "1",
+          label: "国有企业"
+        },
+        {
+          value: "2",
+          label: "私营企业"
+        },
+        {
+          value: "3",
+          label: "个人独资企业"
+        },
+        {
+          value: "4",
+          label: "外商投资企业"
+        },
+        {
+          value: "5",
+          label: "其他"
+        }
+      ],
+      areaOptions: [
+        {
+          value: "0",
+          label: "华东地区"
+        },
+        {
+          value: "1",
+          label: "华南地区"
+        },
+        {
+          value: "2",
+          label: "华中地区"
+        },
+        {
+          value: "3",
+          label: "华北地区"
+        },
+        {
+          value: "4",
+          label: "西北地区"
+        },
+        {
+          value: "5",
+          label: "西南地区"
+        },
+        {
+          value: "6",
+          label: "东北地区"
+        }
+      ],
       //附件上传
-      fileTable: [],
+      attachTableData: [],
+      attachTableSelect: [],
       //表单对应下拉字典
       mainFormOptions: {
         status: [
@@ -414,6 +524,7 @@ export default {
       },
       //主表form
       mainForm: {
+        socialCode:"",
         id: "",
         status: "10",
         //会员编号
@@ -457,12 +568,16 @@ export default {
         hasReadApply: false,
         hasReadRight: false,
         areas: [],
-        certificateNo: ""
+        certificateNo: "",
+        attachIds: ""
       },
       mainFormRules: {
         name: [
           { required: true, message: "请输入会员名称", trigger: "blur" },
           { max: 20, message: "长度在 20 个字符", trigger: "blur" }
+        ],
+        socialCode: [
+          { required: true, message: "请输入社会统一信用代码", trigger: "blur" },
         ],
         registeredFunds: [
           { required: true, message: "请输入注册资金", trigger: "blur" }
@@ -482,9 +597,8 @@ export default {
         ],
         fax: [
           {
-            pattern: /^(\d{3,4}-)?\d{7,8}$/,
             required: true,
-            message: "请输入正确格式的传真",
+            message: "请输入传真好",
             trigger: "blur"
           }
         ],
@@ -537,7 +651,7 @@ export default {
         entryMeeting: [
           { required: true, message: "请输入入会会议", trigger: "blur" }
         ],
-        area: [
+        areas: [
           {
             type: "array",
             required: true,
@@ -575,13 +689,12 @@ export default {
         ]
       },
       memberApplyDialogShow: false,
-      memberRightDialogShow: false
+      memberRightDialogShow: false,
+      btns: this.$store.getters.btns["100020601050"]
     };
   },
   watch: {
     "$route.query.id": function(val, oldVal) {
-      // console.log(val);
-      // console.log(oldVal);
       if (val) {
         if (val != oldVal) {
           this.initForm(val);
@@ -597,14 +710,70 @@ export default {
     this.initForm(this.$route.query.id);
   },
   methods: {
-    initForm(id) {
+    async downloadFile(id) {
+      //获取验证码
+      var key;
+      await getValidateCode("").then(response => {
+        if (response.data) {
+          var validateCode = response.data.validateCode;
+          if (!validateCode) {
+            this.$message({
+              type: "error",
+              message: "获取验证码失败!"
+            });
+            return;
+          }
+          key = this.$encruption(validateCode);
+        }
+      });
+      await downloadFile(id, key).then(response => {
+        console.log(response.headers);
+        var contentDisposition = response.headers["content-disposition"];
+        var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
+        var result = patt.exec(contentDisposition);
+        var fileName = decodeURIComponent(result[1]).trim();
+        const blob = new Blob([response.data]);
+        if ("download" in document.createElement("a")) {
+          // 非IE下载
+          const elink = document.createElement("a");
+          elink.download = fileName;
+          elink.style.display = "none";
+          elink.href = URL.createObjectURL(blob);
+          document.body.appendChild(elink);
+          elink.click();
+          URL.revokeObjectURL(elink.href); // 释放URL 对象
+          document.body.removeChild(elink);
+        } else {
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName);
+        }
+      });
+    },
+    attachTableSelectChange(val) {
+      this.attachTableSelect = val;
+    },
+    //关闭流程日志框
+    closeFileUploadDialog(command, fileList) {
+      this.fileUploadDialog.show = false;
+      console.log(command, fileList);
+      if (command === "ok") {
+        // 此处特殊处理
+        if (fileList && fileList.length > 0) {
+          this.attachTableData = this.attachTableData.concat(fileList);
+        }
+      }
+    },
+    async initForm(id) {
       getAreaTree().then(response => {
         this.mainFormOptions.area = response.data;
       });
       // 生成申请编号
       this.mainForm.code = makeCode("HXXD");
       if (id) {
-        getMember(id).then(response => {
+        var attachIds;
+        await getMember(id).then(response => {
+          //若附件存在。则用表格显示
+          attachIds = response.data.attachIds;
           // 同名字段覆盖，不同名字段添加
           Object.assign(this.mainForm, response.data);
           this.mainForm.areas = strToArr(response.data.areas, ",");
@@ -612,6 +781,38 @@ export default {
           this.mainForm.hasReadApply = response.data.hasReadApply == 1;
           this.mainForm.hasReadRight = response.data.hasReadRight == 1;
         });
+        // 附件id
+        if (attachIds) {
+          var validateCode;
+          // 获取验证码
+          await getValidateCode("").then(response => {
+            if (response.data) {
+              validateCode = response.data.validateCode;
+              if (!validateCode) {
+                this.$message({
+                  type: "error",
+                  message: "获取验证码失败!"
+                });
+                return;
+              }
+              validateCode = this.$encruption(validateCode);
+            }
+          });
+          // 加载附件
+          await listFile(attachIds, validateCode).then(response => {
+            if (response.data) {
+              this.attachTableData = response.data;
+            }
+          });
+        }
+      } else {
+         getCompanyRegister().then(response => {
+            if (response.data) {
+              this.mainForm.socialCode = response.data.socialCode;
+              this.mainForm.contactPhone = response.data.contactPhone;
+              this.mainForm.contactName = response.data.contactName;
+            }
+      });
       }
     },
     save() {
@@ -622,6 +823,15 @@ export default {
           mainData.hasReadApply = mainData.hasReadApply ? 1 : 0;
           mainData.hasReadRight = mainData.hasReadRight ? 1 : 0;
           mainData.areas = this.mainForm.areas.join(",");
+          //收集附件id集合
+          var attachIdArr = new Array();
+          var attachTableData = this.attachTableData;
+          if (attachTableData) {
+            for (var attach of attachTableData) {
+              attachIdArr.push(attach.id);
+            }
+          }
+          mainData.attachIds = attachIdArr.join(",");
           memberApply(mainData).then(response => {
             this.mainForm.id = response.data.id;
             //后端生成编号
@@ -636,12 +846,51 @@ export default {
       });
     },
     //附件新增
-    handleFileAdd(){
-
+    handleFileAdd() {
+      //打开附件上传弹框
+      this.fileUploadDialog.show = true;
     },
     //附件删除
-    handleFileDelete(){
-
+    handleFileDelete() {
+      if (!this.attachTableSelect) {
+        this.$message({
+          type: "info",
+          message: "请选中要删除的文件!"
+        });
+        return;
+      }
+      let selectRows = this.attachTableSelect;
+      if (selectRows.length == 0) {
+        this.$message({
+          type: "info",
+          message: "请选中要删除的文件!"
+        });
+        return;
+      }
+      var idArr = new Array();
+      Object.keys(selectRows).forEach(function(key) {
+        if (selectRows[key].id) {
+          idArr.push(selectRows[key].id);
+        }
+      });
+      this.$confirm("是否执行删除操作?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          //将选中的行删除
+          var tempTableData = new Array();
+          for (var data of this.attachTableData) {
+            if (idArr.indexOf(data.id) < 0) {
+              tempTableData.push(data);
+            }
+          }
+          this.attachTableData = tempTableData;
+        })
+        .catch(() => {
+          // 取消时执行此处
+        });
     },
     submit() {
       var id = this.mainForm.id;
@@ -682,9 +931,12 @@ export default {
     //data中这个不能少：btns: this.$store.getters.btns['100010'],
     btnShow(menuCode) {
       //根据用户所具有的菜单项控制
-      for (var i = 0; i < this.btns.length; i++) {
-        if (menuCode === this.btns[i]) {
-          return true;
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
         }
       }
       return false;
@@ -697,6 +949,18 @@ export default {
       } else {
         for (var i = 0; i <= statusArr.length; i++) {
           if (this.mainForm.status == statusArr[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
             return true;
           }
         }
@@ -729,5 +993,18 @@ export default {
   margin-top: 30px;
   padding-top: 10px;
   text-align: right;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

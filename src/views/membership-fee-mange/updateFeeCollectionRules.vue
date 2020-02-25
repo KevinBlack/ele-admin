@@ -15,9 +15,9 @@
                <el-select v-model="formQuery.memberType" filterable placeholder="请选择" size="mini" style="width:100%">
                   <el-option
                     v-for="item in memberTypeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key"
                   ></el-option>
                 </el-select>
             </el-form-item>
@@ -32,9 +32,9 @@
                <el-select v-model="formQuery.memberDj" filterable placeholder="请选择" size="mini" style="width:100%">
                   <el-option
                     v-for="item in memberDjOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -50,7 +50,6 @@
       <el-row :gutter="10">
         <el-col :span="24" class="btn_bottom">
           <el-button type="primary" size="mini" @click="update">保存</el-button>
-          <el-button type="primary" size="mini" @click="resetForm('formQuery')">重置</el-button>
         </el-col>
       </el-row>
     </el-row>
@@ -59,6 +58,8 @@
 
 <script>
 import { getFeeInfoById,updateMemberFeeInfo } from "@/api/hxxd/membership-fee-mange";
+import { getDictDataLists, getDictDataList } from "@/api/system/comm/comm";
+import { getDictName } from "@/utils/index.js";
 export default {
   data() {
     return {
@@ -68,36 +69,18 @@ export default {
         memberZk: "",
         memberFeeBz: "",
       },
-      memberTypeOptions: [
-        {
-          value: '1',
-          label: '航空公司'
-        },
-        {
-          value: '2',
-          label: '销售代理人'
-        }
-      ],
-      memberDjOptions: [
-        {
-          value: '1',
-          label: '一级会员'
-        },
-        {
-          value: '2',
-          label: '二级会员'
-        }
-      ],
+      memberTypeOptions: [],
+      memberDjOptions: [],
       rules1: {
         memberType: [
           { required: true, message: "不能为空", trigger: "blur" }
         ],
         memberDj: [{ required: true, message: "不能为空" }],
         memberZk: [
-          { required: true, message: "不能为空", trigger: "blur" }
+          { required: true, pattern: /^([0-9](\.[0-9]+)?|10)$/ , message: "请输入正确的值", trigger: "blur" }
         ],
         memberFeeBz: [
-          { required: true, message: "不能为空", trigger: "blur" }
+          { required: true, pattern: /^[-+]?\d*[.]?\d{2}$/, message: "请输入数字", trigger:["blur", "change"] }
         ]
       }
     };
@@ -108,9 +91,18 @@ export default {
     if (id) {
       this.getMessageById(id);
     }
-
+  //加载字典
+    this.beforeLoading();
   },
   methods: {
+    beforeLoading() {
+      getDictDataLists("97001014").then(response => {
+        this.memberTypeOptions = response.data.jq97001014;
+      });
+      getDictDataLists("97001015").then(response => {
+        this.memberDjOptions = response.data.jq97001015;
+      });
+    },
     //系统信息保存
     update() {
       this.$refs["formQuery"].validate(valid => {
@@ -129,6 +121,7 @@ export default {
             type: "success",
             message: msg
           });
+          this.$router.push({ path: "/membership-fee-manage/fee-collection-rules-manage",query: {} });
         } else {
           //保存失败
           this.$message({
@@ -145,12 +138,7 @@ export default {
       getFeeInfoById(id).then(response => {
         this.formQuery = response.data;
       });
-    },
-    resetForm(formName) {
-      this.$nextTick(() => {
-        this.$refs[formName].resetFields();
-      });
-    },
+    }
   }
 };
 </script>

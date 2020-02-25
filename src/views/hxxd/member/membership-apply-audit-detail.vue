@@ -11,6 +11,7 @@
             icon="el-icon-circle-check"
             size="mini"
             @click="handleAuditPass"
+            v-show="btnShow('10002060205010')"
             v-if="btnDisplay('20')"
           >审核通过</el-button>
           <el-button
@@ -18,6 +19,7 @@
             icon="el-icon-circle-close"
             size="mini"
             @click="handleAuditNotPass"
+            v-show="btnShow('10002060205020')"
             v-if="btnDisplay('20')"
           >审核驳回</el-button>
         </el-col>
@@ -48,7 +50,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="会员姓名" size="mini" prop="name">
-              <el-input v-model="mainForm.name" size="mini"></el-input>
+              <el-input v-model="mainForm.name" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -65,52 +67,52 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="公司性质" size="mini" prop="corporateNature">
-              <el-input v-model="mainForm.corporateNature" size="mini"></el-input>
+              <el-input v-model="mainForm.corporateNature" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="法人代表姓名" size="mini" prop="legalRepresentName">
-              <el-input v-model="mainForm.legalRepresentName" size="mini"></el-input>
+              <el-input v-model="mainForm.legalRepresentName" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="注册资金(万)" size="mini" prop="registeredFunds">
-              <el-input v-model="mainForm.registeredFunds" size="mini"></el-input>
+              <el-input v-model="mainForm.registeredFunds" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="主业务范围" size="mini" prop="mainBusinessScope">
-              <el-input v-model="mainForm.mainBusinessScope" size="mini"></el-input>
+              <el-input v-model="mainForm.mainBusinessScope" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="传真" size="mini" prop="fax">
-              <el-input v-model="mainForm.fax" size="mini"></el-input>
+              <el-input v-model="mainForm.fax" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="邮政编码" size="mini" prop="postalCode">
-              <el-input v-model="mainForm.postalCode" size="mini"></el-input>
+              <el-input v-model="mainForm.postalCode" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="通讯地址" size="mini" prop="postalAddress">
-              <el-input v-model="mainForm.postalAddress" size="mini"></el-input>
+              <el-input v-model="mainForm.postalAddress" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="Email" size="mini" prop="email">
-              <el-input v-model="mainForm.email" size="mini"></el-input>
+              <el-input v-model="mainForm.email" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="QQ号" size="mini" prop="qq">
-              <el-input v-model="mainForm.qq" size="mini"></el-input>
+              <el-input v-model="mainForm.qq" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -124,25 +126,25 @@
           <!-- 写好一个col其他的知己复制粘贴 -->
           <el-col :span="6">
             <el-form-item label="姓名" size="mini" prop="contactName">
-              <el-input v-model="mainForm.contactName" size="mini"></el-input>
+              <el-input v-model="mainForm.contactName" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="电话" size="mini" prop="contactPhone">
-              <el-input v-model="mainForm.contactPhone" size="mini"></el-input>
+              <el-input v-model="mainForm.contactPhone" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="职务" size="mini" prop="contactJob">
-              <el-input v-model="mainForm.contactJob" size="mini"></el-input>
+              <el-input v-model="mainForm.contactJob" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="手机号" size="mini" prop="contactTel">
-              <el-input v-model="mainForm.contactTel" size="mini"></el-input>
+              <el-input v-model="mainForm.contactTel" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
@@ -157,13 +159,14 @@
                 size="mini"
                 style="width:100%;"
                 change-on-select
+                :disabled="true"
               ></el-cascader>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="邮箱" size="mini" prop="contactEmail">
-              <el-input v-model="mainForm.contactEmail" size="mini"></el-input>
+              <el-input v-model="mainForm.contactEmail" size="mini" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -186,6 +189,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
                 format="yyyy-MM-dd HH:mm:ss"
                 style="width:100%"
+                :disabled="true"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -198,7 +202,7 @@
           
           <el-col :span="24">
             <el-form-item label="批准会议" size="mini" prop="entryMeeting">
-              <el-input v-model="mainForm.entryMeeting" size="mini" maxlength="200"></el-input>
+              <el-input v-model="mainForm.entryMeeting" size="mini" maxlength="200" :readonly="true"></el-input>
             </el-form-item>
           </el-col>
 
@@ -211,6 +215,7 @@
                 :rows="4"
                 maxlength="500"
                 show-word-limit
+                :readonly="true"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -248,18 +253,48 @@
           <el-col :span="24">
             <!-- 是否同意申请 -->
             <el-form-item label size="mini" prop="hasReadApply">
-              <el-checkbox v-model="mainForm.hasReadApply"></el-checkbox>
-              <el-button type="text" @click=" memberApplyDialogShow=true">《中国航空运输协会销售代理分会单位会员申请书》</el-button>
+              <el-checkbox v-model="mainForm.hasReadApply" :disabled="true"></el-checkbox>
+              <el-button type="text" @click=" memberApplyDialogShow=true" :disabled="true" >《中国航空运输协会销售代理分会单位会员申请书》</el-button>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <!-- 是否已读权利和义务 -->
             <el-form-item label size="mini" prop="hasReadRight">
-              <el-checkbox v-model="mainForm.hasReadRight"></el-checkbox>
-              <el-button type="text" @click=" memberRightDialogShow=true">《会员的权利与义务》</el-button>
+              <el-checkbox v-model="mainForm.hasReadRight" :disabled="true"></el-checkbox>
+              <el-button type="text" @click=" memberRightDialogShow=true" :disabled="true">《会员的权利与义务》</el-button>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row :gutter="10">
+          <el-col :span="24">
+            <h5 class="dtl-title-line">附件</h5>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-card class="box-card" shadow="never" :body-style="{ minHeight: '300px' }">
+              <el-table
+                ref="attachTable"
+                :data="attachTableData"
+                border
+                tooltip-effect="dark"
+                style="width: 100%;margin-bottom:20px;"
+              >
+                <el-table-column type="selection" width="55" align="center"></el-table-column>
+                <el-table-column prop="fileName" label="文件名" align="center"></el-table-column>
+                <el-table-column label="下载" align="center" width="150">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="downloadFile(scope.row.id)">下载</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </el-col>
+        </el-row>
+
+
       </el-form>
       <!-- 中国航空运输协会销售代理分会单位会员申请书 彈框 -->
       <el-dialog title="中国航空运输协会销售代理分会单位会员申请书" :visible.sync="memberApplyDialogShow">
@@ -390,7 +425,7 @@ import {
   auditMember
 } from "@/api/hxxd/member";
 import { parseTime, strToArr } from "@/utils/index.js";
-import { getAreaTree } from "@/api/system/comm/comm";
+import { getAreaTree,listFile, downloadFile,getValidateCode } from "@/api/system/comm/comm";
 import AuditDialog from "./apply-audit-dialog";
 
 export default {
@@ -409,6 +444,8 @@ export default {
   },
   data() {
     return {
+      //附件上传
+      attachTableData: [],
       //表单对应下拉字典
       mainFormOptions: {
         status: [
@@ -477,7 +514,8 @@ export default {
         hasReadRight: false,
         areas: [],
         identityMark: '',
-        identityMarkDate: ''
+        identityMarkDate: '',
+        attachIds: ""
       },
       auditDialog: {
         isShow: false,
@@ -507,7 +545,6 @@ export default {
         ],
         fax: [
           {
-            pattern: /^(\d{3,4}-)?\d{7,8}$/,
             required: true,
             message: "请输入正确格式的传真",
             trigger: "blur"
@@ -562,7 +599,7 @@ export default {
         entryMeeting: [
           { required: true, message: "请输入入会会议", trigger: "blur" }
         ],
-        area: [
+        areas: [
           {
             type: "array",
             required: true,
@@ -600,7 +637,8 @@ export default {
         ]
       },
       memberApplyDialogShow: false,
-      memberRightDialogShow: false
+      memberRightDialogShow: false,
+      btns: this.$store.getters.btns["100020602050"]
     };
   },
   created() {
@@ -608,12 +646,16 @@ export default {
     this.initForm(this.$route.query.id);
   },
   methods: {
-    initForm(id) {
+    async initForm(id) {
       getAreaTree().then(response => {
         this.mainFormOptions.area = response.data;
       });
       if ( id && id !=0 ) {
-        getMember(id).then(response => {
+        var attachIds;
+        await getMember(id).then(response => {
+          //若附件存在。则用表格显示
+          attachIds = response.data.attachIds;
+           console.log(attachIds)
           // 同名字段覆盖，不同名字段添加
           Object.assign(this.mainForm, response.data);
           this.mainForm.areas = strToArr(response.data.areas, ",");
@@ -621,6 +663,30 @@ export default {
           this.mainForm.hasReadApply = response.data.hasReadApply == 1;
           this.mainForm.hasReadRight = response.data.hasReadRight == 1;
         });
+        // 附件id
+        if (attachIds) {
+          var validateCode;
+          // 获取验证码
+          await getValidateCode("").then(response => {
+            if (response.data) {
+              validateCode = response.data.validateCode;
+              if (!validateCode) {
+                this.$message({
+                  type: "error",
+                  message: "获取验证码失败!"
+                });
+                return;
+              }
+              validateCode = this.$encruption(validateCode);
+            }
+          });
+          // 加载附件
+          await listFile(attachIds, validateCode).then(response => {
+            if (response.data) {
+              this.attachTableData = response.data;
+            }
+          });
+        }
       }
     },
     //审核通过
@@ -669,12 +735,15 @@ export default {
         this.mainForm.hasReadRight = false;
       }
     },
-    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    //data中这个不能少：
     btnShow(menuCode) {
       //根据用户所具有的菜单项控制
-      for (var i = 0; i < this.btns.length; i++) {
-        if (menuCode === this.btns[i]) {
-          return true;
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
         }
       }
       return false;
@@ -685,6 +754,45 @@ export default {
         return true;
       }
       return false;
+    },
+    async downloadFile(id) {
+      //获取验证码
+      var key;
+      await getValidateCode("").then(response => {
+        if (response.data) {
+          var validateCode = response.data.validateCode;
+          if (!validateCode) {
+            this.$message({
+              type: "error",
+              message: "获取验证码失败!"
+            });
+            return;
+          }
+          key = this.$encruption(validateCode);
+        }
+      });
+      await downloadFile(id, key).then(response => {
+        console.log(response.headers);
+        var contentDisposition = response.headers["content-disposition"];
+        var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
+        var result = patt.exec(contentDisposition);
+        var fileName = decodeURIComponent(result[1]).trim();
+        const blob = new Blob([response.data]);
+        if ("download" in document.createElement("a")) {
+          // 非IE下载
+          const elink = document.createElement("a");
+          elink.download = fileName;
+          elink.style.display = "none";
+          elink.href = URL.createObjectURL(blob);
+          document.body.appendChild(elink);
+          elink.click();
+          URL.revokeObjectURL(elink.href); // 释放URL 对象
+          document.body.removeChild(elink);
+        } else {
+          // IE10+下载
+          navigator.msSaveBlob(blob, fileName);
+        }
+      });
     }
   }
 };
@@ -712,5 +820,25 @@ export default {
   margin-top: 30px;
   padding-top: 10px;
   text-align: right;
+}
+/* 标题下线和 保存取消上部线 样式 */
+.dialog-footer {
+  border-top: 1px solid #e6e6e6;
+  margin-top: 30px;
+  padding-top: 10px;
+  text-align: right;
+}
+.area_border,
+.area_bordes {
+  box-sizing: border-box;
+  border: 1px solid #e6e6e6;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 0 0 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.area_bordes {
+  padding: 10px;
 }
 </style>

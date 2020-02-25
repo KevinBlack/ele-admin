@@ -22,6 +22,16 @@
             <el-input v-model="formQuery.businessName" size="mini"></el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="6">
+          <el-form-item label="协议有效期" size="mini" prop="businessName">
+            <el-input v-model="formQuery.agreementDuration" size="mini"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="业务类别" size="mini" prop="businessName">
+            <el-input v-model="formQuery.businessType" size="mini"></el-input>
+          </el-form-item>
+        </el-col>
         <el-col :span="8" style="text-align: left;" >
           <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
           <el-button
@@ -36,32 +46,31 @@
     <!-- part2 -->
     <el-row class="area_border">
       <el-col style="margin-left: 10px;width: 27%;">
-        <el-radio-group size="mini">
-          <el-radio-button size="small" type="primary" class="btn_line" @click.native.prevent="downloadFile">模板下载</el-radio-button>
-          <el-radio-button size="small" type="primary" class="btn_line">门户发布</el-radio-button>
-          <el-radio-button size="small" type="primary" class="btn_line">门户撤回</el-radio-button>
-          <el-radio-button size="small" type="primary" class="btn_line" @click.native.prevent="deleteBatch" >删除</el-radio-button>
-        </el-radio-group>
+        <el-button-group size="mini">
+          <el-button size="small" type="primary" v-show="btnShow('1000208040')" class="btn_line" @click.native.prevent="handleDownload">模板下载</el-button>
+          <el-button size="small" type="primary" v-show="btnShow('1000208030')" class="btn_line" @click="pubOrCancelSign(true)">门户发布</el-button>
+          <el-button size="small" type="primary" v-show="btnShow('1000208030')" class="btn_line"  @click="pubOrCancelSign(false)">门户撤回</el-button>
+          <el-button size="small" type="primary" v-show="btnShow('1000208020')" class="btn_line" @click.native.prevent="deleteBatch" >删除</el-button>
+        </el-button-group>
       </el-col>
-      <el-col style="width: 50%;margin-bottom: 15px;">
+      <el-col style="width: 50%;margin-bottom: 15px;margin-left: 10px;">
         <el-upload
           class="upload-demo"
           ref="upload"
-          action="/hxxd/hxXdSignContract/batchUpload"
+          action="/zuul/hxxd/hxXdSignContract/batchUpload"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
           :file-list="fileList"
           :auto-upload="false"
           :headers="uploadHeaders"
-          :data="uploadData"
           :multiple="true"
         >
-
-            <el-button slot="trigger" size="mini" type="primary" style="border-radius: 5px 0 0 5px;">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary" class="btn_line" >选取文件</el-button>
             <el-button
-              style="margin-left: -4px;border-radius:0 5px 5px 0;"
-              size="mini"
+              size="small"
+              class="btn_line"
               type="primary"
+              v-show="btnShow('1000208010')"
               @click="submitUpload"
             >上传到服务器</el-button>
 
@@ -69,14 +78,6 @@
       </el-col>
     </el-row>
     <!-- part3 -->
-    <!-- <el-row :gutter="10">
-      <el-col :span="24">
-        <div class="dtl-info-line">
-          已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
-        </div>
-      </el-col>
-    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -95,6 +96,7 @@
       <el-table-column prop="businessName" label="企业名称" align="center" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="agreementDuration" label="协议有效期" align="center" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="signAirLine" label="签约航空公司" align="center" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="isPub" label="发布状态" align="center" :formatter="statusPub" :show-overflow-tooltip="true"></el-table-column>
     </el-table>
 
     <!-- 分页 -->
@@ -115,13 +117,32 @@
 </template>
 
 <script>
-import { downloadFile } from "@/api/system/comm/comm";
-import { getSignInfoList ,signInfoDeleteBatch} from "@/api/hxxd/agent";
+import { getSignInfoList ,signInfoDeleteBatch,pubOrCancelSign} from "@/api/hxxd/agent";
 import { parseTime } from "@/utils/index.js";
 import { getToken } from "@/utils/auth";
+import { downloadTemplate } from '@/api/hxxd/financialManage'
 export default {
   data() {
     return {
+      //发布状态
+      statusPub(row, column, cellValue, index) {
+      let isPub = row.isPub;
+      if (isPub === "0") {
+        return "未发布";
+      } else if (isPub === "1") {
+        return "已发布";
+      } else if (isPub === "2") {
+        return "取消发布";
+      } else {
+        return row.isPub;
+      }
+    },
+       //获取有权限的按钮
+      btns: this.$store.getters.btns['10002080'],
+      downloadQuery: {
+        fileCatalog: 'sign_template',
+        belongId: 63
+      },
        param:{
         idList: []
       },
@@ -134,6 +155,8 @@ export default {
       createDate: [],
       formQuery: {
         businessName: "",
+        businessType: "",
+        agreementDuration: "",
         beginTime: "",
         endTime: "",
         pageNo: 1,
@@ -143,7 +166,10 @@ export default {
       //文件上传
       fileList: [],
       uploadHeaders: {
-        "X-Token": getToken()
+        "X-Token": getToken(),
+      },
+       uploadData: {
+        id: 22
       }
     };
   },
@@ -158,16 +184,85 @@ export default {
     // }
   },
   methods: {
-    downloadFile() {
-      downloadFile({ id: 1 }).then(response => {
-        console.log(response.headers)
+    //发布或者取消发布
+    pubOrCancelSign(pubOrCancel) {
+      var idList = [];
+      var rows = this.multipleSelection;
+      if (!rows || rows.length == 0) {
+        this.$message({
+          type: "info",
+          message: "请选择要操作的数据!"
+        });
+        return;
+      }
+      var illegalNameArr = new Array();
+      Object.keys(rows).forEach(function(key) {
+        idList.push( rows[key].id);
+        if (pubOrCancel) {
+          if ( rows[key].isPub === "1") {
+            //未发布的可以发布
+            illegalNameArr.push(
+              rows[key].businessName + "-" + rows[key].signAirLine
+            );
+          }
+        } else {
+          if (rows[key].isPub !== "1") {
+            //已发的可以取消
+            illegalNameArr.push(
+              rows[key].businessName + "-" + rows[key].signAirLine
+            );
+          }
+        }
+      });
+
+      if (illegalNameArr.length > 0) {
+        var msg =
+          "选择的数据状态非法，企业名称-签约航空公司：" + illegalNameArr.join(",");
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
+      this.param.idList = idList;
+      this.param.pubOrCancel = pubOrCancel;
+      pubOrCancelSign(this.param).then(response => {
+        if (response.data) {
+          var message = pubOrCancel ? "发布成功" : "取消发布成功"; //操作成功
+          this.$message({
+            type: "success",
+            message: message
+          });
+          //更新列表
+          this.getTableList();
+        } else {
+          var message = pubOrCancel ? "发布失败" : "取消发布失败"; //操作失败
+          this.$message({
+            type: "false",
+            message: message
+          });
+        }
+      });
+    },
+      btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+     handleDownload() {
+      downloadTemplate(this.downloadQuery.belongId,this.downloadQuery.fileCatalog).then(response => {
         var contentDisposition = response.headers["content-disposition"]; //从response的headers中获取filename, 后端response.setHeader("Content-disposition", "attachment; filename=xxxx.docx") 设置的文件名;
+        console.log('contentDisposition',contentDisposition)
         var patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*")
         var result = patt.exec(contentDisposition)
-        console.log(contentDisposition)
-        var fileName=decodeURIComponent(result[1]).trim()
-        // var fileName="20190906~航协系统项目开发蓝图.xlsx"
-        console.log(fileName);
+        var fileName = decodeURIComponent(result[1]).trim()
         const blob = new Blob([response.data])
         if ("download" in document.createElement("a")) {
           // 非IE下载
@@ -175,6 +270,7 @@ export default {
           elink.download = fileName
           elink.style.display = "none"
           elink.href = URL.createObjectURL(blob)
+          console.log(elink.href)
           document.body.appendChild(elink)
           elink.click()
           URL.revokeObjectURL(elink.href) // 释放URL 对象
@@ -193,7 +289,7 @@ export default {
       }
     },
      deleteBatch() {
-      debugger;
+      var rows = this.multipleSelection;
       var idList = [];
       if (this.multipleSelection.length == 0) {
         this.$message({
@@ -201,6 +297,26 @@ export default {
           type: "warning"
         });
       } else {
+        var illegalNameArr = new Array();
+      Object.keys(rows).forEach(function(key) {
+        idList.push( rows[key].id);
+          if ( rows[key].isPub === "1") {
+            //未发布的可以删除
+            illegalNameArr.push(
+              rows[key].businessName + "-" + rows[key].signAirLine
+            );
+          }
+      });
+
+      if (illegalNameArr.length > 0) {
+        var msg =
+          "请选择未发布的数据进行删除，企业名称-签约航空公司：" + illegalNameArr.join(",");
+        this.$message({
+          type: "info",
+          message: msg
+        });
+        return;
+      }
         this.multipleSelection.forEach(i => {
           idList.push(i.id);
         });
@@ -220,14 +336,12 @@ export default {
       }
     },
     handleEdit() {
-      debugger;
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: "请选择数据",
           type: "warning"
         });
       } else if (this.multipleSelection.length == 1) {
-        debugger;
 
         var id = this.multipleSelection[0].id;
         if (id) {
@@ -266,18 +380,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      if (val.length > 1) {
-        this.$message({
-          message: "只能选择单条",
-          type: "warning"
-        });
-      }
-      if (val.length !== 0) {
-        this.added = val.length;
-        this.sum = this.added;
-      } else if (val.length === 0) {
-        this.sum -= this.added;
-      }
     },
     toggleSelection(rows) {
       if (rows) {

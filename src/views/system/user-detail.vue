@@ -296,11 +296,6 @@ export default {
       cascaderOpts: [],
       rules: {
         companyName: [
-          {
-            required: true,
-            message: "公司名称不能为空",
-            trigger: ["blur", "change"]
-          }
         ],
         loginCode: [
           {
@@ -359,6 +354,14 @@ export default {
             min: 8,
             max: 15,
             message: "长度在 8 到 15 个字符",
+            trigger: ["blur", "change"]
+          }
+        ],
+        officeIds:[
+          {
+            type: "array",
+            required: true,
+            message: "请选择组织机构",
             trigger: ["blur", "change"]
           }
         ]

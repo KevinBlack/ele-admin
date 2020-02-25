@@ -12,7 +12,7 @@
             <el-col :span="12">
               <el-form-item label="销售代理人" size="mini" prop="salesAgent">
                 <el-input v-model="detailForm.salesAgent" :readonly="true" filterable placeholder="请选择" style="width:100%">
-                  <el-button slot="append" icon="el-icon-search" @click="showSelect('1')" />
+                  <el-button slot="append" icon="el-icon-search" />
                 </el-input>
               </el-form-item>
               <!-- <el-dialog title="选择销代人" :visible.sync="isShowSelect">
@@ -25,7 +25,7 @@
             <el-col :span="12">
               <el-form-item label="航空公司" size="mini" prop="airlineCompany">
                 <el-input v-model="detailForm.airlineCompany" :readonly="true" filterable placeholder="请选择" style="width:100%">
-                  <el-button slot="append" icon="el-icon-search" @click="showSelect('2')" />
+                  <el-button slot="append" icon="el-icon-search" />
                 </el-input>
               </el-form-item>
               <!-- <el-dialog title="选择航空公司" :visible.sync="isSeeSelect">
@@ -37,7 +37,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="业务类别" size="mini" prop="businessCategory">
-                <el-select v-model="detailForm.businessCategory" filterable placeholder="请选择" style="width: 100%;" size="mini">
+                <el-select v-model="detailForm.businessCategory"  :readonly="true" filterable placeholder="请选择" style="width: 100%;" size="mini">
                   <el-option
                     v-for="item in businessOptions"
                     :key="item.value"
@@ -45,11 +45,6 @@
                     :value="item.value"
                   />
                 </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="统一社会信用代码" size="mini" prop="unifiedCreditCode">
-                <el-input v-model="detailForm.unifiedCreditCode" :readonly="true" ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -64,7 +59,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="处罚类别" size="mini" prop="punishmentType">
-                <el-select v-model="detailForm.punishmentType" filterable placeholder="请选择" style="width: 100%;" size="mini">
+                <el-select v-model="detailForm.punishmentType"  :readonly="true" filterable placeholder="请选择" style="width: 100%;" size="mini">
                   <el-option
                     v-for="item in punishOptions"
                     :key="item.value"
@@ -108,7 +103,6 @@ export default {
         salesAgent: '',
         airlineCompany: '',
         businessCategory: '',
-        unifiedCreditCode: '',
         validityAgreement: '',
         signAirlinesTwoWordCord: '',
         punishmentType: '',

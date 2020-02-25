@@ -5,7 +5,7 @@
       <el-card class="detailsContainer">
         <el-row>
           <el-col :span="24">
-            <h3 class="dtl-title-line register_title">账户注册</h3>
+            <h3 class="dtl-title-line register_title">代理人账户注册</h3>
           </el-col>
           <el-col :span="24">
             <el-steps
@@ -14,19 +14,10 @@
               align-center
               style="margin-top: 20px;"
             >
-              <el-step title="选择用户类型"></el-step>
               <el-step title="基本信息录入"></el-step>
               <el-step title="账户信息录入"></el-step>
               <el-step title="注册信息展示"></el-step>
             </el-steps>
-          </el-col>
-          <el-col :span="24" class="reg-con-c" v-if="active === 0">
-            <button class="btn_usertype" @click="nextFrist('01')">
-              <i class="iconfont airplane_com">&#xe637;</i><span>航空公司</span>
-            </button>
-            <button class="btn_usertype" @click="nextFrist('02')">
-              <i class="iconfont">&#xe61c;</i><span>销售代理人</span>
-            </button>
           </el-col>
           <el-col :span="24" style="padding-top: 50px;">
             <el-form
@@ -36,7 +27,7 @@
               size="mini"
               :rules="rules1"
             >
-              <el-row v-if="active === 1">
+              <el-row v-if="active === 0">
                 <el-col :span="8">
                   <el-form-item label="企业名称" prop="businessName">
                     <el-input
@@ -172,23 +163,14 @@
                   <el-button
                     type="primary"
                     size="mini"
-                    v-if="active != 3"
-                    class="a"
-                    @click="pre"
-                    style="padding: 7px 20px;font-size: 14px;"
-                    >上一步</el-button
-                  >
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    @click="nextSecond"
+                    @click="next(0)"
                     style="padding: 7px 20px;font-size: 14px;"
                     >下一步</el-button
                   >
                 </el-col>
               </el-row>
 
-              <el-row v-if="active === 2">
+              <el-row v-if="active === 1">
                 <el-col :span="7">&nbsp;</el-col>
                 <el-col :span="10">
                   <el-row>
@@ -242,10 +224,10 @@
                       </el-form-item>
                     </el-col>
                     <el-col>
-                      <el-form-item label="密码" prop="password">
+                      <el-form-item label="密码" prop="confiPassword1">
                         <el-input
                           type="password"
-                          v-model="param.password"
+                          v-model="param.confiPassword1"
                           placeholder="请输入密码"
                         />
                       </el-form-item>
@@ -267,7 +249,7 @@
                       <el-button
                         type="primary"
                         size="mini"
-                        v-if="active != 3"
+                        v-if="active === 1"
                         class="a"
                         @click="pre"
                         style="padding: 7px 20px;font-size: 14px;"
@@ -276,7 +258,7 @@
                       <el-button
                         type="primary"
                         size="mini"
-                        @click="nextThird"
+                        @click="next(1)"
                         style="padding: 7px 20px;font-size: 14px;"
                         >下一步</el-button
                       >
@@ -287,27 +269,13 @@
               </el-row>
             </el-form>
           </el-col>
-          <el-col :span="24" class="reg-con-c suc_info" v-if="active === 3">
+          <el-col :span="24" class="reg-con-c suc_info" v-if="active === 2">
             尊敬的用户{{ this.param.loginCode }},恭喜您完成注册
-            <el-col
-              :span="24"
-              class="reg-con-c"
-              v-if="active != 0"
-              style="margin-top: 50px;"
-            >
+            <el-col :span="24" class="reg-con-c" style="margin-top: 50px;">
               <el-button
                 type="primary"
                 size="mini"
-                v-if="active != 3"
-                class="a"
-                @click="pre"
-                style="padding: 7px 20px;font-size: 14px;"
-                >上一步</el-button
-              >
-              <el-button
-                type="primary"
-                size="mini"
-                @click="nextForth"
+                @click="next(2)"
                 style="padding: 7px 20px;font-size: 14px;"
                 >{{ btnMassage }}</el-button
               >
@@ -321,7 +289,7 @@
 </template>
 
 <script>
-import { companyRegisterSave } from "@/api/hxxd/agent";
+import { companyRegisterSave, registerCheckSocialCode } from "@/api/hxxd/agent";
 import { registerSave, registerCheckMobile } from "@/api/system/user";
 import HeaderReload from "@/components/HeaderReload";
 import FooterReload from "@/components/FooterReload";
@@ -355,9 +323,9 @@ export default {
         businessNameEn: "",
         licenseNo: "",
         socialCode: "",
-        companyType: "国营",
-        manageModel: "国营",
-        salesMode: "国营",
+        companyType: "",
+        manageModel: "",
+        salesMode: "",
         contactName: "",
         contactNum: "",
         contactPhone: "",
@@ -369,25 +337,33 @@ export default {
         mobileCode: "",
         password: "",
         confiPassword: "",
-        userType: ""
+        confiPassword1: "",
+        userType: "02",
+        postalcode: ""
       },
       rules1: {
         businessName: [
           { required: true, message: "不能为空", trigger: "blur" }
         ],
-        businessNameEn: [
+        licenseNo: [
           { required: true, message: "不能为空", trigger: "blur" },
           {
-            pattern: /^[a-zA-Z_]+$/,
-            message: "请输入英文",
+            pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/,
+            message: "请输入15位或18位正确格式的营业执照号",
             trigger: ["blur", "change"]
           }
         ],
-        licenseNo: [{ required: true, message: "不能为空", trigger: "blur" }],
-        socialCode: [{ required: true, message: "不能为空", trigger: "blur" }],
-        companyType: [{ required: true, message: "不能为空", trigger: "blur" }],
-        manageModel: [{ required: true, message: "不能为空", trigger: "blur" }],
-        salesMode: [{ required: true, message: "不能为空", trigger: "blur" }],
+        socialCode: [
+          { required: true, message: "不能为空", trigger: "blur" },
+          {
+            pattern: /^[0-9A-Z]{18}$/,
+            message: "请输入18位正确格式的社会信用代码",
+            trigger: ["blur", "change"]
+          }
+        ],
+        companyType: [{ required: true, message: "不能为空", trigger: "change" }],
+        manageModel: [{ required: true, message: "不能为空", trigger: "change" }],
+        salesMode: [{ required: true, message: "不能为空", trigger: "change" }],
         contactName: [{ required: true, message: "不能为空", trigger: "blur" }],
         contactNum: [{ required: true, message: "不能为空", trigger: "blur" }],
         contactPhone: [
@@ -406,19 +382,19 @@ export default {
         userName: [{ required: true, message: "不能为空", trigger: "blur" }],
         mobile: [{ required: true, validator: validPhone, trigger: "blur" }],
         mobileCode: [{ required: true, message: "不能为空", trigger: "blur" }],
-        password: [
+        confiPassword1: [
           { required: true, message: "不能为空", trigger: "blur" },
           {
-            pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,8}$/,
-            message: "请输入8位由数字和英文字母组成的密码",
+            pattern: /^(?=.*?[0-9])(?=.*?[a-z])[0-9a-z]{8,}$/,
+            message: "请输入大于等于8位由数字和英文字母组成的密码",
             trigger: ["blur", "change"]
           }
         ],
         confiPassword: [
           { required: true, message: "不能为空", trigger: "blur" },
           {
-            pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,8}$/,
-            message: "请输入8位由数字和英文字母组成的密码",
+            pattern: /^(?=.*?[0-9])(?=.*?[a-z])[0-9a-z]{8,}$/,
+            message: "请输入大于等于8位由数字和英文字母组成的密码",
             trigger: ["blur", "change"]
           }
         ]
@@ -430,7 +406,7 @@ export default {
         },
         {
           value: "2",
-          label: "股份有限责任公"
+          label: "股份有限责任公司"
         },
         {
           value: "3",
@@ -467,13 +443,6 @@ export default {
       ]
     };
   },
-  watch: {
-    param: function(val, oldVal) {
-      if (val) {
-        this.nextSecond();
-      }
-    }
-  },
   mounted() {
     this.Height = document.documentElement.clientHeight - 194; //监听浏览器窗口变化
     window.onresize = () => {
@@ -489,21 +458,32 @@ export default {
         });
       } else {
         this.$message({
-          type: "error",
+          type: "warning",
           message: msg
         });
       }
+    },
+    checkSocialCode() {
+      registerCheckSocialCode(this.param.socialCode).then(response => {
+        var message = response.message;
+        if (message === "sucess") {
+          this.active = 1;
+        }else{
+          this.active = 0;
+          this.message(warning, message);
+        }
+      });
     },
     checkMobileCode() {
       registerCheckCode(this.param.mobile, this.param.mobileCode).then(
         response => {
           var success = response.data;
-          var msg = success ? "验证码校验成功" : "验证码校验失败";
-          if (msg == "验证码校验成功") {
+          var message = response.message;
+          if (message === "验证通过!") {
             this.companyRegisterSave();
           } else {
-            this.message(success, msg);
-            this.active = 2;
+            this.message(false, message);
+            this.active = 1;
             this.btnMassage = "下一步";
           }
         }
@@ -518,14 +498,14 @@ export default {
         } else {
           registerSendCode(this.param.mobile).then(response => {
             var msg = response.message;
-            if (msg != "false") {
+            if (msg === "请查看手机验证码!") {
               this.$message({
                 type: "success",
                 message: msg
               });
             } else {
               this.$message({
-                type: "false",
+                type: "warning",
                 message: "获取验证码失败"
               });
             }
@@ -550,11 +530,7 @@ export default {
         }, 1000);
       }
     },
-    nextFrist(userType) {
-      this.param.userType = userType;
-      this.active = 1;
-    },
-    nextSecond() {
+    next(val) {
       this.$refs["infoForm"].validate(valid => {
         if (valid) {
           this.isNext = true;
@@ -562,84 +538,69 @@ export default {
           this.isNext = false;
         }
       });
-      this.pageJump(1);
+      this.pageJump(val);
     },
     pageJump(val) {
-      if (val === 1) {
+      if (val === 0) {
         if (this.isNext) {
-          this.active = 2;
+          this.checkSocialCode();
+        } else {
+          this.active = 0;
+          this.$message({
+            type: "warning",
+            message: "请完善信息"
+          });
+        }
+      } else if (val === 1) {
+        if (this.isNext) {
+          this.checkMobileCode();
         } else {
           this.active = 1;
           this.$message({
-            type: "error",
+            type: "warning",
             message: "请完善信息"
           });
         }
       } else if (val === 2) {
-        if (this.isNext) {
-          this.active = 2;
-          this.checkMobileCode();
-        } else {
-          this.active = 2;
-          this.$message({
-            type: "error",
-            message: "请完善信息"
-          });
-        }
+        this.$router.push({ path: "/newlogin", query: {} });
       }
-    },
-    nextThird() {
-      this.$refs["infoForm"].validate(valid => {
-        if (valid) {
-          this.isNext = true;
-        } else {
-          this.isNext = false;
-        }
-      });
-      this.pageJump(2);
-    },
-    nextForth() {
-      this.$router.push({ path: "/newlogin", query: {} });
     },
     pre() {
       if (this.active != 0) {
         this.active--;
         this.btnMassage = "下一步";
       }
-      if (this.active == 3) {
-        this.btnMassage = "跳转到登陆页面";
-      }
     },
     // 企业注册信息保存
     companyRegisterSave() {
-      if (this.param.password != this.param.confiPassword) {
+      if (this.param.confiPassword1 != this.param.confiPassword) {
         this.$message({
-          type: "error",
+          type: "warning",
           message: "两次输入的密码不一致"
         });
-        this.active = 2;
+        this.active = 1;
         this.btnMassage = "下一步";
         return;
       }
       // 数据校验成功
       // 若果密码存在，则对密码进行加密操作
-      else if (this.param.password) {
-        var password = this.$encruption(this.param.password);
+      else if (this.param.confiPassword1) {
+        var password = this.$encruption(this.param.confiPassword1);
         this.param.password = password;
       }
+
       // 企业和用户的都保存成功
       registerSave(this.param).then(response => {
         if (response.status == 200) {
-          debugger;
           // 保存成功
           this.$message({
             type: "success",
             message: "保存成功"
           });
-          this.active = 3;
+          this.active = 2;
           this.btnMassage = "跳转到登陆页面";
         } else {
-          this.active = 2;
+          this.active = 1;
           this.btnMassage = "下一步";
           this.$message({
             type: "success",

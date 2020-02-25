@@ -33,12 +33,31 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="企业性质" prop="enterpriseNature">
-              <el-input v-model="hxXdAnnualReportParam.enterpriseNature" />
+              <el-select
+                v-model="hxXdAnnualReportParam.enterpriseNature"
+                filterable
+                placeholder="请选择"
+                style="width: 100%;"
+              >
+                <el-option
+                  v-for="item in enterpriseNatureOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="年报年份" prop="enterpriseNature">
-              <el-input v-model="hxXdAnnualReportParam.enterpriseNature" />
+            <el-form-item label="年报年份" prop="annual">
+              <el-date-picker
+                v-model="hxXdAnnualReportParam.annual"
+                type="year"
+                placeholder="请选择年份"
+                format="yyyy"
+                value-format="yyyy"
+              >
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -52,7 +71,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="工商注册号" prop="businessRegistNum">
+            <el-form-item label="社会统一信用代码" prop="businessRegistNum">
               <el-input v-model="hxXdAnnualReportParam.businessRegistNum" />
             </el-form-item>
           </el-col>
@@ -101,6 +120,19 @@
               <el-input v-model="hxXdAnnualReportParam.officeClass2" />
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="所属省份" prop="province">
+              <el-input
+                v-model="hxXdAnnualReportParam.province"
+                :disabled="true"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="所属地区" prop="area">
+              <el-input v-model="hxXdAnnualReportParam.area" :disabled="true" />
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <!-- 投资人信息 -->
@@ -115,14 +147,16 @@
           size="mini"
           icon="el-icon-plus"
           @click="addLine"
-        >添加</el-button>
+          >添加</el-button
+        >
         <el-button
           style="margin-left: 10px;"
           type="primary"
           size="mini"
           icon="el-icon-edit"
           @click="handleDelete"
-        >删除</el-button>
+          >删除</el-button
+        >
         <el-table
           ref="multipleTable"
           :data="reportInvestorList"
@@ -132,85 +166,94 @@
           <el-table-column type="selection" width="50" />
           <el-table-column prop="investorType" label="投资人类型">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.investorType" class="edit-input" />
+              <el-input v-model="scope.row.investorType" class="edit-input" />
             </template>
           </el-table-column>
           <el-table-column prop="investorName" label="投资人名称">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.investorName" class="edit-input" />
+              <el-input v-model="scope.row.investorName" class="edit-input" />
             </template>
           </el-table-column>
           <el-table-column prop="certificateNum" label="证照/证件号码">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.certificateNum" class="edit-input" />
+              <el-input v-model="scope.row.certificateNum" class="edit-input" />
             </template>
           </el-table-column>
           <el-table-column prop="investmentAmount" label="投资金额（万元）">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.investmentAmount" class="edit-input" />
+              <el-input
+                v-model="scope.row.investmentAmount"
+                class="edit-input"
+              />
             </template>
           </el-table-column>
           <el-table-column prop="currencyType" label="货币类型">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.currencyType" class="edit-input" />
+              <el-input v-model="scope.row.currencyType" class="edit-input" />
             </template>
           </el-table-column>
         </el-table>
 
-        <!-- 资质认可信息 -->
+        <!-- 代理航空公司信息 -->
         <el-row :gutter="10">
           <el-col :span="24">
-            <h5 class="dtl-title-line bg-font-color">资质认可信息</h5>
+            <h5 class="dtl-title-line bg-font-color">代理航空公司信息</h5>
           </el-col>
         </el-row>
-
         <el-button
           style="margin-left: 10px;"
           type="primary"
           size="mini"
           icon="el-icon-plus"
-          @click="addLine1"
-        >添加</el-button>
+          @click="addLineAirLine"
+          >添加</el-button
+        >
         <el-button
           style="margin-left: 10px;"
           type="primary"
           size="mini"
           icon="el-icon-edit"
-          @click="handleDelete1"
-        >删除</el-button>
+          @click="handleDeleteAirLine"
+          >删除</el-button
+        >
         <el-table
           ref="multipleTable"
-          :data="reportRecognitionList"
+          :data="agentAirLineList"
           style="width: 100%; margin-top: 20px;"
-          @selection-change="handleSelectionChange1"
+          @selection-change="handleSelectionChangeAirLine"
         >
           <el-table-column type="selection" width="50" />
-          <el-table-column prop="recognitionNum" label="资质认可号">
+          <el-table-column prop="airName" label="航空公司名称">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.recognitionNum" class="edit-input" />
+              <!-- <el-input v-model="scope.row.airLineName" class="edit-input" /> -->
+
+              <el-select
+                v-model="scope.row.airLineCode"
+                filterable
+                placeholder="请选择"
+                style="width: 100%;"
+                
+              >
+                <el-option
+                  v-for="item in airNames"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.key"
+                ></el-option>
+              </el-select>
             </template>
           </el-table-column>
-          <el-table-column prop="recognitionType" label="资质类别">
+          <el-table-column prop="airLineCode" label="航空公司二字码">
             <template slot-scope="scope">
-                <el-input v-model="scope.row.recognitionType" class="edit-input" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="startTime" label="有效期开始时间">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.startTime" class="edit-input" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="endTime" label="有效期结束时间">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.endTime" class="edit-input" />
-            </template>
-          </el-table-column>
-          <el-table-column prop="state" label="状态">
-            <template slot-scope="scope">
-                <el-input v-model="scope.row.state" class="edit-input" />
+              <el-input
+                v-model="scope.row.airLineCode"
+                class="edit-input"
+                :disabled="true"
+              />
             </template>
           </el-table-column>
         </el-table>
+
         <!-- 从业人员信息 -->
         <el-row :gutter="10">
           <el-col :span="24">
@@ -298,14 +341,30 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="国内岗位技能证书" prop="homeSkillsCert1">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeSkillsCert1" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeSkillsCert2" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeSkillsCert1"
+                placeholder="客运/本"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeSkillsCert2"
+                placeholder="货运/本"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际岗位技能证书" prop="interSkillsCert1">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interSkillsCert1" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interSkillsCert2" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interSkillsCert1"
+                placeholder="客运/本"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interSkillsCert2"
+                placeholder="货运/本"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -327,60 +386,129 @@
         <!-- 经营状况（万元/万张/万吨） -->
         <el-row :gutter="10">
           <el-col :span="24">
-            <h5 class="dtl-title-line bg-font-color">经营状况（万元/万张/万吨）</h5>
+            <h5 class="dtl-title-line bg-font-color">
+              经营状况（万元/万张/万吨）
+            </h5>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="国内客运" prop="homeTransNum">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeTransNum" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeTransMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeTransNum"
+                placeholder="客票张数/万张"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeTransMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际客运" prop="interTransNum">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interTransNum" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interTransMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interTransNum"
+                placeholder="客票张数/万张"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interTransMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="其中外航承运张数" prop="acceptCarrNum">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.acceptCarrNum" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.acceptCarrMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.acceptCarrNum"
+                placeholder="客票张数/万张"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.acceptCarrMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客运总计" prop="totalPassengerNum">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.totalPassengerNum" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.totalPassengerMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.totalPassengerNum"
+                placeholder="货运吨数/万吨"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.totalPassengerMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国内货运" prop="homeFreightTon">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeFreightTon" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.homeFreightMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeFreightTon"
+                placeholder="货运吨数/万吨"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.homeFreightMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="国际货运" prop="interFreightTon">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interFreightTon" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.interFreightMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interFreightTon"
+                placeholder="货运吨数/万吨"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.interFreightMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="其中外航承运吨数" prop="carryTon">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.carryTon" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.carryMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.carryTon"
+                placeholder="货运吨数/万吨"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.carryMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="货运总计" prop="freightTon">
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.freightTon" />
-              <el-input class="double_ipt" v-model="hxXdAnnualReportParam.freightMoney" />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.freightTon"
+                placeholder="货运吨数/万吨"
+              />
+              <el-input
+                class="double_ipt"
+                v-model="hxXdAnnualReportParam.freightMoney"
+                placeholder="销售金额/万元"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="已签订代理协议的航空公司二字代码" prop="airlineCode">
+            <el-form-item
+              label="已签订代理协议的航空公司二字代码"
+              prop="airlineCode"
+            >
               <el-input v-model="hxXdAnnualReportParam.airlineCode" />
             </el-form-item>
           </el-col>
@@ -417,8 +545,20 @@
       <!-- 按钮区 -->
       <el-row :gutter="10">
         <el-col :span="24" class="btn_bottom">
-          <el-button type="primary" size="mini" @click="reportInfoSave">保存</el-button>
-          <el-button type="primary" size="mini" >上报</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            v-show="btnShow('10002070206010')"
+            @click="reportInfoSave"
+            >保存</el-button
+          >
+          <el-button
+            type="primary"
+            size="mini"
+            v-show="btnShow('10002070206030')"
+            @click="submit"
+            >上报</el-button
+          >
         </el-col>
       </el-row>
     </el-row>
@@ -426,9 +566,10 @@
 </template>
 
 <script>
-import { reportSave } from "@/api/hxxd/agent";
+import { reportSave, initReportInfo, reportSubmit } from "@/api/hxxd/agent";
 import { isvalidPhone } from "@/utils/validate";
-//电话号码校验
+import { getDictDataLists } from "@/api/system/comm/comm";
+// 电话号码校验
 var validPhone = (rule, value, callback) => {
   if (!value) {
     callback(new Error("请输入电话号码"));
@@ -441,6 +582,35 @@ var validPhone = (rule, value, callback) => {
 export default {
   data() {
     return {
+      // 获取有权限的按钮
+      btns: this.$store.getters.btns["100020702060"],
+      airNames: [],
+      enterpriseNatureOptions: [
+        {
+          value: "0",
+          label: "有限责任公司"
+        },
+        {
+          value: "1",
+          label: "国有企业"
+        },
+        {
+          value: "2",
+          label: "私营企业"
+        },
+        {
+          value: "3",
+          label: "个人独资企业"
+        },
+        {
+          value: "4",
+          label: "外商投资企业"
+        },
+        {
+          value: "5",
+          label: "其他"
+        }
+      ],
       sexOptions: [
         {
           value: "0",
@@ -462,6 +632,8 @@ export default {
         }
       ],
       hxXdAnnualReportParam: {
+        id: "",
+        annual: "",
         businessName: "",
         businessNameEn: "",
         businessAddress: "",
@@ -519,21 +691,19 @@ export default {
         generalAssets: "",
         totalIndebt: "",
         ownerEquity: "",
-        totalProfit: ""
+        totalProfit: "",
+        hxXdReportInvestorParamList: [],
+        hxXdAgentAirLineParamList: []
       },
       selectArr: [],
       reportInvestorList: [],
-      selectArr1: [],
-      reportRecognitionList: [],
-      reportRecognition: {
-        reportRecognition: "",
-        reportInvestor: "",
-        annualReportParam: ""
-      },
+      agentAirLineList: [],
+      selectArrAirLine: [],
       rules1: {
         businessName: [
           { required: true, message: "不能为空", trigger: "blur" }
         ],
+        annual: [{ required: true, message: "不能为空", trigger: "blur" }],
         businessNameEn: [{ required: true, message: "不能为空" }],
         socialCode: [
           { required: true, message: "不能为空", trigger: "change" }
@@ -542,50 +712,229 @@ export default {
           { required: true, message: "不能为空", trigger: "blur" }
         ],
         name: [{ required: true, message: "不能为空", trigger: "blur" }],
-        idNum: [{ required: true, message: "不能为空", trigger: "blur" }]
+        idNum: [{ required: true, message: "不能为空", trigger: "blur" }],
+        totalNumber: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        femaleEmployeesNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        contractWorkersNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        dispatchedWorkersNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        foreignLangNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        postCertNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        belowHighNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        juniorCollegeNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        undergraduateNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        aboveMasterNum: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        age20to30Num: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        age30to40Num: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        age40to50Num: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ],
+        ageAbove50Num: [
+          { required: true, message: "不能为空" },
+          {
+            pattern: /^(0|\+?[1-9][0-9]*)$/,
+            message: "大于等于零的整数",
+            trigger: ["blur", "change"]
+          }
+        ]
       }
     };
   },
+  created() {
+    //初始化页面时
+    this.initReportInfo();
+    //加载字典表
+    this.beforeLoading();
+  },
   methods: {
-    //年报信息保存
-    reportInfoSave() {
-      // this.$refs["ruleForm"].validate(valid => {
-      // if (valid) {
-         this.reportRecognition.reportRecognition   = JSON.stringify(this.reportRecognitionList);
-          this.reportRecognition.reportInvestor   = JSON.stringify(this.reportInvestorList);
-          this.reportRecognition.annualReportParam   = JSON.stringify(this.hxXdAnnualReportParam);
-      //数据校验成功
-      reportSave(this.reportRecognition).then(response => {
-        debugger;
-        var msg = response.status == 200 ? "保存成功" : "保存失败";
-        if (response.status == 200) {
-          //保存成功
-          this.$message({
-            type: "success",
-            message: msg
-          });
-          // this.HxXdCompanyCommonInfoParam.companyInfoId = response.data;
-        } else {
-          //保存失败
-          this.$message({
-            type: "success",
-            error: msg
-          });
-          console.log(response.message);
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    //加载字典表
+    beforeLoading() {
+      getDictDataLists("970010120").then(response => {
+        this.airNames = response.data.jq970010120;
+      });
+    },
+    airLineNameChang(row, key) {
+      debugger;
+      row.airLineCode = key;
+    },
+    initReportInfo() {
+      initReportInfo().then(response => {
+        if (null != response.data) {
+          this.hxXdAnnualReportParam = response.data;
+          this.reportInvestorList = this.hxXdAnnualReportParam.hxXdReportInvestorParamList;
+          this.agentAirLineList = this.hxXdAnnualReportParam.hxXdAgentAirLineParamList;
         }
       });
-      // } else {
-      //   //校验失败
-      //   this.$message({
-      //     message: "请正确录入页面数据",
-      //     type: "warning"
-      //   });
-      // }
-      // });
+    },
+    //上报年报
+    submit() {
+      this.$refs["ruleForm"].validate(valid => {
+        if (valid) {
+          this.hxXdAnnualReportParam.hxXdReportInvestorParamList = this.reportInvestorList;
+          this.hxXdAnnualReportParam.hxXdAgentAirLineParamList = this.agentAirLineList;
+          //数据校验成功
+          reportSubmit(this.hxXdAnnualReportParam).then(response => {
+            var msg = response.status == 200 ? "上报成功" : "上报失败";
+            if (response.status == 200) {
+              //保存成功
+              this.$message({
+                type: "success",
+                message: msg
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: msg
+              });
+              console.log(response.message);
+            }
+          });
+        } else {
+          //校验失败
+          this.$message({
+            message: "请正确录入页面数据",
+            type: "warning"
+          });
+        }
+      });
+    },
+    //年报信息保存
+    reportInfoSave() {
+      this.$refs["ruleForm"].validate(valid => {
+        if (valid) {
+          this.hxXdAnnualReportParam.hxXdReportInvestorParamList = this.reportInvestorList;
+          debugger;
+          this.hxXdAnnualReportParam.hxXdAgentAirLineParamList = this.agentAirLineList;
+          //数据校验成功
+          reportSave(this.hxXdAnnualReportParam).then(response => {
+            var msg = response.status == 200 ? "保存成功" : "保存失败";
+            if (response.status == 200) {
+              //保存成功
+              this.$message({
+                type: "success",
+                message: msg
+              });
+            } else {
+              //保存失败
+              this.$message({
+                type: "success",
+                error: msg
+              });
+              console.log(response.message);
+            }
+          });
+        } else {
+          //校验失败
+          this.$message({
+            message: "请正确录入页面数据",
+            type: "warning"
+          });
+        }
+      });
     },
     handleSelectionChange(val) {
       console.log(val);
-      debugger;
       this.selectArr = val;
     },
     addLine() {
@@ -605,7 +954,6 @@ export default {
       this.reportInvestorList.push(newValue);
     },
     handleDelete(index) {
-      debugger;
       // 删除行数
       if (this.selectArr.length <= 0) {
         this.$notify({
@@ -630,31 +978,27 @@ export default {
         });
       }
     },
-    //资质认可相关方法
-    handleSelectionChange1(val) {
+    //以下为航空公司列表相关方法
+    handleSelectionChangeAirLine(val) {
       console.log(val);
-      this.selectArr1 = val;
+      this.selectArrAirLine = val;
     },
-    addLine1() {
+    addLineAirLine() {
       // 添加行数
-      debugger;
-      const len = this.reportRecognitionList.length - 1;
-      const sum = len >= 0 ? this.reportRecognitionList[len].recognitionNum : 0;
+      const len = this.agentAirLineList.length - 1;
+      const sum = len >= 0 ? this.agentAirLineList[len].id : 0;
       const result = sum + 1;
       var newValue = {
-        recognitionNum: "",
-        recognitionType: "",
-        startTime: "",
-        endTime: "",
-        state: "",
-        editing: true
+        airLineName: "",
+        airLineCode: "",
+        annualReportId: ""
       };
       // 添加新的行数
-      this.reportRecognitionList.push(newValue);
+      this.agentAirLineList.push(newValue);
     },
-    handleDelete1(index) {
+    handleDeleteAirLine(index) {
       // 删除行数
-      if (this.selectArr1.length <= 0) {
+      if (this.selectArrAirLine.length <= 0) {
         this.$notify({
           title: "提示",
           message: "请选择要删除的项",
@@ -662,13 +1006,13 @@ export default {
           duration: 2000
         });
       } else {
-        const delArr1 = [];
-        for (var i = 0; i < this.reportRecognitionList.length; i++) {
-          if (this.selectArr1.indexOf(this.reportRecognitionList[i]) === -1) {
-            delArr1.push(this.reportRecognitionList[i]);
+        const delArr = [];
+        for (var i = 0; i < this.agentAirLineList.length; i++) {
+          if (this.selectArrAirLine.indexOf(this.agentAirLineList[i]) === -1) {
+            delArr.push(this.agentAirLineList[i]);
           }
         }
-        this.reportRecognitionList = delArr1;
+        this.agentAirLineList = delArr;
         this.$notify({
           title: "成功",
           message: "删除成功",
@@ -681,10 +1025,10 @@ export default {
 };
 </script>
 <style lang="scss">
- @import '~@/styles/hxxd.scss';
+@import "~@/styles/hxxd.scss";
 
- .double_ipt {
-   display: inline-block;
-   width: 48%;
- }
+.double_ipt {
+  display: inline-block;
+  width: 48%;
+}
 </style>

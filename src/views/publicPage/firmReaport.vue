@@ -5,240 +5,241 @@
       <el-card class="detailsContainer">
         <el-row>
           <el-col>
-            <h1>2018年报</h1>
-            <p style="text-align: right;">填报日期:2018-01-12</p>
+            <h1>{{reportQuery.annual}}年年报</h1>
+            <p style="text-align: right;">填报日期:  {{reportQuery.submitDate}}</p>
             <table class="table_firmInfo">
               <tr>
                 <th rowspan="9" width="100">基本信息</th>
                 <th width="200">企业名称</th>
-                <td colspan="3">{{ businessName }}</td>
+                <td colspan="3">{{ reportQuery.businessName }}</td>
               </tr>
               <tr>
                 <th>法定代表人</th>
-                <td>{{ name }}</td>
+                <td width ="25%">{{ reportQuery.name }}</td>
                 <th>企业性质</th>
-                <td>{{ enterpriseNature }}</td>
+                <td  width ="25%">{{ reportQuery.enterpriseNature }}</td>
               </tr>
               <tr>
                 <th>地址</th>
-                <td colspan="3">{{ businessAddress }}</td>
+                <td colspan="3">{{ reportQuery.businessAddress }}</td>
               </tr>
               <tr>
                 <th>企业网址</th>
-                <td colspan="3">{{ enterpriseWeb }}</td>
+                <td colspan="3">{{ reportQuery.enterpriseWeb }}</td>
               </tr>
               <tr>
                 <th>工商注册号</th>
-                <td>{{ businessRegistNum }}</td>
+                <td>{{ reportQuery.businessRegistNum }}</td>
                 <th>工商登记机关</th>
-                <td>{{ bureauCommerce }}</td>
+                <td>{{ reportQuery.bureauCommerce }}</td>
               </tr>
               <tr>
                 <th>组织机构代码	</th>
-                <td>{{ orgCode }}</td>
+                <td>{{ reportQuery.orgCode }}</td>
                 <th>代码证颁发机关</th>
-                <td>{{ codeCertiAuth }}</td>
+                <td>{{ reportQuery.codeCertiAuth }}</td>
               </tr>
               <tr>
                 <th>注册资本（万元）</th>
-                <td>{{ registeredCapital }}</td>
+                <td>{{ reportQuery.registeredCapital }}</td>
                 <th>业务负责人</th>
-                <td>{{ businessHead }}</td>
+                <td>{{ reportQuery.businessHead }}</td>
               </tr>
               <tr>
                 <th>公司电话</th>
-                <td>{{ companyPhone }}</td>
+                <td>{{ reportQuery.companyPhone }}</td>
                 <th>公司传真</th>
-                <td>{{ companyFax }}</td>
+                <td>{{ reportQuery.companyFax }}</td>
               </tr>
               <tr>
                 <th>一类office号</th>
-                <td>{{ officeClass1 }}</td>
+                <td>{{ reportQuery.officeClass1 }}</td>
                 <th>二类office号	</th>
-                <td>{{ officeClass2 }}</td>
+                <td>{{ reportQuery.officeClass2 }}</td>
               </tr>
             </table>
-            <table class="table_firmInfo">
-              <tr>
-                <th rowspan="2" width="100">投资人信息</th>
-                <th width="200">投资人类型</th>
-                <th>投资人名称</th>
-                <th>证照/证件号码</th>
-                <th>投资金额(万元)</th>
-                <th>货币类型</th>
-                <th>投资比例</th>
-              </tr>
-              <tr>
-                <td>{{ investorType }}</td>
-                <td>{{ investorName }}</td>
-                <td>{{ certificateNum }}</td>
-                <td>{{ investmentAmount }}</td>
-                <td>{{ currencyType }}</td>
-                <td>{{ investmentsRatio }}</td>
-              </tr>
-            </table>
-            <el-table class="table_firmInfo" :data="hxXdReportRecognitionParamList">
-              <el-table-column label="资质认可信息" width="100"></el-table-column>
-              <el-table-column>
-                <el-table-column prop="industryType" width="200" label="资质认可号" align="center"></el-table-column>
-                <el-table-column prop="industryType" label="资质类别" align="center"></el-table-column>
-                <el-table-column prop="industryType" colspan="2" label="有效期起止" align="center"></el-table-column>
-                <el-table-column prop="industryType" label="状态" align="center"></el-table-column>
+             <el-table class="table_firmInfo" 
+                  :data="reportQuery.hxXdReportInvestorParamList"
+                  border
+                  tooltip-effect="dark"
+                  :header-cell-style="getCellStyle"
+                  highlight-current-row >
+              <el-table-column   label="投资人信息" width="100">
+                <el-table-column prop="investorType"   color= "#c75151" width="200" label="投资人类型" align="center"></el-table-column>
+                <el-table-column prop="investorName" label="投资人名称" align="center"></el-table-column>
+                <el-table-column prop="certificateNum" colspan="2" label="证照/证件号码" align="center"></el-table-column>
+                <el-table-column prop="investmentAmount" label="投资金额(万元)" align="center"></el-table-column>
+                <el-table-column prop="currencyType" label="货币类型" align="center"></el-table-column>
+                <el-table-column prop="investmentsRatio" label="投资比例" align="center"></el-table-column>
               </el-table-column>
+            </el-table>
+           
+            <el-table class="table_firmInfo" 
+                  :data="reportQuery.hxXdReportRecognitionParamList"
+                  border
+                  tooltip-effect="dark"
+                  :header-cell-style="getCellStyle"
+                  highlight-current-row >
+                <el-table-column label="资质认可信息"  width="100" text-align="center">
+                  <el-table-column prop="recognitionNum" width="200" label="资质认可号" align="center"></el-table-column>
+                  <el-table-column prop="recognitionType" label="资质类别" align="center"></el-table-column>
+                  <el-table-column prop="startTime" colspan="2" label="有效期起止" align="center"></el-table-column>
+                  <el-table-column prop="state" label="状态" align="center"></el-table-column>
+                </el-table-column>   
             </el-table>
             <table class="table_firmInfo">
               <tr>
                 <th rowspan="7" width="100">从业人员信息</th>
-                <th width="200">从业人员总数</th>
-                <td colspan="2">{{ totalNumber }}</td>
-                <th>女员工人数</th>
-                <td colspan="2">{{ femaleEmployeesNum }}</td>
+                <th width="14%">从业人员总数</th>
+                <td colspan="2">{{ reportQuery.totalNumber }}</td>
+                <th width="14%">女员工人数</th>
+                <td colspan="2">{{ reportQuery.femaleEmployeesNum }}</td>
               </tr>
               <tr>
                 <th>合同工人数</th>
-                <td colspan="2">{{ contractWorkersNum }}</td>
+                <td colspan="2">{{ reportQuery.contractWorkersNum }}</td>
                 <th>派遣工人数</th>
-                <td colspan="2">{{ dispatchedWorkersNum }}</td>
+                <td colspan="2">{{ reportQuery.dispatchedWorkersNum }}</td>
               </tr>
               <tr>
                 <th>懂外语人数</th>
-                <td colspan="2">{{ foreignLangNum }}</td>
+                <td colspan="2">{{ reportQuery.foreignLangNum }}</td>
                 <th>持有岗位证书人数</th>
-                <td colspan="2">{{ postCertNum }}</td>
+                <td colspan="2">{{ reportQuery.postCertNum }}</td>
               </tr>
               <tr>
                 <th rowspan="4">学历构成</th>
-                <th>高中以下</th>
-                <td>{{ belowHighNum }}</td>
+                <th width="12%">高中以下</th>
+                <td>{{ reportQuery.belowHighNum }}</td>
                 <th rowspan="4">年龄构成</th>
-                <th>20-30岁</th>
-                <td>{{ age20to30Num }}</td>
+                <th width="15%">20-30岁</th>
+                <td>{{ reportQuery.age20to30Num }}</td>
               </tr>
               <tr>
                 <th>专科</th>
-                <td>{{ juniorCollegeNum }}</td>
+                <td>{{ reportQuery.juniorCollegeNum }}</td>
                 <th>30-40岁</th>
-                <td>{{ age30to40Num }}</td>
+                <td>{{ reportQuery.age30to40Num }}</td>
               </tr>
               <tr>
                 <th>本科</th>
-                <td>{{ undergraduateNum }}</td>
+                <td>{{ reportQuery.undergraduateNum }}</td>
                 <th>40-50岁</th>
-                <td>{{ age40to50Num }}</td>
+                <td>{{ reportQuery.age40to50Num }}</td>
               </tr>
               <tr>
                 <th>硕士及以上</th>
-                <td>{{ aboveMasterNum }}</td>
+                <td>{{ reportQuery.aboveMasterNum }}</td>
                 <th>50岁以上</th>
-                <td>{{ ageAbove50Num }}</td>
+                <td>{{ reportQuery.ageAbove50Num }}</td>
               </tr>
             </table>
             <table class="table_firmInfo">
               <tr>
-                <th rowspan="3" width="100">岗位证书信息</th>
-                <th width="200">国内岗位技能证书1</th>
-                <td>{{ homeSkillsCert1 }}</td>
-                <th>国内岗位技能证书2</th>
-                <td>{{ homeSkillsCert2 }}</td>
-                <th>国际岗位技能证书1</th>
-                <td>{{ interSkillsCert1 }}</td>
-                <th>国际岗位技能证书2</th>
-                <td>{{ interSkillsCert2 }}</td>
+                <th rowspan="3" width="9%">岗位证书信息</th>
+                <th width="12.5%">国内岗位技能证书1</th>
+                <td width="10%">{{ reportQuery.homeSkillsCert1 }}</td>
+                <th width="12.5%">国内岗位技能证书2</th>
+                <td width="10%">{{ reportQuery.homeSkillsCert2 }}</td>
+                <th width="12.5%">国际岗位技能证书1</th>
+                <td width="10%">{{ reportQuery.interSkillsCert1 }}</td>
+                <th width="12.5%">国际岗位技能证书2</th>
+                <td width="10%">{{ reportQuery.interSkillsCert2 }}</td>
               </tr>
               <tr>
                 <th>危险品运输证书</th>
-                <td colspan="3">{{ dangerGoodsCert }}</td>
+                <td colspan="3">{{ reportQuery.dangerGoodsCert }}</td>
                 <th>安保培训证书</th>
-                <td colspan="3">{{ securityTrainCert }}</td>
+                <td colspan="3">{{ reportQuery.securityTrainCert }}</td>
               </tr>
               <tr>
                 <th>其他证书</th>
-                <td colspan="9">{{ otherCert }}</td>
+                <td colspan="9">{{ reportQuery.otherCert }}</td>
               </tr>
             </table>
             <table class="table_firmInfo">
               <tr>
                 <th rowspan="9" width="100">经营情况<br />（万元/万张/万吨）</th>
-                <th width="200">国内客运</th>
-                <th>客票张数</th>
-                <td>{{ homeTransNum }}</td>
-                <th>销售金额</th>
-                <td>{{ homeTransMoney }}</td>
+                <th width="12.5%">国内客运</th>
+                <th width="20%">客票张数</th>
+                <td>{{ reportQuery.homeTransNum }}</td>
+                <th width="12%">销售金额</th>
+                <td>{{ reportQuery.homeTransMoney }}</td>
               </tr>
               <tr>
                 <th rowspan="2">国际客运</th>
                 <th>客票张数</th>
-                <td>{{ interTransNum }}</td>
+                <td>{{ reportQuery.interTransNum }}</td>
                 <th>销售金额</th>
-                <td>{{ interTransMoney }}</td>
+                <td>{{ reportQuery.interTransMoney }}</td>
               </tr>
               <tr>
                 <th>其中外航承运张数</th>
-                <td>{{ acceptCarrNum }}</td>
+                <td>{{ reportQuery.acceptCarrNum }}</td>
                 <th>销售金额</th>
-                <td>{{ acceptCarrMoney }}</td>
+                <td>{{ reportQuery.acceptCarrMoney }}</td>
               </tr>
               <tr>
                 <th>客运总计</th>
                 <th>客票张数</th>
-                <td>{{ totalPassengerNum }}</td>
+                <td>{{ reportQuery.totalPassengerNum }}</td>
                 <th>销售金额</th>
-                <td>{{ totalPassengerMoney }}</td>
+                <td>{{ reportQuery.totalPassengerMoney }}</td>
               </tr>
               <tr>
                 <th>国内货运</th>
                 <th>货运吨数</th>
-                <td>{{ homeFreightTon }}</td>
+                <td>{{ reportQuery.homeFreightTon }}</td>
                 <th>销售金额</th>
-                <td>{{ homeFreightMoney }}</td>
+                <td>{{ reportQuery.homeFreightMoney }}</td>
               </tr>
               <tr>
                 <th rowspan="2">国际货运</th>
                 <th>货运吨数</th>
-                <td>{{ interFreightTon }}</td>
+                <td>{{ reportQuery.interFreightTon }}</td>
                 <th>销售金额</th>
-                <td>{{ interFreightMoney }}</td>
+                <td>{{ reportQuery.interFreightMoney }}</td>
               </tr>
               <tr>
                 <th>其中外航承运吨数</th>
-                <td>{{ carryTon }}</td>
+                <td>{{ reportQuery.carryTon }}</td>
                 <th>销售金额</th>
-                <td>{{ carryMoney }}</td>
+                <td>{{ reportQuery.carryMoney }}</td>
               </tr>
               <tr>
                 <th>货运总计</th>
                 <th>货运吨数</th>
-                <td>{{ freightTon }}</td>
+                <td>{{ reportQuery.freightTon }}</td>
                 <th>销售金额</th>
-                <td>{{ freightMoney }}</td>
+                <td>{{ reportQuery.freightMoney }}</td>
               </tr>
               <tr>
                 <th colspan="2">已签订代理协议的航空公司二字代码</th>
-                <td colspan="4">{{ airlineCode }}</td>
+                <td colspan="4">{{ reportQuery.airlineCode }}</td>
               </tr>
             </table>
             <table class="table_firmInfo">
               <tr>
                 <th rowspan="4" width="100">财务情况<br />（万元）</th>
                 <th width="200">资产总额</th>
-                <td>{{ generalAssets }}</td>
+                <td>{{ reportQuery.generalAssets }}</td>
               </tr>
               <tr>
                 <th>负债总额</th>
-                <td>{{ totalIndebt }}</td>
+                <td>{{ reportQuery.totalIndebt }}</td>
               </tr>
               <tr>
                 <th>所有者权益</th>
-                <td>{{ ownerEquity }}</td>
+                <td>{{ reportQuery.ownerEquity }}</td>
               </tr>
               <tr>
                 <th>利润总额</th>
-                <td>{{ totalProfit }}</td>
+                <td>{{ reportQuery.totalProfit }}</td>
               </tr>
             </table>
             <p style="text-align: left;">
               <b>备注：1、此信息以企业年报年度12月31日的数据为准进行填报；</b><br />
-              <b>2、此信息为该企业的最新年报数据；</b><br />
+              <b>2、此信息为该企业的年报数据；</b><br />
               <b>3、此信息由该企业提供，企业对其公示信息的真实性、合法性负责。</b>
             </p>
           </el-col>
@@ -298,8 +299,12 @@ export default {
         homeSkillsCert2: '',
         homeTransMoney: '',
         homeTransNum: '',
-        hxXdReportInvestorParamList: [],
-        hxXdReportRecognitionParamList: [],
+        annual: '',
+        submitDate: '',
+        hxXdReportInvestorParamList: [
+        ],
+        hxXdReportRecognitionParamList: [
+        ],
         id: '',
         interFreightMoney: '',
         interFreightTon: '',
@@ -346,6 +351,13 @@ export default {
     window.onresize = ()=> {this.Height = document.documentElement.clientHeight -194}
   },
   methods: {
+     getCellStyle({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0 || rowIndex === 1  ) {
+        return 'background: #f8fbff;color: #333;font-weight: normal;text-align: center;'
+      } else {
+        return ''
+      }
+    },
     getList(id) {
       query(id).then(response => {
         console.log(response.data)
@@ -360,8 +372,15 @@ export default {
 @import '~@/styles/register.scss';
 @import '~@/styles/hxxd.scss';
 .detailsContainer {
+  .table_firmInfo tr th[data-v-96f536d8] {
+    font-weight: normal;
+}
+  .table_firmInfo tr td[data-v-96f536d8] {
+    color: #606266
+}
+  
   h1 {
-    font-weight: bolder;
+    font-weight: normal;
     font-size: 30px;
     line-height: 60px;
   }

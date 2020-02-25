@@ -18,7 +18,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/system/u/user/logout',
+    url: '/system/u/user/anonw/logout',
     method: 'post'
   })
 }
@@ -84,11 +84,11 @@ export function stopUser(userIds) {
  * @param {*} mobileNum 手机号/或邮箱号
  * @param {*} passWord 需要修改的密码
  */
-export function modifyPassWrod(mobileNum, passWord) {
+export function modifyPassWrod(mobileNum, passWord, key) {
   return request({
     url: `/system/jqSysUser/anonw/modifyPassWrod`,
     method: 'post',
-    data: { mobileNum, passWord }
+    data: { mobileNum, passWord, key }
   })
 }
 /**

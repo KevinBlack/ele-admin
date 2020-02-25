@@ -11,7 +11,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="销售代理人" size="mini" prop="salesAgent">
-                <el-input v-model="detailForm.salesAgent" :disabled="true" filterable placeholder="请选择" style="width:100%">
+                <el-input v-model="detailForm.salesAgent" :readonly="true" filterable placeholder="请选择" style="width:100%">
                   <el-button slot="append" icon="el-icon-search" @click="showSelect('1')" />
                 </el-input>
               </el-form-item>
@@ -24,7 +24,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="航空公司" size="mini" prop="airlineCompany">
-                <el-input v-model="detailForm.airlineCompany" :disabled="true" filterable placeholder="请选择" style="width:100%">
+                <el-input v-model="detailForm.airlineCompany" :readonly="true" filterable placeholder="请选择" style="width:100%">
                   <el-button slot="append" icon="el-icon-search" @click="showSelect('2')" />
                 </el-input>
               </el-form-item>
@@ -45,11 +45,6 @@
                     :value="item.value"
                   />
                 </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="统一社会信用代码" size="mini" prop="unifiedCreditCode">
-                <el-input v-model="detailForm.unifiedCreditCode" ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -83,7 +78,6 @@
           <el-row :gutter="10">
             <el-col :span="24" class="btn_bottom">
               <el-button type="primary" size="mini" @click="updateSecurityIncident">保存</el-button>
-              <el-button type="primary" size="mini" @click="cancel()">取消</el-button>
             </el-col>
           </el-row>
         </el-form>
@@ -112,9 +106,10 @@ export default {
     return {
       detailForm: {
         salesAgent: '',
+        salesAgentId: '',
         airlineCompany: '',
+        airlineCompanyId: '',
         businessCategory: '',
-        unifiedCreditCode: '',
         validityAgreement: '',
         signAirlinesTwoWordCord: '',
         punishmentType: '',
@@ -134,7 +129,6 @@ export default {
         salesAgent: [{ required: true}],
         airlineCompany: [{ required: true}],
         businessCategory: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        unifiedCreditCode: [{ required: true, message: '不能为空', trigger: 'blur' }, { pattern: /^\s*\S((.){0,16}\S)?\s*$/, message: '请输入18位统一社会信用代码', trigger: ['blur', 'change'] }],
         validityAgreement: [{ required: true, message: '不能为空', trigger: 'blur' }],
         signAirlinesTwoWordCord: [{ required: true, message: '不能为空', trigger: 'blur' }],
         punishmentType: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -206,8 +200,10 @@ export default {
         })
       } else if(fdmag === '1') {
         this.detailForm.salesAgent = chiledArr.value
+        this.detailForm.salesAgentId = chiledArr.key
       } else if(fdmag === '2') {
         this.detailForm.airlineCompany = chiledArr.value
+        this.detailForm.airlineCompanyId = chiledArr.key
       }
       this.isShowSelect = fdshow
       this.memberForm = fdmag
@@ -216,9 +212,10 @@ export default {
       const {
         id,
         salesAgent,
+        salesAgentId,
         airlineCompany,
+        airlineCompanyId,
         businessCategory,
-        unifiedCreditCode,
         validityAgreement,
         signAirlinesTwoWordCord,
         punishmentType,
@@ -228,9 +225,10 @@ export default {
       updateSecurityIncident({
         id,
         salesAgent,
+        salesAgentId,
         airlineCompany,
+        airlineCompanyId,
         businessCategory,
-        unifiedCreditCode,
         validityAgreement,
         signAirlinesTwoWordCord,
         punishmentType,
@@ -240,18 +238,13 @@ export default {
         if(response.status==200){
             this.$message({
             type: 'success',
-            message: '修改成功',
-            path: '/securityIncidents'
+            message: '修改成功'
             })
+            this.$router.push({ path: "/security-incidents-manage/security-incidents-query"});
         }
         for (const key in this.detailForm) {
           this.detailForm[k] = ''
         }
-      })
-    },
-      cancel() {
-       this.$router.push({
-        path: '/hxxd/securityIncidents',query: {}
       })
     }
   }

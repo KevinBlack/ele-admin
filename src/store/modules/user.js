@@ -8,7 +8,8 @@ const state = {
   avatar: '',
   introduction: '',
   menuCodes: [],
-  btns: {}
+  btns: {},
+  roleType: '0'
 }
 
 const mutations = {
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_BTNS: (state, btns) => {
     state.btns = btns
+  },
+  SET_ROLETYPE: (state, roleType) => {
+    state.roleType = roleType
   }
 }
 
@@ -69,19 +73,20 @@ const actions = {
           btns,
           name,
           avatar,
-          introduction
+          introduction,
+          roleType
         } = data
 
         // roles must be a non-empty array
         if (!menuCodes || menuCodes.length <= 0) {
           reject('请联系管理员分配相应权限')
         }
-
         commit('SET_MENUCODES', menuCodes)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
         commit('SET_BTNS', btns)
+        commit('SET_ROLETYPE', roleType)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -93,10 +98,16 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
+        console.log('logout', state.menuCodes)
+        // 清空信息
+        removeToken()
         commit('SET_TOKEN', '')
         commit('SET_MENUCODES', [])
-        commit('SET_BTNS', '')
-        removeToken()
+        commit('SET_NAME', '')
+        commit('SET_AVATAR', '')
+        commit('SET_INTRODUCTION', '')
+        commit('SET_BTNS', [])
+        commit('SET_ROLETYPE', 0)
         resetRouter()
         resolve()
       }).catch(error => {
@@ -108,9 +119,17 @@ const actions = {
   // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
+      removeToken()
       commit('SET_TOKEN', '')
       commit('SET_MENUCODES', [])
-      removeToken()
+      commit('SET_NAME', '')
+      commit('SET_AVATAR', '')
+      commit('SET_INTRODUCTION', '')
+      commit('SET_BTNS', [])
+      commit('SET_ROLETYPE', 0)
+      // commit('SET_TOKEN', '')
+      // commit('SET_MENUCODES', [])
+      // removeToken()
       resolve()
     })
   },

@@ -103,28 +103,21 @@
             class="btn_line"
             v-show="btnShow('1000201060')"
             @click.native.prevent="handleAdd"
-            >新 增</el-radio-button
+            >审核通过</el-radio-button
           >
           <el-radio-button
             type="primary"
             class="btn_line"
             v-show="btnShow('1000201070')"
             @click.native.prevent="handleEdit('show')"
-            >查 看</el-radio-button
+            >审核驳回</el-radio-button
           >
           <el-radio-button
             type="primary"
             class="btn_line"
             v-show="btnShow('1000201040')"
             @click.native.prevent="handleEdit('update')"
-            >修 改</el-radio-button
-          >
-          <el-radio-button
-            type="primary"
-            class="btn_line"
-            v-show="btnShow('1000201050')"
-            @click.native.prevent="deleteBatch"
-            >删 除</el-radio-button
+            >流程日志</el-radio-button
           >
         </el-radio-group>
       </el-col>
@@ -141,7 +134,7 @@
       @selection-change="handleSelectionChange"
       class="table-hxxd"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55"  align="center" />
       <el-table-column
         type="index"
         width="55"
@@ -184,7 +177,7 @@
       <el-table-column
         prop="status"
         label="是否经营异常"
-        width="110"
+         width="110"
         align="center"
         :show-overflow-tooltip="true"
       ></el-table-column>
@@ -214,19 +207,14 @@
 </template>
 
 <script>
-import {
-  getCompanyInfoList,
-  deleteBatch,
-  deleteBatchCheck
-} from "@/api/hxxd/agent";
+import { getCompanyInfoList, deleteBatch } from "@/api/hxxd/agent";
 import { parseTime } from "@/utils/index.js";
 export default {
   data() {
     return {
       btns: this.$store.getters.btns["1000201030"],
       param: {
-        idList: [],
-        socialCodeList: []
+        idList: []
       },
       dialogVisible: false,
       sum: 0,
@@ -488,9 +476,7 @@ export default {
       }
     },
     deleteBatch() {
-      debugger;
       var idList = [];
-      var socialCodeList = [];
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: "请选择数据",
@@ -499,32 +485,18 @@ export default {
       } else {
         this.multipleSelection.forEach(i => {
           idList.push(i.id);
-          socialCodeList.push(i.socialCode);
         });
-        debugger;
-        //删除校验
-        this.param.socialCodeList = socialCodeList;
-        deleteBatchCheck(this.param).then(response => {
-          if (response.message === false) {
-            //校验通过，批量删除
-            this.param.idList = idList;
-            deleteBatch(this.param).then(response => {
-              if (response.status == 200) {
-                //删除成功
-                this.$message({
-                  type: "success",
-                  message: "删除成功"
-                });
-                //更新列表
-                this.getTableList();
-              }
-            });
-          } else {
-            //删除前校验未通过
+        //批量删除
+        this.param.idList = idList;
+        deleteBatch(this.param).then(response => {
+          if (response.status == 200) {
+            //删除成功
             this.$message({
-              type: "warning",
-              message: response.message
+              type: "success",
+              message: "删除成功"
             });
+            //更新列表
+            this.getTableList();
           }
         });
       }

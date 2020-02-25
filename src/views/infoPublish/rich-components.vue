@@ -13,14 +13,25 @@ export default {
     return {
       editor: null,
       editorContent: '',
-      content: ''
+      content: '',
+      detailForm: {
+        id: '',
+        industryContent: '',
+        industryType: '',
+        publishStatus: '',
+        industryBody: '',
+        modifyTime: '',
+        industryTitle: '',
+        fileList: []
+      },
     };
   },
   // catchData是一个类似回调函数，来自父组件，当然也可以自己写一个函数，主要是用来获取富文本编辑器中的html内容用来传递给服务端
   props: ['catchData', 'checkId'], // 接收父组件的方法
   created() {
-    console.log(this.checkId)
+    // console.log(this.checkId)
     if(this.checkId) {
+      this.detailForm.id = this.checkId
       this.getMenuInfo(this.checkId)
     }
   },
@@ -70,14 +81,14 @@ export default {
       selectIndustry(this.detailForm).then(response => {
         this.content = response.data[0].contentBody
         console.log(response.data)
-        console.log(this.content)
+        // console.log(this.content)
       })
     }
   }
 }
 </script>
 <style lang="scss">
-.w-e-menu, .w-e-text-container {
-  z-index: 0 !important;
-}
+// .w-e-menu, .w-e-text-container {
+//   z-index: 0 !important;
+// }
 </style>

@@ -2,6 +2,7 @@
   <div class="app-wrapper">
     <header-reload />
     <div class="contont-main" v-bind:style="{height: Height+'px'}">
+      <!-- <el-card :class="{detailsContainer: seeClass, detailsContainerL:seeNo}"> -->
       <el-card :class="{detailsContainer: seeClass, detailsContainerL:seeNo}">
         <h1>企业信息查询</h1>
         <el-input placeholder="请输入要查询的企业名称、法人或统一社会信用代码" v-model="formQuery.businessName" class="input-with-select" @keyup.enter.native="getTableList" style="width: 70%;vertical-align: middle;">
@@ -10,7 +11,7 @@
           <ul class="search_list" v-show="seeNo">
             <li v-for="(item) in tableData" :key="item.id">
               <p><a @click="handleClick(item.socialCode)">{{ item.businessName }}</a></p>
-              <p><span><b>法定代表人：</b>{{ item.name }}</span><span><b>地址：</b>{{ item.businessAddress }}</span></p>
+              <p><span><i class="iconfont">&#xe634;</i>统一社会信用代码：{{ item.socialCode }}</span><span><i class="el-icon-user"></i>法定代表人：{{ item.name }}</span></p>
             </li>
           </ul>
       </el-card>
@@ -59,21 +60,33 @@ export default {
     },
     getTableList() {
       this.tableLoading = true;
-      selectComponyByParam(this.formQuery).then(response => {
-        if(this.formQuery.businessName.split(" ").join("").length == 0){
-          this.seeNo=false
+      if(this.formQuery.businessName.split(" ").join("").length == 0){
+        this.seeNo=false
+        this.seeClass=true
+        this.$message({
+          type: "false",
+          message: "请输入相关数据"
+        })
+        return
+      } else{
+        selectComponyByParam(this.formQuery).then(response => {
+          console.log(response.data)
+          if (response.data.length === 0) {
+            this.seeNo = false
+            this.seeClass = true
             this.$message({
-              type: "false",
-              message: "请输入相关数据"
+            type: "warning",
+            message: "没有相应数据，请输入正确的信息"
           })
-        }else{
-          this.seeNo = true
-          this.seeClass = false
-          this.tableData = response.data
-          this.pageTotal = response.page.total
-          this.tableLoading = false
-        }
-      })
+          } else {
+            this.seeNo = true
+            this.seeClass = false
+            this.tableData = response.data
+            this.pageTotal = response.page.total
+            this.tableLoading = false
+          }
+        })
+      }
     }
   }
 }
@@ -100,16 +113,21 @@ export default {
       line-height: 30px;
       margin-top: 20px;
       a {
-        color:#409EFF;
-        text-decoration: underline;
+        color:rgb(100, 100, 100);
+        font-size: 18px;
+        font-weight: 550;
       }
       p {
         span {
+          display: inline-block;
+          width: 35%;
           font-size: 12px;
+          color: rgb(105, 105, 105);
           margin-right: 20px;
-          b {
+          i {
             font-size: 12px;
-            color: #67C23A;
+            margin-right: 5px;
+            color: rgb(84, 156, 214);
           }
         }
       }

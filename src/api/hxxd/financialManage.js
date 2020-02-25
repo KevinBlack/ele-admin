@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function downloadTemplate(belongId, fileCatalog) {
   return request({
-    url: '/hxxd/hxXdSysFile/fileDownload',
+    url: '/hxxd/hxXdSysFile/anonw/fileDownload',
     method: 'get',
     params: {
       belongId,
@@ -49,12 +49,12 @@ export function deleteFinancialData(ids) {
   })
 }
 
-export function selectReference(tradePipelineNum) {
+export function selectReference(pipeLine) {
   return request({
     url: '/hxxd/hx-xd-financial-manage/selectReference',
     method: 'post',
     params: {
-      tradePipelineNum
+      pipeLine
     }
   })
 }

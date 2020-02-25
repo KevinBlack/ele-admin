@@ -10,10 +10,11 @@ export function toPinYinUppercase(chineseCharacter) {
 }
 
 // 获取验证码
-export function getValidateCode() {
+export function getValidateCode(type) {
   return request({
     url: '/system/jqSysCommon/anonw/getValidateCode',
-    method: 'post'
+    method: 'post',
+    data: { type }
   })
 }
 
@@ -77,34 +78,32 @@ export function listProcessLog(system, tableName, dateId, dateCode) {
   })
 }
 
-// 附件下載
-export function downloadFile(data) {
+// 文件下载
+export function downloadFile(id, key) {
   return request({
-    url: '/system/jqSysFile/fileDownload',
+    url: '/system/anonw/jqSysAttachment/fileDownload',
     method: 'post',
-    data,
+    data: { id, key },
     responseType: 'blob'
     // responseEncoding: 'utf8'
   })
 }
 
-// 上传
-export function uploadFile(formData) {
+// 文件删除
+export function deleteFile(ids, key) {
   return request({
-    url: '/hxxd/hxXdSysFile/fileUpload',
+    url: '/system/anonw/jqSysAttachment/deleteFile',
     method: 'post',
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    params: { ids, key }
   })
 }
 
-export function fileDownload(data) {
+// 获取文件列表
+export function listFile(ids, key) {
   return request({
-    url: '/hxxd/hxXdSysFile/fileDownload',
+    url: '/system/anonw/jqSysAttachment/listFile',
     method: 'post',
-    data
+    params: { ids, key }
   })
 }
 

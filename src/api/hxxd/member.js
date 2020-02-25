@@ -167,3 +167,25 @@ export function registerCheckCode(mobileNum, code) {
     data: { mobileNum, code }
   })
 }
+/**
+ * 缴费会员查询（多条）
+ * @param {*} id
+ */
+export function getMembers(data) {
+  return request({
+    url: '/hxxd/hxXdMember/getMemberList',
+    method: 'post',
+    data
+  })
+}
+/**
+ * 按地区查询无欠费会员
+ * @param {*} id
+ */
+export function getMemberByRegion(data) {
+  return request({
+    url: '/hxxd/hxXdMember/getMemberByRegion',
+    method: 'post',
+    data
+  })
+}

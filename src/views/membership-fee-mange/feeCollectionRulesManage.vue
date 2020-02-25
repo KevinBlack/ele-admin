@@ -7,16 +7,16 @@
         <el-col :span="8">
           <el-form-item label="会员类别" size="mini" prop="memberType">
             <el-select v-model="formQuery.memberType" filterable placeholder="请选择" size="mini">
-              <el-option v-for="item in memberTypeOptions" :key="item.value" :label="item.label" style="width:100%"
-                :value="item.value"></el-option>
+              <el-option v-for="item in memberTypeOptions" :key="item.key" :label="item.value" :value="item.key"  style="width:100%"
+                ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="会员等级" size="mini" prop="memberDj">
             <el-select v-model="formQuery.memberDj" filterable placeholder="请选择" size="mini">
-              <el-option v-for="item in memberDjOptions" :key="item.value" :label="item.label" style="width:100%"
-                :value="item.value"></el-option>
+              <el-option v-for="item in memberDjOptions" :key="item.key" :label="item.value" :value="item.key"  style="width:100%"
+                ></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -31,9 +31,9 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-button-group size="mini">
-          <el-button type="primary" size="mini" class="btn_line" @click="handleCreate()">新 增</el-button>
-          <el-button type="primary" size="mini" class="btn_line" @click="handleUpdate()">修 改</el-button>
-          <el-button type="primary" size="mini" class="btn_line" @click="deleteByIds()">删 除</el-button>
+          <el-button v-show="btnShow('100021503010')" v-if="btnDisplay('10')" type="primary" size="mini" class="btn_line" @click="handleCreate()">新 增</el-button>
+          <el-button v-show="btnShow('100021503020')" v-if="btnDisplay('10')" type="primary" size="mini" class="btn_line" @click="handleUpdate()">修 改</el-button>
+          <el-button v-show="btnShow('100021503030')" v-if="btnDisplay('10')" type="primary" size="mini" class="btn_line" @click="deleteByIds()">删 除</el-button>
         </el-button-group>
       </el-col>
     </el-row>
@@ -47,11 +47,10 @@
       class="table-hxxd"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="memberType" width="200" :formatter="memberTypeStatus" label="会员类别" align="center" />
-      <el-table-column prop="memberDj" :formatter="memberDjStatus" label="会员等级" align="center" />
+      <el-table-column prop="memberType" width="200" label="会员类别" align="center" />
+      <el-table-column prop="memberDj"  label="会员等级" align="center" />
       <el-table-column prop="memberZk" label="会员折扣（折）" align="center" />
       <el-table-column prop="memberFeeBz" label="会员费用标椎（元）" align="center" />
-      <!-- <el-table-column prop="memberTypeCode" label="会员类型编码" align="center" /> -->
     </el-table>
     <!-- 表格区2end -->
     <el-row class="area_bordes" style="margin-top:20px">
@@ -71,6 +70,7 @@ import {
   insertMemberFeeInfo,
   updateMemberFeeInfo
 } from '@/api/hxxd/membership-fee-mange';
+import { getDictDataLists, getDictDataList } from "@/api/system/comm/comm";
 import {
   parseTime
 } from '@/utils/index.js';
@@ -84,6 +84,8 @@ export default {
   // data 开始
   data() {
     return {
+      btns: this.$store.getters.btns['1000215030'],
+      // btns: ["100021503010", "100021503020"],
       show: false,
       treeData: [],
       treeDefaultProps: {
@@ -92,12 +94,13 @@ export default {
           return data.complainant
         }
       },
+      memberTypeOptions: [],
+      memberDjOptions: [],
       pageTotal: 0,
       formQuery: {
         id: '',
         memberType: '',
         memberDj: '',
-        memberTypeCode: '',
         memberZk: '',
         memberFeeBz: '',
         pageNo: 1,
@@ -105,32 +108,44 @@ export default {
       },
       tableLoading: false,
       tableData: [],
-      tableMultiSelection: [],
-      memberTypeOptions: [{
-          value: '1',
-          label: '航空公司'
-        },
-        {
-          value: '2',
-          label: '销售代理人'
-        }
-      ],
-      memberDjOptions: [{
-          value: '1',
-          label: '一级会员'
-        },
-        {
-          value: '2',
-          label: '二级会员'
-        }
-      ]
+      tableMultiSelection: []
     }
   },
   // data 结束
   created() {
+    //加载字典
+    this.beforeLoading();
     this.getTableList()
   },
   methods: {
+    //data中这个不能少：btns: this.$store.getters.btns['100010'],
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    btnDisplay(status) {
+      //根据具体业务数据控制 
+      if (status == "10") {
+        return true;
+      }
+      return false;
+    },
+     beforeLoading() {
+      getDictDataLists("97001014").then(response => {
+        this.memberTypeOptions = response.data.jq97001014;
+      });
+      getDictDataLists("97001015").then(response => {
+        this.memberDjOptions = response.data.jq97001015;
+      });
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
@@ -142,6 +157,14 @@ export default {
       this.tableLoading = true
       selectMemberFeeInfo(this.formQuery).then(response => {
         this.tableData = response.data
+        for (const key in this.tableData) {
+          getDictDataList('97001015','',this.tableData[key].memberDj,false,'','').then(response => {
+          this.tableData[key].memberDj=response.data[0].value
+         });
+          getDictDataList('97001014','',this.tableData[key].memberType,false,'','').then(response => {
+          this.tableData[key].memberType=response.data[0].value
+         });
+        }
         this.pageTotal = response.page.total
         this.tableLoading = false
       })
@@ -248,26 +271,6 @@ export default {
     },
     headRowStyle(row, rowIndex) {
       return 'height:15px'
-    },
-    memberTypeStatus(row, column, cellValue, index) {
-      const memberType = row.memberType
-      if (memberType === '1') {
-        return '航空公司'
-      } else if (memberType === '2') {
-        return '销售代理人'
-      } else {
-        return row.memberType
-      }
-    },
-    memberDjStatus(row, column, cellValue, index) {
-      const memberType = row.memberDj
-      if (memberType === '1') {
-        return '一级会员'
-      } else if (memberType === '2') {
-        return '二级会员'
-      } else {
-        return row.memberType
-      }
     }
   }
 }

@@ -3,18 +3,42 @@
     <!-- 查询面板start -->
     <!-- label-width='65px' -->
     <el-form ref="formQuery" :model="formQuery" :inline="true" size="mini">
-      <el-row :gutter="20" class="area_border">
-        <el-col :span="6">
+      <el-row :gutter="24" class="area_border">
+         <el-col :span="6"  v-if="ColShow">
           <el-form-item label="会员名称" size="mini" prop="memberName">
             <el-input v-model="formQuery.memberName" size="mini" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="会员类别" size="mini" prop="memberType">
-            <el-input v-model="formQuery.memberType" size="mini" />
+        <el-col :span="6" v-if="ColShow">
+          <el-form-item label="会员类别" size="mini" prop="memberType" >
+            <el-select v-model="formQuery.memberType" filterable placeholder="请选择" size="mini">
+              <el-option v-for="item in memberTypeOptions" :key="item.key" :label="item.value" :value="item.key"  style="width:100%"
+                ></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="6">
+          <el-form-item label="缴费年度" size="mini" prop="paymentYear">
+           <el-select
+              v-model="formQuery.paymentYear"
+              placeholder="请选择"
+              style="width: 100%;"
+            >
+              <el-option
+                v-for="item in yearOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="归属地区" size="mini" prop="area">
+            <el-input v-model="formQuery.area" size="mini" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="审批状态" size="mini" prop="spState">
             <el-select v-model="formQuery.spState" filterable placeholder="请选择" size="mini">
               <el-option
@@ -26,7 +50,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="5" style="text-align: left;padding-left: 1.3em;">
+        <el-col :span="6" style="text-align: left;">
           <el-form-item size="mini">
             <el-button type="primary" size="mini" icon="el-icon-search" @click="search">查询</el-button>
             <el-button size="mini" icon="el-icon-refresh-right" @click="resetForm('formQuery')">重置</el-button>
@@ -43,40 +67,42 @@
             class="btn_line"
             type="primary"
             size="mini"
+            v-show="btnShow('100021501010')"
             @click.native.prevent="handleAdd()"
           >新建</el-radio-button>
           <el-radio-button
             class="btn_line"
             type="primary"
             size="mini"
+            v-show="btnShow('100021501050')"
             @click.native.prevent="modify()"
           >修改</el-radio-button>
           <el-radio-button
             class="btn_line"
             type="primary"
             size="mini"
+            v-show="btnShow('100021501040')"
             @click.native.prevent="batchDelete()"
           >删除</el-radio-button>
           <el-radio-button
             class="btn_line"
             type="primary"
             size="mini"
+            v-show="btnShow('100021501060')"
             @click.native.prevent="handleInfo()"
           >查看</el-radio-button>
         </el-radio-group>
-        <el-button class="btn_line" type="primary" icon="el-icon" size="mini" @click="submit">提交</el-button>
+        <el-button 
+            class="btn_line" 
+            type="primary" 
+            icon="el-icon" 
+            size="mini" 
+            v-show="btnShow('100021501030')" 
+            @click="submit">提交</el-button>
       </el-col>
     </el-row>
     <!-- 按钮区end -->
     <!-- 表格区2 -->
-    <!-- <el-row :gutter="10">
-      <el-col :span="24">
-        <div class="dtl-info-line">
-          已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
-        </div>
-      </el-col>
-    </el-row> -->
     <el-table
       ref="companyTable"
       v-loading="tableLoading"
@@ -94,18 +120,18 @@
       <el-table-column
         prop="memberId"
         label="会员ID"
-        width="70"
         align="center"
         :show-overflow-tooltip="true"
+        v-if="show"
       />
-      <el-table-column prop="memberName" label="会员名称" width="80" align="center" />
+      <el-table-column prop="memberName" label="会员名称"  align="center" />
       <el-table-column prop="memberType" label="会员类别" width="105px" align="center" />
       <el-table-column prop="memberGrade" label="会员等级" width="80" align="center" />
       <el-table-column prop="paymentYear" label="缴费年度" width="80" align="center" />
       <el-table-column
         prop="paymentDate"
         label="缴纳日期"
-        width="80"
+        width="120"
         align="center"
         :show-overflow-tooltip="true"
       />
@@ -126,39 +152,22 @@
       <el-table-column
         prop="amountDue"
         label="应缴金额"
-        width="80"
         align="center"
         :show-overflow-tooltip="true"
       />
       <el-table-column
         prop="paymentAmount"
         label="实缴金额"
-        width="80"
         align="center"
         :show-overflow-tooltip="true"
       />
       <el-table-column
         prop="agent"
         label="经办人"
-        width="80"
         align="center"
         :show-overflow-tooltip="true"
       />
-      <el-table-column
-        prop="remarks"
-        label="备注"
-        width="50"
-        align="center"
-        :show-overflow-tooltip="true"
-      />
-      <!-- <el-table-column
-              align="center"
-              prop="spState"
-              width="150"
-              :formatter="statusFmt"
-              label="状态"
-      />-->
-      <el-table-column fixed="right" prop="spState" label="状态" width="160" align="center">
+      <el-table-column fixed="right" prop="spState" label="状态"   :show-overflow-tooltip="true" align="center">
         <template scope="scope">
           <span v-if="scope.row.spState==='30'" style="color:green">通过</span>
           <span v-else-if="scope.row.spState==='25'" style="color: red">驳回</span>
@@ -197,7 +206,8 @@ import {
   getDjInfoList,
   deleteMember
 } from "@/api/hxxd/membership-fee-mange";
-
+import { getDictDataLists, getDictDataList } from "@/api/system/comm/comm";
+import { getDictName } from "@/utils/index.js";
 export default {
   props: {
     pageCode: {
@@ -208,8 +218,10 @@ export default {
   // data 开始
   data() {
     return {
+      btns: this.$store.getters.btns['1000215010'],
       sum: 0,
       show: false,
+      ColShow: false,
       treeData: [],
       treeDefaultProps: {
         children: "childs",
@@ -232,12 +244,20 @@ export default {
         paymentAmount: "",
         agent: "",
         remarks: "",
-        spState: ""
+        pageNo: 1,
+        pageSize: 15,
+        spState: "20",
+        area: ""
       },
       tableLoading: false,
       tableData: [],
+      memberTypeOptions: [],
       tableMultiSelection: [],
       statusOptions: [
+        {
+          value: "",
+          label: "全部"
+        },
         {
           value: "20",
           label: "待审核"
@@ -254,14 +274,54 @@ export default {
           value: "25",
           label: "驳回"
         }
-      ]
+      ],
+      yearOptions: [
+        {
+          value: "2019",
+          label: "2019"
+        },
+        {
+          value: "2020",
+          label: "2020"
+        },
+        {
+          value: "2021",
+          label: "2021"
+        },
+        {
+          value: "2022",
+          label: "2022"
+        }
+      ],
     };
   },
   // data 结束
   created() {
     this.getTableList();
+    //加载字典
+    this.beforeLoading();
   },
   methods: {
+     beforeLoading() {
+      getDictDataLists("97001014").then(response => {
+        this.memberTypeOptions = response.data.jq97001014;
+      });
+    },
+     btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            if(btns[i] === "100021501010"){
+              this.ColShow = true;
+            }
+           return true;
+          }
+        }
+      }
+      return false;
+    },
     submit() {
       let selectRows = this.tableMultiSelection;
       if (!this.tableMultiSelection) {
@@ -280,10 +340,11 @@ export default {
       }
       var idArr = [];
       Object.keys(selectRows).forEach(key => {
-        if (selectRows[key].spState != "10") {
+        console.log(selectRows[key].spState)
+        if (selectRows[key].spState === "20" || selectRows[key].spState === "30" ) {
           this.$notify({
             title: "提示",
-            message: "只能操作未提交数据",
+            message: "只能操作 未提交 或 已驳回 数据!!",
             type: "warning",
             duration: 2000
           });
@@ -345,6 +406,11 @@ export default {
         this.tableData = response.data;
         this.pageTotal = response.page.total;
         this.tableLoading = false;
+        for (const key in this.tableData) {
+          getDictDataList('97001014','',this.tableData[key].memberType,false,'','').then(response => {
+          this.tableData[key].memberType=response.data[0].value
+         });
+        }
       });
     },
     handleSizeChange() {
@@ -380,6 +446,14 @@ export default {
         return;
       }
       const selectRows = this.tableMultiSelection;
+      var spState = selectRows[0].spState;
+      if (spState === "30" || spState === "25" || spState === "20" ) {
+        this.$message({
+          type: "info",
+          message: "待审核、已驳回、已通过的数据不可删除!"
+        });
+        return;
+      }
       if (selectRows.length === 0) {
         this.$message({
           type: "info",
@@ -416,7 +490,7 @@ export default {
     },
     handleAdd() {
       this.$router.push({
-        path: "/membership-fee-mange/add",
+        path: "/membership-fee-manage/add",
         query: {}
       });
     },
@@ -444,19 +518,25 @@ export default {
       }
       var selectId = selectRows[0].id;
       var spState = selectRows[0].spState;
-      if (spState != "10") {
+      if (spState === "20" || spState === "30") {
         this.$message({
-          type: "info",
-          message: "请选择未提交的数据!"
+          type: "warning",
+          message: "请选择 未提交 或 已驳回 的数据!"
         });
         return;
       }
       this.$router.push({
-        path: "/membership-fee-mange/modify-register",
+        path: "/membership-fee-manage/add",
         query: {
           selectId: selectId
         }
       });
+      // this.$router.push({
+      //   path: "/membership-fee-manage/modify-register",
+      //   query: {
+      //     selectId: selectId
+      //   }
+      // });
     },
     handleInfo() {
       if (this.tableMultiSelection.length === 0) {
@@ -482,7 +562,7 @@ export default {
       }
       var selectId = selectRows[0].id;
       this.$router.push({
-        path: "/membership-fee-mange/register-info",
+        path: "/membership-fee-manage/register-info",
         query: {
           selectId: selectId
         }
@@ -536,7 +616,6 @@ export default {
   margin-bottom: 20px;
   overflow: hidden;
 }
-
 .area_bordes {
   padding: 10px;
 }

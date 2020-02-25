@@ -50,10 +50,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
+          <el-col :span="24" style="text-align: center;margin: 10px 0;">
             <el-form-item size="mini">
-              <el-button type="primary" size="mini" @click="search">查询</el-button>
-              <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetForm('formQuery')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -86,7 +86,7 @@
               size="mini"
               @click="handleView"
             >查看</el-button>
-             <el-button type="primary" icon="el-icon-view" size="mini" @click="editDataScope">数据权限</el-button>
+            <el-button type="primary" icon="el-icon-view" size="mini" @click="editDataScope">数据权限</el-button>
           </el-button-group>
         </el-col>
       </el-row>
@@ -102,7 +102,7 @@
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="roleCode" label="角色编码" width="200" align="left"></el-table-column>
         <el-table-column prop="roleName" label="角色名称" width="250" align="left"></el-table-column>
-        <el-table-column prop="status"  label="状态"  width="150" align="center" :formatter="statusFmt" ></el-table-column>
+        <el-table-column prop="status" label="状态" width="150" align="center" :formatter="statusFmt"></el-table-column>
         <el-table-column
           prop="system"
           label="归属系统"
@@ -130,19 +130,19 @@ import { getDictDataLists } from "@/api/system/comm/comm";
 import { getDictName } from "@/utils/index.js";
 
 export default {
-  name:'Role',
+  name: "Role",
   data() {
     return {
       formQuery: {
         roleCode: "",
         roleName: "",
-        system:'',
+        system: "",
         status: "0",
         pageNo: 1,
         pageSize: 20,
         orderBy: "roleSort+"
       },
-       dict: {
+      dict: {
         system: []
       },
       tableLoading: false,
@@ -161,8 +161,8 @@ export default {
     };
   },
   created() {
-    this.beforeLoading()
-    this.getTableList()
+    this.beforeLoading();
+    this.getTableList();
   },
   methods: {
     beforeLoading() {
@@ -341,7 +341,6 @@ export default {
       this.$router.push({ path: "/system/role-detail", query: {} });
     },
     handleView() {
-
       if (!this.tableMultiSelection) {
         this.$message({
           type: "info",
@@ -368,7 +367,6 @@ export default {
           query: { roleId: roleId }
         });
       }
-
     },
     systemFmt(row, column, cellValue, index) {
       return getDictName(this.dict.system, row.system);

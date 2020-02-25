@@ -71,6 +71,18 @@
                 <el-input v-model.number="formQuery.contactMail" :readonly="true" size="mini" />
               </el-form-item>
             </el-col>
+            <el-col :span="11">
+            <el-form-item label="投诉分类" size="mini" prop="complaintClassification">
+              <el-select v-model="formQuery.complaintClassification" :readonly="true" style="width: 100%;" size="mini">
+                  <el-option
+                    v-for="item in businessOptions"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key"
+                  />
+                </el-select>
+            </el-form-item>
+            </el-col>
             <el-col :span="22">
               <el-form-item label="处理结果" size="mini" prop="processingResults">
                 <el-input type="textarea"  v-model="formQuery.processingResults" :readonly="true"  :rows="4"></el-input>
@@ -89,22 +101,28 @@
         </el-col>
       </el-row>
       <el-form v-if="isShow" ref="formQuery" :model="formQuery" label-width="100px" size="mini" >
-        <el-row :gutter="20">
-            <el-col :span="4">&nbsp;</el-col>
-          <el-col :span="16">
-            <el-row>
-              <el-col>
+        <el-row :gutter="22">
+            <!-- <el-col :span="4">&nbsp;</el-col> -->
+              <el-col :span="11">
+                <el-form-item label="复审人" prop="examineStatus">
+                  <el-input  v-model="formQuery.createPerson" :readonly="true" style="width:100%"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="11">
+                <el-form-item label="复审时间" prop="examineStatus">
+                  <el-input  v-model="formQuery.createTime" :readonly="true" style="width:100%"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="11">
                 <el-form-item label="审核状态" prop="examineStatus">
                   <el-input  v-model="formQuery.examineStatus" :readonly="true" style="width:100%"/>
                 </el-form-item>
               </el-col>
-              <el-col>
+              <el-col :span="22">
                 <el-form-item label="审核描述" prop="complaintsContents">
                   <el-input type="textarea" :rows="4" v-model="formQuery.auditReason" :readonly="true" />
                 </el-form-item>
               </el-col>
-        </el-row>
-        </el-col>
         </el-row>
       </el-form>
     </el-row>
@@ -114,6 +132,7 @@
 <script>
 import { selectComplainInfoAndProcessingById } from "@/api/hxxd/complaintInfo";
 import { downloadTemplate } from '@/api/hxxd/financialManage'
+import { getDictDataLists, getDictDataList } from "@/api/system/comm/comm";
 export default {
   data() {
     return {
@@ -131,8 +150,12 @@ export default {
         contactMail: "",
         fileList: [],
         examineStatus: "",
-        auditReason: ""
+        auditReason: "",
+        createPerson: "",
+        createTime: "",
+        complaintClassification: ""
       },
+      businessOptions: [],
       isShow: true,
       personShow: true,
       // downloadQuery: {
@@ -161,17 +184,29 @@ export default {
         {
           value: '30',
           label: "审核通过"
+        },
+        {
+          value: '50',
+          label: "待处理"
         }
       ]
     }
   },
   created(){
     let id = this.$route.query.id
+    console.log("1aid=="+id)
     if (id) {
       this.getMessageById(id)
     }
+    //加载字典
+    this.beforeLoading();
   },
   methods: {
+    beforeLoading() {
+      getDictDataLists("97001017").then(response => {
+        this.businessOptions = response.data.jq97001017;
+      });
+    },
     //系统消息查询
     getMessageById(id) {
       var id = id;
@@ -181,6 +216,8 @@ export default {
           this.formQuery.examineStatus= "审核通过"
         } else if(response.data.examineStatus === "15"){
           this.formQuery.examineStatus= "驳回"
+        }else if(response.data.examineStatus === "50"){
+          this.formQuery.examineStatus= "待处理"
         }
         if (this.formQuery.auditReason === null) {
           this.isShow = false

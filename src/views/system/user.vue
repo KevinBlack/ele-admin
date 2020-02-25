@@ -5,32 +5,32 @@
       <!-- label-width="65px" -->
       <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
         <el-row :gutter="20" class="area_border">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="机构Id" size="mini" prop="officeId" style="display:none;">
               <el-input v-model="formQuery.officeId" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="登录名" size="mini" prop="loginCode">
               <el-input v-model="formQuery.loginCode" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="用户名" size="mini" prop="userName">
               <el-input v-model="formQuery.userName" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="邮箱" size="mini" prop="email">
               <el-input v-model="formQuery.email" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="手机" size="mini" prop="mobile">
               <el-input v-model="formQuery.mobile" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="归属系统" size="mini" prop="system">
               <el-select
                 v-model="formQuery.system"
@@ -49,12 +49,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="电话" size="mini" prop="phone">
               <el-input v-model="formQuery.phone" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="状态" size="mini" prop="status">
               <el-select
                 v-model="formQuery.status"
@@ -72,11 +72,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="9" style="text-align: left;padding-left: 1.3em;">
-            <el-form-item size="mini">
-              <el-button type="primary" size="mini" @click="search">查询</el-button>
-              <el-button size="mini" @click="resetForm('formQuery')">重置</el-button>
-            </el-form-item>
+          <el-col :span="24" style="text-align: center;margin: 10px 0;">
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
+            <el-button icon="el-icon-refresh-right" @click="resetForm('formQuery')" size="mini">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -132,8 +130,8 @@
           @selection-change="selectionChange"
         >
           <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column prop="loginCode" label="登录账号" width="150" align="center"></el-table-column>
-          <el-table-column prop="userName" label="用户名" width="100" align="center"></el-table-column>
+          <el-table-column prop="loginCode" label="登录账号" width="200" align="center"></el-table-column>
+          <el-table-column prop="userName" label="用户名" width="200" align="center"></el-table-column>
           <el-table-column
             align="center"
             prop="status"
@@ -144,8 +142,20 @@
           <el-table-column prop="email" label="邮箱" width="200" align="center"></el-table-column>
           <el-table-column prop="mobile" label="手机" width="150" align="center"></el-table-column>
           <el-table-column prop="phone" label="电话" width="150" align="center"></el-table-column>
-          <el-table-column prop="system" label="归属系统" width="150" align="center" :formatter="systemFmt"></el-table-column>
-          <el-table-column prop="freezeCause" label="冻结内容" width="150" align="left" :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column
+            prop="system"
+            label="归属系统"
+            width="150"
+            align="center"
+            :formatter="systemFmt"
+          ></el-table-column>
+          <el-table-column
+            prop="freezeCause"
+            label="冻结内容"
+            width="150"
+            align="left"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
           <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
         </el-table>
         <el-col class="area_bordes">
@@ -178,7 +188,7 @@ import { getDictDataLists } from "@/api/system/comm/comm";
 import { getDictName } from "@/utils/index.js";
 
 export default {
-  name:'User',
+  name: "User",
   data() {
     return {
       downloadLoading: false,
@@ -230,7 +240,7 @@ export default {
     this.getTableList();
   },
   methods: {
-     beforeLoading() {
+    beforeLoading() {
       getDictDataLists("97001005").then(response => {
         this.dict.system = response.data.jq97001005;
       });

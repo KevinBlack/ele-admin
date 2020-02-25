@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function memberExitApply(data) {
   return request({
-    url: '/hxxd/hxXdMemberExit/add',
+    url: '/hxxd/hxXdMemberExit/save',
     method: 'post',
     data
   })

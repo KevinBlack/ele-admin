@@ -1,16 +1,21 @@
-	<template>
+<template>
   <div>
     <el-card class="detailsContainer">
       <!-- 查询面板 -->
       <!-- label-width="65px" -->
-      <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
+      <el-form
+        ref="formQuery"
+        :model="formQuery"
+        label-width="100px"
+        size="mini"
+      >
         <el-row :gutter="20" class="area_border">
           <el-col :span="6">
-            <el-form-item label="会员编码" size="mini" prop="code">
+            <el-form-item label="申请编号" size="mini" prop="code">
               <el-input v-model="formQuery.code" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="会员名称" size="mini" prop="name">
               <el-input v-model="formQuery.name" size="mini"></el-input>
             </el-form-item>
@@ -41,8 +46,27 @@
               ></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
-            <el-form-item label="归属地区" size="mini" prop="areas">
+
+          <el-col :span="6">
+            <el-form-item label="归属地区" size="mini" prop="region">
+              <el-select
+                v-model="formQuery.region"
+                filterable
+                placeholder="请选择"
+                style="width: 100%;"
+              >
+                <el-option
+                  v-for="item in areaOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="6">
+            <el-form-item label="所属省市" size="mini" prop="areas">
               <el-cascader
                 :props="props.area"
                 :options="options.area"
@@ -55,9 +79,33 @@
               ></el-cascader>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="会员状态" size="mini" prop="areas">
-              <el-select v-model="formQuery.status" size="mini" style="width:100%">
+
+          <el-col :span="6">
+            <el-form-item label="身份标记" size="mini" prop="status">
+              <el-select
+                v-model="formQuery.identityMark"
+                filterable
+                placeholder="请选择"
+                size="mini"
+                style="width:100%"
+              >
+                <el-option
+                  v-for="item in memberTypeOptions"
+                  :key="item.key"
+                  :label="item.value"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="6">
+            <el-form-item label="会员状态" size="mini" prop="status">
+              <el-select
+                v-model="formQuery.status"
+                size="mini"
+                style="width:100%"
+              >
                 <el-option
                   v-for="item in options.status"
                   :key="item.value"
@@ -67,14 +115,21 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="7" style="text-align: left;padding-left: 30px;">
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
+
+          <el-col :span="24" style="text-align: center;margin: 10px 0;">
             <el-button
               type="primary"
-              icon="el-icon-refresh-right"
+              icon="el-icon-search"
               size="mini"
+              @click="search"
+              >查询</el-button
+            >
+            <el-button
+              icon="el-icon-refresh-right"
               @click="resetForm('formQuery')"
-            >重置</el-button>
+              size="mini"
+              >重置</el-button
+            >
           </el-col>
         </el-row>
       </el-form>
@@ -82,21 +137,53 @@
       <el-row class="area_bordes">
         <el-col :span="24">
           <el-button-group size="mini">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
-            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete">删除</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-upload2"
+              size="mini"
+              class="btn_line"
+              @click="handleExport"
+              v-show="btnShow('100020605040')"
+              >批量导出</el-button
+            >
+            <el-button
+              type="primary"
+              icon="el-icon-check"
+              size="mini"
+              class="btn_line"
+              @click="handleRecovery"
+              v-show="btnShow('100020605050')"
+              >恢复</el-button
+            >
           </el-button-group>
           <el-button-group size="mini">
-            <el-button type="primary" icon="el-icon-zoom-in" size="mini" class="btn_line" @click="handleView">查看</el-button>
-            <el-button type="primary" icon="el-icon-zoom-in" size="mini" class="btn_line" @click="handleProcessLogView">流程日志</el-button>
-          </el-button-group>
-          <el-button-group size="mini">
-            <el-button type="primary" icon="el-icon-upload2" size="mini" class="btn_line" @click="handleExport">批量导出</el-button>
-            <el-button type="primary" icon="el-icon-check" size="mini" class="btn_line" @click="handleRecovery">恢复</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-zoom-in"
+              size="mini"
+              class="btn_line"
+              @click="handleView"
+              v-show="btnShow('100020605020')"
+              >查看</el-button
+            >
+            <el-button
+              type="primary"
+              icon="el-icon-zoom-in"
+              size="mini"
+              class="btn_line"
+              @click="handleProcessLogView"
+              v-show="btnShow('100020605030')"
+              >流程日志</el-button
+            >
           </el-button-group>
         </el-col>
       </el-row>
       <!-- 表格区 -->
-      <el-card class="box-card" shadow="never" :body-style="{ minHeight: '600px' }">
+      <el-card
+        class="box-card"
+        shadow="never"
+        :body-style="{ minHeight: '600px' }"
+      >
         <!-- 表格区 -->
         <el-table
           ref="tableData"
@@ -108,16 +195,50 @@
           @selection-change="selectionChange"
         >
           <el-table-column type="selection" width="55" align="center" />
-          <el-table-column prop="code" label="申请编号" width="250" align="center" />
-          <el-table-column prop="certificateNo" label="会员证书编号" width="250" align="center" />
-          <el-table-column prop="name" label="会员名称" width="120" align="center" />
-          <el-table-column prop="status" label="状态" width="100" align="center" :formatter="statusFmt" />
-          <el-table-column prop="expiryDate" label="过期时间" width="180" align="center" />
+          <el-table-column
+            prop="code"
+            label="申请编号"
+            width="250"
+            align="center"
+          />
+          <el-table-column
+            prop="certificateNo"
+            label="会员证书编号"
+            width="250"
+            align="center"
+          />
+          <el-table-column
+            prop="name"
+            label="会员名称"
+            width="120"
+            align="center"
+          />
+          <el-table-column
+            prop="identityMark"
+            label="身份标记"
+            width="100"
+            align="center"
+          />
+
           <el-table-column label="地址" align="center">
             <el-table-column prop="region" label="大区" align="center" />
             <el-table-column prop="provinceName" label="省份" align="center" />
             <el-table-column prop="cityName" label="市" align="center" />
           </el-table-column>
+
+          <el-table-column
+            prop="status"
+            label="状态"
+            width="100"
+            align="center"
+            :formatter="statusFmt"
+          />
+          <el-table-column
+            prop="expiryDate"
+            label="过期时间"
+            width="180"
+            align="center"
+          />
         </el-table>
         <el-col class="area_bordes">
           <el-col :span="24" style="text-align: right;">
@@ -147,8 +268,8 @@
   </div>
 </template>
 
-	<script>
-import { getMemberList, memberExport, memberRecovery } from "@/api/hx/member";
+<script>
+import { getMemberList, memberRecovery } from "@/api/hxxd/member";
 import { getDictDataLists, getAreaTree } from "@/api/system/comm/comm";
 import { getDictName } from "@/utils/index.js";
 import SysProcessLogDialog from "@/views/comm/sys-process-log-dialog";
@@ -158,6 +279,7 @@ export default {
   components: { SysProcessLogDialog },
   data() {
     return {
+      memberTypeOptions: [],
       downloadLoading: false,
       pageTotal: 0,
       formQuery: {
@@ -169,8 +291,40 @@ export default {
         pageNo: 1,
         pageSize: 15,
         orderBy: "",
-        status: []
+        status: [],
+        identityMark: "",
+        region: ""
       },
+      areaOptions: [
+        {
+          value: "华东地区",
+          label: "华东地区"
+        },
+        {
+          value: "华南地区",
+          label: "华南地区"
+        },
+        {
+          value: "华中地区",
+          label: "华中地区"
+        },
+        {
+          value: "华北地区",
+          label: "华北地区"
+        },
+        {
+          value: "西北地区",
+          label: "西北地区"
+        },
+        {
+          value: "西南地区",
+          label: "西南地区"
+        },
+        {
+          value: "东北地区",
+          label: "东北地区"
+        }
+      ],
       tableLoading: false,
       tableData: [],
       tableMultiSelection: [],
@@ -184,7 +338,7 @@ export default {
       options: {
         status: [
           { value: "10", label: "生效" },
-          { value: "30", label: "作废" }
+          { value: "30", label: "已退会" }
         ],
         area: []
       },
@@ -198,7 +352,8 @@ export default {
           label: "name",
           children: "childs"
         }
-      }
+      },
+      btns: this.$store.getters.btns["1000206050"]
     };
   },
   created() {
@@ -206,37 +361,106 @@ export default {
     this.getTableList();
   },
   methods: {
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "status") {
+            return this.parseStatus(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    parseStatus(value) {
+      if (value == "10") {
+        return "生效";
+      } else if (value == "30") {
+        return "失效";
+      }
+    },
     handleExport() {
-      let selectRows = this.tableMultiSelection;
-          var ids = new Array();
-          Object.keys(selectRows).forEach(function(key) {
-            if (selectRows[key].id) {
-              ids.push(selectRows[key].id);
-            }
-          });
-          var userIds = ids.join();
-          console.log(userIds)
-          window.location.href="http://localhost:8020/hxxd/hxMember/memberExport?"+"ids="+userIds
-            //   memberExport(userIds).then(response => {
-            // })
+      var selectedRows = this.tableMultiSelection;
+      if (!selectedRows || selectedRows.length === 0) {
+        this.$message({
+          type: "info",
+          message: "请选中要导出的数据!"
+        });
+        return;
+      }
+      this.downloadLoading = true;
+      // 引入Excel导出js文件
+      import("@/vendor/Export2Excel").then(excel => {
+        // excel 列标题
+        const tHeader = [
+          "会员证书编号",
+          "会员名称",
+          "身份标记",
+          "省份名称",
+          "城市名称",
+          "中国大区",
+          "状态",
+          "过期时间"
+        ];
+        //  excel 每行的数据（如果想导出所有数据，发送ajax，从服务端获取数据）
+        const list = selectedRows;
+        // excel 数据对应的字段
+        const filterVal = [
+          "certificateNo",
+          "name",
+          "identityMark",
+          "provinceName",
+          "cityName",
+          "region",
+          "status",
+          "expiryDate"
+        ];
+        // 从list 中去出值
+        const data = this.formatJson(filterVal, list);
+        excel.export_json_to_excel({
+          // excel 列标题
+          header: tHeader,
+          // excel 数据
+          data,
+          // excel 文件名
+          filename: "用户管理表",
+          // excel 是否自动宽度
+          autoWidth: true,
+          // excel 文件后缀 ['xlsx', 'csv', 'txt']
+          bookType: "xlsx"
+        });
+        this.downloadLoading = false;
+      });
     },
     handleRecovery() {
       let selectRows = this.tableMultiSelection;
-          var ids = new Array();
-          Object.keys(selectRows).forEach(function(key) {
-            if (selectRows[key].id) {
-              ids.push(selectRows[key].id);
-            }
+      if (!selectRows || selectRows.length === 0) {
+        this.$message({
+          type: "info",
+          message: "请选中要恢复的数据!"
+        });
+        return;
+      }
+      var ids = new Array();
+      Object.keys(selectRows).forEach(function(key) {
+        if (selectRows[key].status == "10") {
+          this.$message({
+            type: "info",
+            message: "当前数据已生效，请选中要恢复的数据!"
           });
-          var userIds = ids.join();
-          console.log(userIds)
-      memberRecovery(userIds).then(response => {
-        if(response.status === 200){
-          return "会员恢复成功"
-        }else{
-          return "会员恢复失败"
+          return;
         }
-      })
+        if (selectRows[key].id) {
+          ids.push(selectRows[key].id);
+        }
+      });
+      var userIds = ids.join();
+      memberRecovery(userIds).then(response => {
+        this.$message({
+          type: "success",
+          message: "会员恢复成功!"
+        });
+      });
     },
     beforeLoading() {
       getAreaTree().then(response => {
@@ -245,6 +469,9 @@ export default {
       // getDictDataLists("97001005").then(response => {
       //   this.dict.system = response.data.jq97001005;
       // });
+      getDictDataLists("97001014").then(response => {
+        this.memberTypeOptions = response.data.jq97001014;
+      });
     },
     handleProcessLogView() {
       if (!this.tableMultiSelection) {
@@ -315,7 +542,16 @@ export default {
     },
     getTableList() {
       this.tableLoading = true;
-      getMemberList(this.formQuery).then(response => {
+      var formQuery = Object.assign({}, this.formQuery);
+      var areas = formQuery.areas;
+      if (areas) {
+        var tempArr = new Array();
+        for (var i = 0; i < areas.length; i++) {
+          tempArr.push(areas[i]);
+        }
+        formQuery.areas = tempArr.join(",");
+      }
+      getMemberList(formQuery).then(response => {
         this.tableData = response.data;
         this.pageTotal = response.page.total || 0;
         this.tableLoading = false;
@@ -370,19 +606,32 @@ export default {
       //     // 取消时执行此处
       //   });
     },
-    handleAdd() {
-      this.$router.push({
-        path: "/member-manage/member-apply-detail",
-        query: {}
-      });
-    },
+    // handleAdd() {
+    //   this.$router.push({
+    //     path: "/member-manage/member-apply-detail",
+    //     query: {}
+    //   });
+    // },
     statusFmt(row, column, cellValue, index) {
       let status = row.status.trim();
       if (status === "10") {
         return "生效";
       } else if (status === "30") {
-        return "作废";
+        return "已退会";
       }
+    },
+    //data中这个不能少：
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
     //, systemFmt(row, column, cellValue, index) {
     //   return getDictName(this.dict.system, row.system);
@@ -390,7 +639,7 @@ export default {
   }
 };
 </script>
-	<style>
+<style>
 * {
   font-weight: normal;
 }

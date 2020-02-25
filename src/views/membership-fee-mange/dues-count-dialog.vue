@@ -3,7 +3,7 @@
     <!-- part1 -->
     <el-form ref="formQuery" :model="formQuery" :inline="true">
       <el-row>
-        <el-col :span="18">
+        <el-col :span="18"  align="left">
           <el-form-item label="会员名称" size="mini" prop="name">
             <el-input v-model="formQuery.name" size="mini" />
           </el-form-item>
@@ -23,35 +23,47 @@
       border
       tooltip-effect="dark"
       style="width: 100%;"
-      @selection-change="handleSelectionChange"
       :header-row-style="headRowStyle"
       :row-style="rowStyle"
       :header-cell-style="getCellStyle"
       class="table-hxxd"
     >
-      <el-table-column type="selection" width="55"  align="center" />
       <el-table-column prop="id" label="ID" width="" align="center" v-if='show' />
       <el-table-column prop="code" label="会员编号" width="" align="center" />
       <el-table-column prop="name" label="会员名称" width="" align="center" />
       <el-table-column prop="remarks" label="备注" width="" align="center" />
     </el-table>
+        <!-- 分页 -->
+    <el-row class="area_bordes" style="margin-top:20px">
+      <el-col :span="24" style="text-align: right;">
+        <el-pagination
+          background
+          :total="pageTotal"
+          layout="total, sizes, prev, pager, next, jumper"
+          :current-page.sync="formQuery.pageNo"
+          :page-size.sync="formQuery.pageSize"
+          :page-sizes="[10, 20, 30, 40]"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </el-col>
+    </el-row>
+    <!-- 分页end -->
     <el-row class="btn_bottom">
         <el-col :span="24">
-        <el-button type="primary" size="mini" @click="handleClose('saveBtn')">保存</el-button>
-        <el-button type="primary" size="mini" @click="handleClose('canselBtn')">取消</el-button>
-      </el-col>
+        <el-button type="primary" size="mini" @click="handleClose()">取消</el-button>
+      </el-col> 
     </el-row>
   </div>
 </template>
-
 <script>
 import {
-  getMembers
+  getMemberByRegion
 } from '@/api/hxxd/member'
 export default {
-  name: 'add_member_modality',
+  name: 'dues-count-dialog',
   props: {
-    fdmsg: {
+    fdmsg: { 
       type: [String, Number,Object],
       required: true,
       default: ''
@@ -64,22 +76,26 @@ export default {
   },
   data() {
     return {
+      pageTotal: 0,
       show:false,
       formQuery: {
         id:'',
         code:'',
         name:'',
         remarks:'',
-        status:'30'
+        status:'30',
+        region:'',
+        pageNo: 1,
+        pageSize: 15,
       },
       fdshow: false,
-      selectArr: [],
-      childArr: [],
       tableData: []
     }
   },
   created(){
-    this.getTableList()
+    var fdmsg = JSON.stringify(this.fdmsg)
+    this.formQuery.region = fdmsg.region
+    // this.getTableList()
   },
   watch:{
     'fdshow3':function(val, oldVal) {
@@ -89,10 +105,17 @@ export default {
     }
   },
   methods: {
+    handleSizeChange() {
+      this.getTableList();
+    },
+    handleCurrentChange() {
+      this.getTableList();
+    },
      getTableList() {
       this.tableLoading = true
-      getMembers(this.formQuery).then(response => {
+      getMemberByRegion(this.formQuery).then(response => {
         this.tableData = response.data
+         this.pageTotal = response.page.total;
       })
     },
      search() {
@@ -102,9 +125,6 @@ export default {
       this.$nextTick(() => {
         this.$refs[formName].resetFields()
       })
-    },
-     handleSelectionChange(val) {
-      this.selectArr = val
     },
      headRowStyle(row, rowIndex) {
       return "height:15px;";
@@ -119,49 +139,8 @@ export default {
         return "";
       }
     },
-    batchCheck() {
-      if (!this.selectArr) {
-        this.$message({
-          type: 'info',
-          message: '请选中要操作的数据!'
-        })
-        return
-      }
-      const selectRows = this.selectArr
-      if (selectRows.length === 0) {
-        this.$message({
-          type: 'info',
-          message: '请选中要操作的数据!'
-        })
-        return
-      }
-      if (selectRows.length > 1) {
-        this.$message({
-          type: 'info',
-          message: '只能选中一条操作数据!'
-        })
-        return
-      }
-      var idArr = []
-      Object.keys(selectRows).forEach(function(key) {
-        if (selectRows[key].id) {
-          idArr.push(selectRows[key].id)
-        }
-      })
-      if (idArr && idArr.length > 0) {
-        var Ids = idArr.join()
-        this.getTableList()
-      }
-      this.$emit('closeDalogPay', this.selectArr[0], this.fdshow)
-      this.selectArr = []
-      this.$refs.multipleTable.clearSelection() // 清空所有选择
-    },
-     handleClose(e) {
-      if (e === 'saveBtn') {
-        this.batchCheck()
-      }else{
-        this.$emit('closeDalogPay', '', this.fdshow)
-      }
+     handleClose() {
+        this.$emit('closeDalog', this.fdshow)
     }
   }
 }

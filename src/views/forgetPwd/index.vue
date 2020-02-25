@@ -190,6 +190,7 @@ import {
 } from "@/api/system/user";
 import HeaderReload from "@/components/HeaderReload";
 import FooterReload from "@/components/FooterReload";
+import { getValidateCode } from "@/api/system/comm/comm";
 import { isvalidPhone } from "@/utils/validate";
 import {
   sendCode,
@@ -221,6 +222,7 @@ export default {
       isPhone: true,
       isNext: true,
       showSend: true,
+      key:"",
       loginCodeMsg: "验证码将以短信形式发送到密保手机",
       param: {
         contactPhone: "",
@@ -376,9 +378,8 @@ export default {
           return;
         } else {
           sendCode(this.param.contactPhone).then(response => {
-            var success = response.data;
-            var msg = success ? "请查看验证码" : "发送手机验证码失败";
-            this.message(success, msg);
+            var msg = response.message;
+            this.message(msg==="请查看手机验证码!",msg)
             this.getCode()
           });
         }
@@ -393,9 +394,8 @@ export default {
           return;
         } else {
           sendEmailCode(this.param.contactMail).then(response => {
-            var success = response.data;
-            var msg = success ? "请查看邮箱验证码" : "发送手机验证码失败";
-            this.message(success, msg);
+             var msg = response.message;
+            this.message(msg==="请查看邮箱验证码!",msg)
             this.getCode()
           });
         }
@@ -418,10 +418,9 @@ export default {
       // const mobileNum = JSON.stringify(this.param.contactPhone);
       checkCode(this.param.contactPhone, this.param.loginCode).then(
         response => {
-          var success = response.data;
-          var msg = success ? "验证通过" : "验证错误";
-           this.message(success,msg)
-          if(success){
+          var success = response.message;
+          this.message(success==="验证通过!",success)
+          if(success==="验证通过!"){
             this.active = 2;
           }else{
             this.active = 1;
@@ -432,10 +431,9 @@ export default {
     checkEmailCode() {
       checkEmailCode(this.param.contactMail, this.param.loginCode).then(
         response => {
-          var success = response.data;
-          var msg = success ? "验证通过" : "验证错误";
-          this.message(success,msg)
-            if(success){
+          var success = response.message;
+          this.message(success==="验证通过!",success)
+          if(success==="验证通过!"){
             this.active = 2;
           }else{
             this.active = 1;
@@ -444,7 +442,7 @@ export default {
       );
     },
     // 信息保存
-    companyRegisterSave() {
+    async companyRegisterSave() {
       if (this.param.password != this.param.confiPassword) {
         this.$message({
           type: "error",
@@ -457,24 +455,40 @@ export default {
       //数据校验成功
       // 若果密码存在，则对密码进行加密操作
       else if (this.param.password) {
-        this.active = 3;
         this.btnMassage = "跳转到登陆页面";
         var password = this.$encruption(this.param.password);
         this.param.password = password;
-      }
-       var num;
-      if(isPhone){
-         num = this.param.contactPhone
-      }else {
-        num =this.param.contactMail;
-      }
-      modifyPassWrod(num, this.param.password).then(
-        response => {
-          var success = response.data;
-          var msg = success ? "修改成功" : "修改失败";
-          this.message(success, msg);
+        var num;
+        if(this.isPhone){
+          num = this.param.contactPhone
+        }else {
+          num =this.param.contactMail;
         }
-      );
+        await getValidateCode("").then(response => {
+          if (response.data) {
+            var validateCode = response.data.validateCode;
+            if (!validateCode) {
+              this.$message({
+                type: "error",
+                message: "获取验证码失败!"
+              });
+              return;
+            }
+            this.key = this.$encruption(validateCode);
+            //文件上传
+          }
+        });
+        await modifyPassWrod(num, this.param.password,this.key).then(
+          response => {
+            var msg = response.message;
+              if(msg==="密码修改成功!"){
+                this.active = 3;
+              }
+            this.message(msg==="密码修改成功!", msg);
+          }
+        );
+      }
+     
       // //用户信息保存成功
       // registerSave(this.param).then(response => {
       //   var msg = response.status == 200 ? "注册成功" : "注册失败";

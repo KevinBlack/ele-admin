@@ -38,19 +38,6 @@ export function getStatistics(year) {
 }
 
 /**
- * 批量导出
- * formQuery
- */
-export function memberExport(ids) {
-  return request({
-    url: '/hxxd/hxMember/memberExport',
-    method: 'get',
-    responseType: 'blob',
-    params: {ids}
-  })
-}
-
-/**
  * 会员恢复
  * formQuery
  */
@@ -58,6 +45,6 @@ export function memberRecovery(ids) {
   return request({
     url: '/hxxd/hxMember/memberRecovery',
     method: 'post',
-    params : {ids}
+    params: { ids }
   })
 }

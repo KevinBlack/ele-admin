@@ -14,13 +14,20 @@
           </el-form-item>
         </el-col>
         <el-col :span="24" style="text-align: center;margin: 10px 0;">
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="getTableList"
+            >查询</el-button
+          >
           <el-button
             type="primary"
             icon="el-icon-refresh-right"
             @click="resetForm('queryForm')"
             size="mini"
-          >重置</el-button>
+            >重置</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -29,7 +36,12 @@
       <el-col :span="24">
         <div class="dtl-info-line">
           已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
+          <el-button
+            type="text"
+            style="margin-left: 20px;"
+            @click="toggleSelection()"
+            >清空</el-button
+          >
         </div>
       </el-col>
     </el-row>
@@ -44,9 +56,24 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="50" />
-      <el-table-column type="index" width="100" label="序号" align="center"></el-table-column>
-      <el-table-column prop="name" label="会员名称" width="285" align="center"></el-table-column>
-      <el-table-column prop="code" label="会员编号" width="300" align="center"></el-table-column>
+      <el-table-column
+        type="index"
+        width="100"
+        label="序号"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="name"
+        label="会员名称"
+        width="285"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="code"
+        label="会员编号"
+        width="300"
+        align="center"
+      ></el-table-column>
     </el-table>
 
     <!-- 分页 -->
@@ -62,17 +89,36 @@
       :total="pageTotal"
     ></el-pagination>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" icon="el-icon-check" size="mini" @click="handleClose('ok')">选择会员</el-button>
-      <el-button type="primary" icon="el-icon-close" size="mini" @click="handleClose('close')">取消</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-check"
+        size="mini"
+        @click="handleClose('ok')"
+        >选择会员</el-button
+      >
+      <el-button
+        type="primary"
+        icon="el-icon-close"
+        size="mini"
+        @click="handleClose('close')"
+        >取消</el-button
+      >
     </div>
   </div>
 </template>
 
 <script>
-import { getMemberList } from "@/api/hxxd/member";
+import { getMembers } from "@/api/hxxd/member";
 import { parseTime } from "@/utils/index.js";
 export default {
-  name: "Leaguer",
+  name: "leaguer",
+  props: {
+    fdmsg: {
+      type: [String, Number, Object],
+      required: true,
+      default: ''
+    }
+  },
   data() {
     return {
       sum: 0,
@@ -83,6 +129,10 @@ export default {
       tableData: [],
       // 查询条件
       queryForm: {
+        //会员缴费状态   10:欠费 20:未欠费
+        JfStatus: "",
+        //会员审核状态
+        status: "30",
         // 会员编号
         code: "",
         // 会员名称
@@ -93,6 +143,20 @@ export default {
         pageSize: 15
       },
     };
+  },
+    watch:{
+    'fdmsg':function(val, oldVal) {
+      if(val){
+        if(val === "1"){
+          console.log(val + "===val1")
+          this.queryForm.JfStatus = "10"
+        }else {
+          this.queryForm.JfStatus = ""
+          console.log(val + "===val2"  )
+        }
+       this.getTableList(); 
+      }
+    }
   },
   created() {
     //初始化页面时
@@ -111,7 +175,7 @@ export default {
     },
     getTableList() {
       this.tableLoading = true;
-      getMemberList(this.queryForm).then(response => {
+      getMembers(this.queryForm).then(response => {
         this.tableData = response.data;
         this.pageTotal = response.page.total;
         this.tableLoading = false;
@@ -124,12 +188,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      if (val.length > 1) {
-        this.$message({
-          message: "只能选择单条",
-          type: "warning"
-        });
-      }
       if (val.length !== 0) {
         this.added = val.length;
         this.sum = this.added;

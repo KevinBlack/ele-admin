@@ -29,7 +29,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="24" style="text-align: center;margin: 10px 0;">
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="getTableList">查询</el-button>
+          <el-button type="primary" icon="el-icon-search" size="mini" v-show="btnShow('100020904010')" @click="getTableList">查询</el-button>
           <el-button
             type="primary"
             icon="el-icon-refresh-right"
@@ -43,34 +43,28 @@
     <el-row class="area_bordes">
       <el-col :span="24">
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">新 增</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" v-show="btnShow('100020904030')"  @click.native.prevent="handleAdd">新 增</el-radio-button>
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('100020904020')" 
             @click.native.prevent="handleEdit('update')"
           >修 改</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="deleteBatch">删 除</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" v-show="btnShow('100020904050')"  @click.native.prevent="deleteBatch">删 除</el-radio-button>
           <el-radio-button
             type="primary"
             class="btn_line"
+            v-show="btnShow('100020904040')" 
             @click.native.prevent="handleEdit('show')"
           >查 看</el-radio-button>
         </el-radio-group>
         <el-radio-group size="mini">
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">通知管理员</el-radio-button>
-          <el-radio-button type="primary" class="btn_line" @click.native.prevent="handleAdd">常见问题查看</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" v-show="btnShow('100020904040')"  @click.native.prevent="handleAdd">通知管理员</el-radio-button>
+          <el-radio-button type="primary" class="btn_line" v-show="btnShow('100020904040')"  @click.native.prevent="handleAdd">常见问题查看</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
     <!-- part3 -->
-    <!-- <el-row :gutter="10">
-      <el-col :span="24">
-        <div class="dtl-info-line">
-          已选择{{ sum }}条
-          <el-button type="text" style="margin-left: 20px;" @click="toggleSelection()">清空</el-button>
-        </div>
-      </el-col>
-    </el-row> -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -114,6 +108,7 @@ export default {
   name: 'SysLeavewordQuery',
   data() {
     return {
+      btns: this.$store.getters.btns['1000209040'],
       param:{
         idList: []
       },
@@ -146,6 +141,18 @@ export default {
     // }
   },
   methods: {
+      btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
     getCellStyle({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         return 'background: #F2F2F2;font-size: 13px;color: #333;font-weight: normal'
@@ -154,13 +161,11 @@ export default {
       }
     },
     handleAdd(){
-      debugger;
       this.$router.push({
             path: "/message-manage/leaving-message-edit",
           });
     },
     deleteBatch() {
-      debugger;
       var idList = [];
       if (this.multipleSelection.length == 0) {
         this.$message({
@@ -187,14 +192,12 @@ export default {
       }
     },
    handleEdit(type) {
-      debugger;
       if (this.multipleSelection.length == 0) {
         this.$message({
           message: "请选择数据",
           type: "warning"
         });
       } else if (this.multipleSelection.length == 1) {
-        debugger;
 
         var id = this.multipleSelection[0].id;
         if (id) {
@@ -233,18 +236,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      if (val.length > 1) {
-        this.$message({
-          message: "只能选择单条",
-          type: "warning"
-        });
-      }
-      if (val.length !== 0) {
-        this.added = val.length;
-        this.sum = this.added;
-      } else if (val.length === 0) {
-        this.sum -= this.added;
-      }
     },
     toggleSelection(rows) {
       if (rows) {

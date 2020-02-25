@@ -5,22 +5,22 @@
       <!-- label-width="65px" -->
       <el-form ref="formQuery" :model="formQuery" label-width="100px" size="mini">
         <el-row :gutter="20" class="area_border">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="申请编号" size="mini" prop="code">
               <el-input v-model="formQuery.code" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="会员名称" size="mini" prop="name">
               <el-input v-model="formQuery.name" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="法定代表人" size="mini" prop="legalRepresentName">
               <el-input v-model="formQuery.legalRepresentName" size="mini"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item label="邮箱" size="mini" prop="email">
               <el-input v-model="formQuery.email" size="mini"></el-input>
             </el-form-item>
@@ -28,12 +28,7 @@
 
           <el-col :span="24" style="text-align: center;margin: 10px 0;">
             <el-button type="primary" icon="el-icon-search" size="mini" @click="search">查询</el-button>
-            <el-button
-              type="primary"
-              icon="el-icon-refresh-right"
-              @click="resetForm('formQuery')"
-              size="mini"
-            >重置</el-button>
+            <el-button icon="el-icon-refresh-right" @click="resetForm('formQuery')" size="mini">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -42,8 +37,9 @@
       <el-row class="area_bordes">
         <el-col :span="24">
           <el-button-group size="mini">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
-            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete">删除</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" 
+                          v-show="btnShow('100020601010')">新增</el-button>
+            <el-button type="primary" icon="el-icon-delete" size="mini" @click="batchDelete" v-show="btnShow('100020601020')">删除</el-button>
           </el-button-group>
           <el-button-group size="mini" style="margin-left: 20px;">
             <el-button
@@ -52,6 +48,7 @@
               icon="el-icon-zoom-in"
               size="mini"
               @click="handleView"
+              v-show="btnShow('100020601030')"
             >查看</el-button>
             <el-button
               type="primary"
@@ -59,6 +56,7 @@
               icon="el-icon-zoom-in"
               size="mini"
               @click="handleProcessLogView"
+              v-show="btnShow('100020601040')"
             >流程日志</el-button>
           </el-button-group>
         </el-col>
@@ -77,32 +75,32 @@
           @selection-change="selectionChange"
         >
           <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column prop="code" label="申请编号" width="250" align="center"></el-table-column>
-          <el-table-column prop="certificateNo" label="会员证书编号" width="250" align="center"></el-table-column>
-          <el-table-column prop="name" label="会员名称" width="120" align="center"></el-table-column>
-          <el-table-column
-            align="center"
-            prop="status"
-            width="100"
-            :formatter="statusFmt"
-            label="状态"
-          ></el-table-column>
-          <el-table-column prop="legalRepresentName" label="法定代表人" width="200" align="center"></el-table-column>
+          <el-table-column prop="code" label="申请编号" width="200" align="center" :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column prop="certificateNo" label="会员证书编号" width="200" align="center" :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column prop="name" label="会员名称" width="120" align="center" :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column prop="legalRepresentName" label="法定代表人" width="120" align="center" :show-overflow-tooltip="true"></el-table-column>
           <el-table-column
             prop="corporateNature"
             label="公司性质"
-            width="150"
+            width="120"
             align="center"
             :show-overflow-tooltip="true"
           ></el-table-column>
           <el-table-column
             prop="mainBusinessScope"
             label="主要业务范围"
-            width="200"
+            width="120"
             align="center"
             :show-overflow-tooltip="true"
           ></el-table-column>
-          <el-table-column prop="remarks" label="备注" align="left" :show-overflow-tooltip="true"></el-table-column>
+          <el-table-column prop="remarks" label="备注" align="center" :show-overflow-tooltip="true"></el-table-column>
+           <el-table-column
+            align="center"
+            prop="status"
+            width="80"
+            :formatter="statusFmt"
+            label="状态"
+          ></el-table-column>
         </el-table>
         <el-col class="area_bordes">
           <el-col :span="24" style="text-align: right;">
@@ -139,7 +137,7 @@ import { getDictName } from "@/utils/index.js";
 import SysProcessLogDialog from "@/views/comm/sys-process-log-dialog";
 
 export default {
-  name: "MembershipApply",
+  // name: "MembershipApply",
   components: { SysProcessLogDialog },
   data() {
     return {
@@ -163,13 +161,14 @@ export default {
         dataId: "",
         dataCode: "",
         system: "hxxd"
-      }
+      },
+      btns: this.$store.getters.btns["1000206010"]
     };
   },
   created() {
-    this.beforeLoading();
     this.getTableList();
-  },
+    this.beforeLoading();
+  },  
   methods: {
     beforeLoading() {
       // getDictDataLists("97001005").then(response => {
@@ -273,12 +272,21 @@ export default {
         });
         return;
       }
+      for (var i = 0; i < selectRows.length; i++) {
+        if (selectRows.status != "10" && selectRows.status != "15") {
+          this.$message({
+            type: "error",
+            message: "只有未提交或者审核驳回状态的数据，才能删除!"
+          });
+          return;
+        }
+      }
       this.$confirm("是否执行删除操作?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
-      .then(() => {
+        .then(() => {
           var idArr = new Array();
           Object.keys(selectRows).forEach(function(key) {
             if (selectRows[key].id) {
@@ -321,6 +329,19 @@ export default {
       } else {
         return row.status;
       }
+    },
+    //data中这个不能少：
+    btnShow(menuCode) {
+      //根据用户所具有的菜单项控制
+      var btns = this.btns;
+      if (btns && btns.length > 0) {
+        for (var i = 0; i < btns.length; i++) {
+          if (menuCode === btns[i]) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
     //, systemFmt(row, column, cellValue, index) {
     //   return getDictName(this.dict.system, row.system);
